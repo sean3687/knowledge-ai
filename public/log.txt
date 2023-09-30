@@ -1,0 +1,82 @@
+2023-09-18T02:22:28.282Z [INFO]: # Cloning repository: git@github.com:th-sean/fast-api-chat-app.git
+2023-09-18T02:22:29.490Z [INFO]: 
+2023-09-18T02:22:29.491Z [INFO]: Cloning into 'fast-api-chat-app'...
+2023-09-18T02:22:29.491Z [INFO]: # Switching to commit: cecaf5a6bd71f66abc904c78051ac775cd36f322
+2023-09-18T02:22:29.505Z [INFO]: Note: switching to 'cecaf5a6bd71f66abc904c78051ac775cd36f322'.
+                                 You are in 'detached HEAD' state. You can look around, make experimental
+                                 changes and commit them, and you can discard any commits you make in this
+                                 state without impacting any branches by switching back to a branch.
+                                 If you want to create a new branch to retain commits you create, you may
+                                 do so (now or later) by using -c with the switch command. Example:
+                                 git switch -c <new-branch-name>
+                                 Or undo this operation with:
+                                 git switch -
+                                 Turn off this advice by setting config variable advice.detachedHead to false
+                                 HEAD is now at cecaf5a test
+2023-09-18T02:22:29.540Z [INFO]: Successfully cleaned up Git credentials
+2023-09-18T02:22:29.540Z [INFO]: # Checking for Git submodules at: /codebuild/output/src2347852782/src/fast-api-chat-app/.gitmodules
+2023-09-18T02:22:29.547Z [INFO]: # Retrieving environment cache...
+2023-09-18T02:22:29.569Z [WARNING]: ! Unable to write cache: {"code":"ERR_BAD_REQUEST","message":"Request failed with status code 404"})}
+2023-09-18T02:22:29.570Z [INFO]: ---- Setting Up SSM Secrets ----
+2023-09-18T02:22:29.570Z [INFO]: SSM params {"Path":"/amplify/d1u0j7gfvuk3hc/deploy/","WithDecryption":true}
+2023-09-18T02:22:30.408Z [INFO]: No live updates for this build run
+2023-09-18T02:22:30.411Z [INFO]: # Retrieving cache...
+2023-09-18T02:22:35.478Z [INFO]: # Extracting cache...
+2023-09-18T02:22:38.461Z [INFO]: # Extraction completed
+2023-09-18T02:22:38.513Z [INFO]: # Retrieved cache
+2023-09-18T02:23:04.859Z [INFO]: ## Starting Backend Build
+                                 ## Checking for associated backend environment...
+                                 ## No backend environment association found, continuing...
+                                 ## Completed Backend Build
+2023-09-18T02:23:04.865Z [INFO]: {"backendDuration": 0}
+                                 ## Starting Frontend Build
+                                 # Starting phase: preBuild
+                                 # Executing command: npm ci
+2023-09-18T02:23:17.733Z [INFO]: added 363 packages, and audited 364 packages in 13s
+2023-09-18T02:23:17.738Z [INFO]: 117 packages are looking for funding
+                                 run `npm fund` for details
+                                 2 moderate severity vulnerabilities
+                                 To address all issues (including breaking changes), run:
+                                 npm audit fix --force
+                                 Run `npm audit` for details.
+2023-09-18T02:23:17.754Z [INFO]: # Completed phase: preBuild
+2023-09-18T02:23:17.754Z [INFO]: # Starting phase: build
+                                 # Executing command: npm run build
+2023-09-18T02:23:18.069Z [INFO]: > my-nextjs-project@0.1.0 build
+                                 > next build
+2023-09-18T02:23:18.608Z [WARNING]: - warn Invalid next.config.js options detected:
+2023-09-18T02:23:18.609Z [WARNING]: - warn     The root value has an unexpected property, bodyParser, which is not in the list of allowed properties (amp, analyticsId, assetPrefix, basePath, cleanDistDir, compiler, compress, configOrigin, crossOrigin, devIndicators, distDir, env, eslint, excludeDefaultMomentLocales, experimental, exportPathMap, generateBuildId, generateEtags, headers, httpAgentOptions, i18n, images, modularizeImports, onDemandEntries, optimizeFonts, output, outputFileTracing, pageExtensions, poweredByHeader, productionBrowserSourceMaps, publicRuntimeConfig, reactProductionProfiling, reactStrictMode, redirects, rewrites, sassOptions, serverRuntimeConfig, skipMiddlewareUrlNormalize, skipTrailingSlashRedirect, staticPageGenerationTimeout, swcMinify, target, trailingSlash, transpilePackages, typescript, useFileSystemPublicRoutes, webpack).
+                                    - warn See more info here: https://nextjs.org/docs/messages/invalid-next-config
+2023-09-18T02:23:18.612Z [INFO]: - warn No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+2023-09-18T02:23:18.616Z [INFO]: Attention: Next.js now collects completely anonymous telemetry regarding usage.
+2023-09-18T02:23:18.617Z [INFO]: This information is used to shape Next.js' roadmap and prioritize features.
+                                 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+                                 https://nextjs.org/telemetry
+2023-09-18T02:23:18.695Z [INFO]: - info Linting and checking validity of types...
+2023-09-18T02:23:20.614Z [WARNING]: Failed to compile.
+2023-09-18T02:23:20.614Z [WARNING]: ./pages/index.js
+                                    15:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+                                    ./pages/login/index.js
+                                    68:64  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+                                    ./pages/upload/index.js
+                                    68:6  Warning: React Hook useEffect has missing dependencies: 'showKebabDropdown' and 'showUploadDropdown'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+                                    ./components/animation/lottie-animation.js
+                                    19:6  Warning: React Hook useEffect has missing dependencies: 'autoplay' and 'loop'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+                                    ./components/controller.js
+                                    33:6  Warning: React Hook useEffect has a missing dependency: 'fetchSummary'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+                                    ./components/fileController.js
+                                    96:12  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+                                    96:12  Warning: img elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
+                                    113:12  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+                                    113:12  Warning: img elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
+                                    134:12  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+                                    134:12  Warning: img elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
+                                    ./components/responsiveNavbar.js
+                                    149:6  Warning: React Hook useEffect has missing dependencies: 'accessToken' and 'loadedUsername'. Either include them or remove the dependency array. If 'setToken' needs the current value of 'accessToken', you can also switch to useReducer instead of useState and read 'accessToken' in the reducer.  react-hooks/exhaustive-deps
+                                    info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+2023-09-18T02:23:20.626Z [ERROR]: !!! Build failed
+2023-09-18T02:23:20.626Z [INFO]: Please check the supported SSR features to find if your build failure is related to an unsupported feature: https://docs.aws.amazon.com/amplify/latest/userguide/ssr-Amplify-support.html#supported-unsupported-features. You may also find this troubleshooting guide useful: https://docs.aws.amazon.com/amplify/latest/userguide/troubleshooting-ssr-deployment.html
+2023-09-18T02:23:20.626Z [ERROR]: !!! Non-Zero Exit Code detected
+2023-09-18T02:23:20.627Z [INFO]: # Starting environment caching...
+2023-09-18T02:23:20.627Z [INFO]: # Environment caching completed
+Terminating logging...
