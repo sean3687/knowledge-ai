@@ -344,7 +344,6 @@ function Navbar({ accessToken, name }) {
                               <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 pr-2">
                                 <PiTrashDuotone
                                   onClick={(e) => {
-                                    e.stopPropagation();
                                     postDeleteChat(chat.chat_id);
                                   }}
                                 />
