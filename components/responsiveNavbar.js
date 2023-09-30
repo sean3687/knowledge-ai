@@ -456,7 +456,7 @@ function Navbar({ accessToken, name }) {
           },
         }
       );
-
+        console.log("Original ChatHisotry",response.data.messages)
       const messages = response.data.messages.split("\n");
 
       if (messages.length > 1) {

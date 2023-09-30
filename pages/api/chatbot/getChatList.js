@@ -13,6 +13,7 @@ export default async function handler(req, res) {
         },
       }
     );
+   
     const chatList = response.data;
     res
       .status(200)
