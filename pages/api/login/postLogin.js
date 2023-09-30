@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await axios.post(
-      "http://54.193.180.218:8000/token",
+      "http://35.220.164.17:8000/token",
       bodyRequest,
       {
         headers: header,

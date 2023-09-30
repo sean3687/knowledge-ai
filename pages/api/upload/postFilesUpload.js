@@ -24,7 +24,7 @@ async function handler(req, res) {
       };
 
       try {
-          const { data } = await axios.post('http://54.193.180.218:8000/uploadfiles', req, axiosConfig);
+          const { data } = await axios.post('http://35.220.164.17:8000/uploadfiles', req, axiosConfig);
           data.pipe(res);  
           res.status(200).json({
               success: true,

@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await axios.get(
-      `http://54.193.180.218:8000/get_chat_info`,
+      `http://35.220.164.17:8000/get_chat_info`,
       {
         headers: {
           "Content-Type": "application/json",

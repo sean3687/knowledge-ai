@@ -47,7 +47,7 @@ function ProfilePage() {
     };
     try {
       const response = await axios.post(
-        "http://54.193.180.218:8000/set_api",
+        "http://35.220.164.17:8000/set_api",
         bodyRequest,
         {
           headers: {
