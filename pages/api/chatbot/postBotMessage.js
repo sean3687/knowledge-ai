@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       }
       ,timeout: 180000
     });
-    console.log("this is message" , response.data)
+   
     if (response.status === 200) {
       
       const botTime = moment().format("h:mm");

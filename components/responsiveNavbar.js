@@ -13,8 +13,11 @@ import {
   PiUploadDuotone,
   PiChatTeardropTextDuotone,
   PiUserCircleDuotone,
-  PiChatDuotone,
+  PiPowerDuotone,
   PiTrashDuotone,
+  PiCaretUpDuotone,
+  PiCaretDownDuotone,
+  PiChatDuotone,
 } from "react-icons/pi";
 
 import { FaFileLines, FaGoogleDrive } from "react-icons/fa6";
@@ -47,31 +50,42 @@ const TabItems = ({
   setShowCreateModal,
 }) => {
   return (
-    <div>
-      <div className="flex justify-center align-middle px-5 pt-4 pb-3">
+    <div className="rounded-lg">
+      <div className="flex justify-center align-middle px-5 pt-4 pb-3 ">
         <button
-          className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-blue-600 text-white ring-0 ring-blue-600 hover:ring-2 active:ring-0 w-full"
+          className="transition-all bg-gray-200 duration-200 relative font-semibold  outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm border-gray-600 text-gray-500 ring-0 ring-gray-200 hover:ring-2 active:ring-0 w-full"
           onClick={() => setShowCreateModal(true)}
         >
-          + Upload documents
+          Upload documents
         </button>
       </div>
-      {tabs.map((tab, index) => (
-        <div
-          key={index}
-          className={`${
-            selectedTabIndex === index
-              ? "text-blue-800 text-sm font-medium"
-              : ""
-          } mx-4 flex py-2 items-center justify-center align-center rounded hover:bg-gray-100 font-medium transition duration-300`}
-          onClick={() => setSelectedTabIndex(index)}
-        >
-          <div className="ml-3 text-sm mr-3">{tab.icon}</div>
-          <Link href={tab.link} className="w-full text-sm">
-            {tab.text}
-          </Link>
-        </div>
-      ))}
+      <div className="border-b bg-gray-100">
+        {tabs.map((tab, index) => (
+          <div
+            key={index}
+            className={`${
+              selectedTabIndex === index
+                ? "text-blue-800 text-sm font-medium"
+                : ""
+            } mx-4 flex py-2 items-center justify-center align-center rounded hover:bg-gray-100 font-medium transition duration-300`}
+            onClick={() => setSelectedTabIndex(index)}
+          >
+            <div className="ml-3 text-sm mr-3">{tab.icon}</div>
+            <Link href={tab.link} className="w-full text-sm">
+              {tab.text}
+            </Link>
+          </div>
+        ))}
+      </div>
+      <div
+        className="mx-4 flex py-2 items-center justify-center align-center rounded hover:bg-gray-100 font-medium transition duration-300 cursor-pointer"
+        onClick={handleLogout}
+      >
+        <PiPowerDuotone className="ml-3 text-xl mr-3" />
+        <Link href={"/login"} className="w-full text-sm">
+          Logout
+        </Link>
+      </div>
     </div>
   );
 };
@@ -232,24 +246,145 @@ function Navbar({ accessToken, name }) {
     const yesterday = [];
     const last7Days = [];
     const last30Days = [];
-    
+
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const now = moment().tz(userTimeZone).startOf('day');
-  
+    const now = moment().tz(userTimeZone).startOf("day");
+
     chatList.forEach((chat) => {
-      const chatTime = moment.utc(chat.last_chat_time).tz(userTimeZone).startOf('day');
+      const chatTime = moment
+        .utc(chat.last_chat_time)
+        .tz(userTimeZone)
+        .startOf("day");
       const diffDays = now.diff(chatTime, "days");
-  
+
       if (diffDays < 0) return; // Handle chats from the future appropriately
-      
+
       if (diffDays === 0) today.push(chat);
       else if (diffDays === 1) yesterday.push(chat);
-      else if (diffDays <= 7) last7Days.push(chat); // If you want to include 'yesterday' in 'last7Days'
+      else if (diffDays <= 7) last7Days.push(chat);
+      // If you want to include 'yesterday' in 'last7Days'
       else if (diffDays <= 30) last30Days.push(chat); // If you want to include 'last7Days' in 'last30Days'
     });
-  
+
     return { today, yesterday, last7Days, last30Days };
   }, [chatList]);
+
+  function Navigation() {
+    const [isDropdownVisible, setDropdownVisible] = useState(false);
+    return (
+      <div className="flex flex-col h-full relative">
+        {isDropdownVisible && (
+          <div className="absolute mb-1 bottom-12 rounded-lg m-2 left-0 right-0 mx-auto z-20 pb-1 mt-2 origin-top-right bg-gray-100 focus:outline-none border border-gray-200 translate-y-1 animate-expandFromBottom max-w-[95%]">
+          <TabItems
+            setSelectedTabIndex={setSelectedTabIndex}
+            selectedTabIndex={selectedTabIndex}
+            setShowCreateModal={setShowCreateModal}
+          />
+        </div>
+        )}
+
+        <div className="overflow-hidden flex flex-col">
+          <div className="flex justify-center align-middle px-5 pt-4 pb-3">
+            <button
+              className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-blue-600 text-white ring-0 ring-blue-600 hover:ring-2 active:ring-0 w-full"
+              onClick={() => {}}
+            >
+              <div onClick={handleNewConversation}>+ New Conversation</div>
+            </button>
+          </div>
+
+          <div className="overflow-y-auto flex-grow">
+            {[
+              { label: "Today", chats: groupedChats.today },
+              { label: "Yesterday", chats: groupedChats.yesterday },
+              { label: "Previous 7 Days", chats: groupedChats.last7Days },
+              { label: "Previous 30 Days", chats: groupedChats.last30Days },
+            ].map(
+              (section) =>
+                section.chats.length > 0 && (
+                  <div
+                    className="text-sm text-gray-600 px-2 py-1"
+                    key={section.label}
+                  >
+                    <div className="text-xs ml-3 font-semibold text-gray-400">
+                      {section.label}
+                    </div>
+                    <ul>
+                      {section.chats.map((chat) => (
+                        <li
+                          key={chat.chat_id}
+                          onClick={() => handleChatClick(chat.chat_id)}
+                          className={
+                            selectedChatId === chat.chat_id
+                              ? "text-blue-800 bg-gray-200 rounded-lg hover:bg-gray-200 relative"
+                              : "relative"
+                          }
+                        >
+                          <Link
+                            href={`/chatbot`}
+                            className="block py-3 px-2 rounded hover:bg-gray-100 transition duration-300 w-full relative"
+                          >
+                            <div className="flex items-center flex-grow space-x-2 pr-6">
+                              <div className="flex-shrink-0">
+                                <PiChatDuotone />
+                              </div>
+                              <div
+                                className={
+                                  selectedChatId === chat.chat_id
+                                    ? "min-w-0 mr-2 typewriter-effect inline-block"
+                                    : "min-w-0 mr-2 inline-block"
+                                }
+                              >
+                                <div className="truncate text-ellipsis flex-grow text-caption font-regular">
+                                  {chat.subject}
+                                </div>
+                              </div>
+                            </div>
+                            {selectedChatId === chat.chat_id && (
+                              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 pr-2">
+                                <PiTrashDuotone
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    postDeleteChat(chat.chat_id);
+                                  }}
+                                />
+                              </div>
+                            )}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+            )}
+          </div>
+        </div>
+
+        <div className="mt-auto">
+          <div
+            className="flex items-center justify-between h-12 px-4 border-gray-200 bg-gray-100 hover:bg-gray-200 border-b"
+            onClick={() => {
+              setDropdownVisible(!isDropdownVisible);
+              console.log("profile section clicked");
+            }}
+          >
+            <div
+              className="flex items-center "
+              onClick={() => console.log(currentChatId)}
+            >
+              <div className="bg-green-800 text-xs w-6 h-6 aspect-1 rounded-full font-bold text-white flex items-center justify-center">
+                {firstLetterCapitalized(name)}
+              </div>
+              <div className="text-black-800 truncate ml-2 font-medium">
+                {name}
+              </div>
+            </div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   async function getChatList() {
     try {
@@ -387,136 +522,7 @@ function Navbar({ accessToken, name }) {
       {/* Desktop Navigation */}
 
       <div className="hidden lg:block relative h-screen overflow-hidden w-64 bg-gray-50 transition-transform transform translate-x-0 transition duration-300 flex flex-col">
-        <div className="">
-          <div className="flex items-center justify-between h-12 px-4 border-gray-200 hover:bg-gray-100 border-b">
-            <div
-              className="flex items-center "
-              onClick={() => console.log(currentChatId)}
-            >
-              <div className="bg-green-800 text-xs w-6 h-6 aspect-1 rounded-full font-bold text-white flex items-center justify-center">
-                {firstLetterCapitalized(name)}
-              </div>
-              <div className="text-black-800 truncate ml-2 font-medium">
-                {name}
-              </div>
-            </div>
-            <Link href={"/login"} className="text-sm" onClick={handleLogout}>
-              <AiOutlineLogin className="text-xl" />
-            </Link>
-          </div>
-        </div>
-        <div className="pb-2 flex-0 border-b border-gray-200 mt-2 ">
-          <TabItems
-            setSelectedTabIndex={setSelectedTabIndex}
-            selectedTabIndex={selectedTabIndex}
-            setShowCreateModal={setShowCreateModal}
-          />
-        </div>
-
-        <div className="overflow-hidden flex flex-col">
-          <div className="flex justify-center align-middle px-5 pt-4 pb-3">
-            <button
-              className="transition-all bg-gray-200 duration-200 relative font-semibold  outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm border-gray-600 text-gray-500 ring-0 ring-gray-200 hover:ring-2 active:ring-0 w-full"
-              onClick={() => {}}
-            >
-              <div onClick={handleNewConversation}>New Conversation</div>
-            </button>
-          </div>
-          <div className="text-sm text-gray-600 pl-5 pt-2 font-medium mb-2">
-            Chat history
-          </div>
-          <div className="overflow-y-auto flex-grow">
-            {[
-              { label: "Today", chats: groupedChats.today },
-              { label: "Yesterday", chats: groupedChats.yesterday },
-              { label: "Previous 7 Days", chats: groupedChats.last7Days },
-              { label: "Previous 30 Days", chats: groupedChats.last30Days },
-            ].map(
-              (section) =>
-                section.chats.length > 0 && (
-                  <div
-                    className="text-sm text-gray-600 pl-5 pt-2 font-medium mb-2"
-                    key={section.label}
-                  >
-                    <h2>{section.label}</h2>
-                    <ul>
-                      {section.chats.map((chat) => (
-                        <li
-                          key={chat.chat_id}
-                          onClick={() => handleChatClick(chat.chat_id)}
-                          className={
-                            selectedChatId === chat.chat_id
-                              ? "text-blue-800"
-                              : ""
-                          }
-                        >
-                          <Link
-                            href={`/chatbot`}
-                            className=" flex py-2 px-2 mr-4 items-center justify-center align-center rounded hover:bg-gray-100 transition duration-300"
-                          >
-                            <PiChatDuotone className="" />
-
-                            {selectedChatId === chat.chat_id ? (
-                              <div className="w-full text-sm ml-2 font-normal">
-                                {chat.subject}
-                              </div>
-                            ) : (
-                              <div className="w-full text-sm ml-2 font-normal truncate">
-                                {chat.subject}
-                              </div>
-                            )}
-
-                            {selectedChatId === chat.chat_id && (
-                              <PiTrashDuotone
-                                onClick={() => postDeleteChat(chat.chat_id)}
-                                className="ml-2"
-                              />
-                            )}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )
-            )}
-          </div>
-
-          {/* <ul>
-              {chatList.map((chat) => (
-                <li
-                  key={chat.chat_id}
-                  onClick={() => handleChatClick(chat.chat_id)}
-                  className={
-                    selectedChatId === chat.chat_id ? "text-blue-800" : ""
-                  }
-                >
-                  <Link
-                    href={`/chatbot`}
-                    className="mx-4 flex py-2 px-2 justify-center align-center rounded hover:bg-gray-100 transition duration-300"
-                  >
-                    <PiChatDuotone className="text-regular" />
-
-                    {selectedChatId === chat.chat_id ? (
-                      <div className="w-full text-sm ml-2 font-normal">
-                        {chat.subject}
-                      </div>
-                    ) : (
-                      <div className="w-full text-sm ml-2 font-normal truncate">
-                        {chat.subject}
-                      </div>
-                    )}
-
-                    {selectedChatId === chat.chat_id && (
-                      <PiTrashDuotone
-                        onClick={() => postDeleteChat(chat.chat_id)}
-                        className="ml-2"
-                      />
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul> */}
-        </div>
+        <Navigation />
       </div>
 
       {/* Mobile Navigation */}
@@ -526,13 +532,7 @@ function Navbar({ accessToken, name }) {
             className="fixed top-0 left-0 h-full w-full bg-black bg-opacity-50 z-20"
             onClick={() => setDrawerOpen(false)}
           >
-            <div className="absolute top-0 left-0 h-full w-64 bg-white shadow-md z-10 transition-transform transform translate-x-0 transition duration-300 custom:hidden">
-              <TabItems
-                setSelectedTabIndex={setSelectedTabIndex}
-                selectedTabIndex={selectedTabIndex}
-                setShowCreateModal={setShowCreateModal}
-              />
-            </div>
+            <Navigation />
           </div>
         )}
 

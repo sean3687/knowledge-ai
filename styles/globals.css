@@ -44,3 +44,40 @@ body {
   .scaleUp {
     animation: scaleUp 1s ease-out;
   }
+
+  @keyframes typewriter {
+    from {
+      max-width: 0;
+    }
+    to {
+      max-width: 100%;
+    }
+  }
+  
+  .typewriter-effect {
+    display: inline-block; 
+    overflow: hidden; /* Ensures the content is not revealed until the animation */
+    border-right: .3rem solid orange; /* The typewriter cursor */
+    white-space: nowrap; /* Keeps the content on a single line */
+    margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+    animation: 
+      typewriter 2s steps(40, end) forwards,
+      blink-caret .5s step-end infinite;
+  }
+  
+  /* The typewriter cursor effect */
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: rgba(83, 73, 228, 0.63); }
+  }
+
+  @keyframes expandFromBottom {
+    from {
+      transform: scaleY(0);
+      transform-origin: bottom;
+    }
+    to {
+      transform: scaleY(1);
+      transform-origin: bottom;
+    }
+  }
