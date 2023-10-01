@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import FileController from "./fileController.js";
 import ChatController from "./chatController.js";
+import useChatStream from '@magicul/react-chat-stream';
 import moment from "moment";
 import { useRouter } from "next/router";
 import axios from "axios";

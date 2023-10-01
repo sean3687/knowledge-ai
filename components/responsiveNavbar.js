@@ -23,6 +23,8 @@ import {
 import { FaFileLines, FaGoogleDrive } from "react-icons/fa6";
 import axios from "axios";
 import { useRouter } from "next/router";
+import isEqual from "lodash.isEqual";
+import ChatComponent from "./chatComponent.js";
 import firstLetterCapitalized from "../utils/stringManimupaltion.js";
 import useChatInfoStore from "../stores/chatStore.js";
 
@@ -206,6 +208,7 @@ const CreateContentModal = ({ showModal, setShowCreateModal }) => {
     )
   );
 };
+
 const handleLogout = () => {
   sessionStorage.setItem("accessToken", "");
 };
@@ -275,12 +278,12 @@ function Navbar({ accessToken, name }) {
       <div className="flex flex-col h-full relative">
         {isDropdownVisible && (
           <div className="absolute mb-1 bottom-12 rounded-lg m-2 left-0 right-0 mx-auto z-20 pb-1 mt-2 origin-top-right bg-gray-100 focus:outline-none border border-gray-200 translate-y-1 animate-expandFromBottom max-w-[95%]">
-          <TabItems
-            setSelectedTabIndex={setSelectedTabIndex}
-            selectedTabIndex={selectedTabIndex}
-            setShowCreateModal={setShowCreateModal}
-          />
-        </div>
+            <TabItems
+              setSelectedTabIndex={setSelectedTabIndex}
+              selectedTabIndex={selectedTabIndex}
+              setShowCreateModal={setShowCreateModal}
+            />
+          </div>
         )}
 
         <div className="overflow-hidden flex flex-col">
@@ -311,46 +314,13 @@ function Navbar({ accessToken, name }) {
                     </div>
                     <ul>
                       {section.chats.map((chat) => (
-                        <li
+                        <ChatComponent
                           key={chat.chat_id}
-                          onClick={() => handleChatClick(chat.chat_id)}
-                          className={
-                            selectedChatId === chat.chat_id
-                              ? "text-blue-800 bg-gray-200 rounded-lg hover:bg-gray-200 relative"
-                              : "relative"
-                          }
-                        >
-                          <Link
-                            href={`/chatbot`}
-                            className="block py-3 px-2 rounded hover:bg-gray-100 transition duration-300 w-full relative"
-                          >
-                            <div className="flex items-center flex-grow space-x-2 pr-6">
-                              <div className="flex-shrink-0">
-                                <PiChatDuotone />
-                              </div>
-                              <div
-                                className={
-                                  selectedChatId === chat.chat_id
-                                    ? "min-w-0 mr-2 typewriter-effect inline-block"
-                                    : "min-w-0 mr-2 inline-block"
-                                }
-                              >
-                                <div className="truncate text-ellipsis flex-grow text-caption font-regular">
-                                  {chat.subject}
-                                </div>
-                              </div>
-                            </div>
-                            {selectedChatId === chat.chat_id && (
-                              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 pr-2">
-                                <PiTrashDuotone
-                                  onClick={(e) => {
-                                    postDeleteChat(chat.chat_id);
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </Link>
-                        </li>
+                          chat={chat}
+                          selectedChatId={selectedChatId}
+                          handleChatClick={handleChatClick}
+                          postDeleteChat={postDeleteChat}
+                        />
                       ))}
                     </ul>
                   </div>
@@ -387,7 +357,6 @@ function Navbar({ accessToken, name }) {
 
   async function getChatList() {
     try {
-      console.log("Function :getChatList");
       const response = await axios.get("/api/chatbot/getChatList", {
         headers: {
           Authorization: `Bearer ${
@@ -395,8 +364,10 @@ function Navbar({ accessToken, name }) {
           }`,
         },
       });
-      console.log("chatlist response :", response.data);
-      setChatList(response.data);
+
+      if (!isEqual(response.data, chatList)) {
+        setChatList(response.data);
+      }
     } catch (error) {
       console.error("Error getting new chat ID", error);
     }
@@ -456,18 +427,18 @@ function Navbar({ accessToken, name }) {
           },
         }
       );
-        console.log("Original ChatHisotry",response.data.messages)
+      console.log("Original ChatHisotry", response.data.messages);
       const messages = response.data.messages.split("\n");
 
       if (messages.length > 1) {
         messages.forEach((message, index) => {
           const isHuman = message.startsWith("human:");
-          const messageContent = message.split(": ")[1]; // Extracting message content after ':'
+          const messageContent = message.split(": ")[1]; 
 
           const messageObject = {
             sender: isHuman ? "me" : "bot",
             message: isHuman ? messageContent : { message: messageContent },
-            time: "", // You can fill in the time based on your requirement
+            time: "", 
           };
 
           addChatArray(messageObject);
@@ -479,26 +450,6 @@ function Navbar({ accessToken, name }) {
     } catch (error) {
       console.error("Error getting new chat ID", error);
       return -1;
-    }
-  }
-
-  async function getChatTitle(id) {
-    try {
-      console.log("Function : UpdateChatTitle ");
-      const response = await axios.get(
-        "/api/chatbot/getChatTitle",
-        { chat_id: id },
-        {
-          headers: {
-            Authorization: `Bearer ${
-              sessionStorage.getItem("accessToken") || ""
-            }`,
-          },
-        }
-      );
-      //refresh
-    } catch (error) {
-      console.error("Error getting new chat ID", error);
     }
   }
 
