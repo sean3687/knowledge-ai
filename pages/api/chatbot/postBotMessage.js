@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     res.setHeader("Connection", "keep-alive");
 
     const response = await axios.post(
-      "http://35.220.164.17:8000/chain",
+      "https://chitchatrabbit.me/chain",
       {
         message: message,
         chat_id: chat_id,

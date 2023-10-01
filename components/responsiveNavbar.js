@@ -23,7 +23,6 @@ import {
 import { FaFileLines, FaGoogleDrive } from "react-icons/fa6";
 import axios from "axios";
 import { useRouter } from "next/router";
-import isEqual from "lodash.isEqual";
 import ChatComponent from "./chatComponent.js";
 import firstLetterCapitalized from "../utils/stringManimupaltion.js";
 import useChatInfoStore from "../stores/chatStore.js";

@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     const token = req.headers.authorization.split(" ")[1];
 
     try {
-        const response = await axios.get("http://35.220.164.17:8000/users/me", {
+        const response = await axios.get("https://chitchatrabbit.me/users/me", {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",

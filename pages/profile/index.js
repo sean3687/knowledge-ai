@@ -47,7 +47,7 @@ function ProfilePage() {
     };
     try {
       const response = await axios.post(
-        "http://35.220.164.17:8000/set_api",
+        "https://chitchatrabbit.me/set_api",
         bodyRequest,
         {
           headers: {

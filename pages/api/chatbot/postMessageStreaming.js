@@ -5,7 +5,7 @@ export default async (req, res) => {
 
     const { message,  } = req.body
   try {
-    const fastApiUrl = 'http://35.220.164.17:8000/stream';
+    const fastApiUrl = 'https://chitchatrabbit.me/stream';
     const response = await axios.post(fastApiUrl, { message: 'Your message' }, { responseType: 'stream' });
 
     res.setHeader('Content-Type', 'text/event-stream');
