@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const { token, setToken } = useContext(TokenContext);
-const API_BASE_URL = "http://http://54.193.180.218:8000";
+const API_BASE_URL = "http://https://chitchatrabbit.me";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -12,7 +12,7 @@ export const login = async (un, pw) => {
 
   try {
     // await axios.post(
-    //   "http://http://54.193.180.218:8000/token",
+    //   "http://https://chitchatrabbit.me/token",
     //   { 'username': un, 'password':pw },
     //   { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     // ).then(function(response){

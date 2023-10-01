@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await axios.post(
-      "http://54.193.180.218:8000/register",
+      "https://chitchatrabbit.me/register",
       bodyRequest,
       {
         headers: header,
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
 //     }
 
 //     try {
-//       const response = await fetch("http://54.193.180.218:8000/register", {
+//       const response = await fetch("https://chitchatrabbit.me/register", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",

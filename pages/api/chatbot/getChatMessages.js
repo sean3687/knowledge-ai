@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await axios.get(
-      `http://54.193.180.218:8000/get_chat_message/${chat_id}`,
+      `https://chitchatrabbit.me/get_chat_message/${chat_id}`,
       {
         headers: {
           "Content-Type": "application/json",
