@@ -10,6 +10,7 @@ import { icons } from "react-icons";
 function ChatController({
   inputText,
   isLoading,
+  streamingResponse,
   messages,
   setInputText,
   handleClick,
@@ -123,26 +124,6 @@ function ChatController({
                     </div>
                     <div className="border-t border-gray-300"></div>
                   </>
-                ) : item.sender == "bot-loading" && isLoading ? (
-                  <>
-                    <div className=" bg-gray-50 px-20 py-5  flex " key={key}>
-                      <div className="text-white">
-                        <AiOutlineRobot className="text-4xl fill-current bg-indigo-600 rounded p-1" />
-                      </div>
-                      <div className="chat-bubble chat-bubble-primary ml-5">
-                        {item.message}
-                        <div>
-                          <time className="text-xs opacity-50">
-                            {item.time}
-                          </time>
-                        </div>
-                        <div className="chat-bubble items-center chat-bubble-primary">
-                          <Loading />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="border-t border-gray-300"></div>
-                  </>
                 ) : (
                   <>
                     <div className="bg-gray-50 px-20 py-5 flex" key={key}>
@@ -150,14 +131,13 @@ function ChatController({
                         <AiOutlineRobot className="text-4xl fill-current bg-indigo-600 rounded p-1" />
                       </div>
                       <div className="ml-5">
-                        {displayMessage}
-
+                        {item.message}
                         <div>
                           <time className="text-xs opacity-50">
                             {item.time}
                           </time>
                         </div>
-                        <div className="flex text-xs ">
+                        {/* <div className="flex text-xs ">
                           {displayFileId > -1 && (
                             <div className="text-sm font-bold flex items-center justify-center">
                               Learn more :
@@ -168,7 +148,7 @@ function ChatController({
                               </div>
                             </div>
                           )}
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                     <div className="border-t border-gray-300"></div>
@@ -178,6 +158,27 @@ function ChatController({
             </div>
           </div>
         )}
+<div>
+  {isLoading ? (
+    <>
+      <div className=" bg-gray-50 px-20 py-5 flex ">
+        <div></div>
+        <div className="text-white">
+          <AiOutlineRobot className="text-4xl fill-current bg-indigo-600 rounded p-1" />
+        </div>
+        <div className="chat-bubble chat-bubble-primary ml-5">
+          {streamingResponse}
+          <div className="chat-bubble items-center chat-bubble-primary">
+            <Loading />
+          </div>
+        </div>
+      </div>
+      <div className="border-t border-gray-300"></div>
+    </>
+  ) : (
+    <></>
+  )}
+</div>
       </div>
 
       <div
