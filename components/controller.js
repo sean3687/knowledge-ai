@@ -8,9 +8,10 @@ import useChatInfoStore from "../stores/chatStore.js";
 
 function Controller() {
   // const [inputText, setInputText] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSendChatLoading, setIsSendChatLoading] = useState(false);
 
-  // const [chatArray, setChatArray] = useState([]);
+
+  const [fileObject, setFileObject] = useState();
 
   // State to hold user input
   const [inputText, setInputText] = useState("");
@@ -34,7 +35,7 @@ function Controller() {
   }, []);
 
   const sendMessageClick = async () => {
-    setIsLoading(true);
+    setIsSendChatLoading(true);
     setStreamingResponse(""); // Clear previous streaming response
     setInputText("");
 
@@ -67,15 +68,16 @@ function Controller() {
 
         reader.read().then(function process({ done, value }) {
             if (done) {
-                const cleanedMessage = accumulatedResponse.replace(/\n\n/g, " ").trim();
+                const aiResponse = accumulatedResponse.replace(/\n\n/g, " ").trim();
                 const finalBotMessage = {
                     sender: "bot",
-                    message: cleanedMessage,
+                    message: aiResponse,
                     time: sendTime,
                 };
                 addChatArray(finalBotMessage);
-                console.log("Final bot message added: ", finalBotMessage); // For Debugging
-                setIsLoading(false);
+                getRelevantFile(currentChatId, inputText, aiResponse);
+                getChatTitle(currentChatId)
+                setIsSendChatLoading(false);
                 setStreamingResponse("");
                 return;
             }
@@ -102,28 +104,36 @@ function Controller() {
     }
 };
 
-  async function getChantMessages() {
+
+  async function getRelevantFile(chatId, inputText, aiResponse) {
+    const body = {
+      chat_id: chatId,
+      human_message: inputText,
+      ai_message: aiResponse 
+    };
     try {
-      const response = await axios.get("/api/chatbot/getChatMessages", {
+      const response = await axios.post("/api/chatbot/getRelevantFile", body,{
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
           "Content-Type": "application/json",
         },
       });
-
       if (response.status === 200) {
-        const messages = response.data.messages;
-        setChatArray(messages);
+        const releventFile = response.data;
+        setFileObject(releventFile);
+        return releventFile
       }
+      
     } catch (error) {
-      console.error("Error getting chat messages", error);
+      return setFileObject({
+        file_id : -1,
+        file_name: "No relevant file found"
+      })
     }
   }
 
-  async function getRelevantFile() {
-    try {
-    } catch (error) {}
-  }
+
+ 
 
   async function setNewChatId() {
     try {
@@ -160,10 +170,9 @@ function Controller() {
           },
         }
       );
-      console.log("Function : UpdateChatTitle -> success");
-      //refresh chat list should be implemented
+      //refresh
     } catch (error) {
-      console.error("Function : UpdateChatTitle -> failed", error);
+      console.error("Error getting new chat ID", error);
     }
   }
 
@@ -187,9 +196,10 @@ function Controller() {
     <div className="w-full lg:h-[calc(100%-258px)]">
       <ChatController
         inputText={inputText}
-        isLoading={isLoading}
+        isSendChatLoading={isSendChatLoading}
         streamingResponse={streamingResponse}
         messages={chatArray}
+        getRelevantFile={fileObject}
         setInputText={setInputText}
         handleClick={sendMessageClick}
         handleRefresh={handleRefresh}

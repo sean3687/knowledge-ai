@@ -446,7 +446,7 @@ function Navbar({ accessToken, name }) {
   async function getChatMessages(id) {
     try {
       const response = await axios.post(
-        "/api/chatbot/getChatMessages",
+        "/api/chatbot/getChatMessage",
         { chat_id: id },
         {
           headers: {
@@ -457,48 +457,13 @@ function Navbar({ accessToken, name }) {
         }
       );
 
-      const messages = response.data.messages.split("\n");
-
-      if (messages.length > 1) {
-        messages.forEach((message, index) => {
-          const isHuman = message.startsWith("human:");
-          const messageContent = message.split(": ")[1]; // Extracting message content after ':'
-
-          const messageObject = {
-            sender: isHuman ? "me" : "bot",
-            message: isHuman ? messageContent : { message: messageContent },
-            time: "", // You can fill in the time based on your requirement
-          };
-
-          addChatArray(messageObject);
-        });
-        console.log("Chat History restored", messages);
-      }
+      const messages = response.data;
+      setChatArray(messages)
 
       await getChatList();
     } catch (error) {
       console.error("Error getting new chat ID", error);
       return -1;
-    }
-  }
-
-  async function getChatTitle(id) {
-    try {
-      console.log("Function : UpdateChatTitle ");
-      const response = await axios.get(
-        "/api/chatbot/getChatTitle",
-        { chat_id: id },
-        {
-          headers: {
-            Authorization: `Bearer ${
-              sessionStorage.getItem("accessToken") || ""
-            }`,
-          },
-        }
-      );
-      //refresh
-    } catch (error) {
-      console.error("Error getting new chat ID", error);
     }
   }
 
