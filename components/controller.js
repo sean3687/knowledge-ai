@@ -24,7 +24,7 @@ function Controller() {
   const popChatArray = useChatInfoStore((state) => state.popChatArray);
   const currentChatId = useChatInfoStore((state) => state.currentChatId);
   const setCurrentChatId = useChatInfoStore((state) => state.setCurrentChatId);
-  const streamingResponseRef = useRef('');
+  const streamingResponseRef = useRef("");
   const isApiCallInProgress = useRef(false);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function Controller() {
     setIsLoading(true);
     setStreamingResponse(""); // Clear previous streaming response
     setInputText("");
-    
+
     let chatId = currentChatId;
     if (!chatId) {
       chatId = await setNewChatId();
@@ -48,68 +48,59 @@ function Controller() {
     addChatArray(myMessage);
 
     try {
-      const response = await fetch(
-        `https://chitchatrabbit.me/chain/${chatId}/${encodeURIComponent(
-          inputText
-        )}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-          },
-        }
-      );
-  
-      if (!response.body) throw Error("ReadableStream not yet supported in this browser.");
-  
-  
-      const reader = response.body.getReader();
-  
-      let stream = new ReadableStream({
-        start(controller) {
-          function push() {
-            reader.read().then(({ done, value }) => {
-              if (done) {
-                controller.close();
+        const response = await fetch(
+            `https://chitchatrabbit.me/chain/${chatId}/${encodeURIComponent(inputText)}`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+                },
+            }
+        );
+
+        if (!response.body)
+            throw Error("ReadableStream not yet supported in this browser.");
+        console.log("This is debug input text", inputText);
+        const reader = response.body.getReader();
+
+        let accumulatedResponse = ""; // Declare a variable to accumulate the response
+
+        reader.read().then(function process({ done, value }) {
+            if (done) {
+                const cleanedMessage = accumulatedResponse.replace(/\n\n/g, " ").trim();
                 const finalBotMessage = {
-                  sender: "bot",
-                  message: streamingResponseRef.current,
-                  time: sendTime,
+                    sender: "bot",
+                    message: cleanedMessage,
+                    time: sendTime,
                 };
-                addChatArray(finalBotMessage); // Add final bot message to chat array
+                addChatArray(finalBotMessage);
                 console.log("Final bot message added: ", finalBotMessage); // For Debugging
                 setIsLoading(false);
                 setStreamingResponse("");
                 return;
-              }
-              controller.enqueue(value);
-              let decodedValue = new TextDecoder("utf-8").decode(value);
-              let processedValue = decodedValue.split('data: ').join('');
-              setStreamingResponse((prev) => {
-                const newStreamingResponse = prev + processedValue;
-                streamingResponseRef.current = newStreamingResponse; // Update the ref value as well
-                return newStreamingResponse;
-              });
-              push();
-            });
-          }
-          push();
-        },
-      });
-    
+            }
+
+            let decodedValue = new TextDecoder("utf-8").decode(value);
+            let processedValue = decodedValue.split("data: ").join("");
+            
+            accumulatedResponse += processedValue; // Add to the accumulated response
+            setStreamingResponse(accumulatedResponse);
+            console.log("This is newest streaming response", accumulatedResponse);
+            
+            return reader.read().then(process); // Continue processing the stream
+        });
     } catch (error) {
-      popChatArray(); // Remove bot loading message from chat array in case of error
-      setStreamingResponse("");
-      const errorMessage = {
-        sender: "bot",
-        message: error.message,
-        time: sendTime,
-      };
-      addChatArray(errorMessage); // Add error message to chat array
-      console.error("Fetch Error:", error);
+        popChatArray(); // Remove bot loading message from chat array in case of error
+        setStreamingResponse("");
+        const errorMessage = {
+            sender: "bot",
+            message: error.message,
+            time: sendTime,
+        };
+        addChatArray(errorMessage); // Add error message to chat array
+        console.error("Fetch Error:", error);
     }
-    
-  };
+};
 
   async function getChantMessages() {
     try {
@@ -129,13 +120,9 @@ function Controller() {
     }
   }
 
-
-  async function getRelevantFile(){
-    try{
-
-    } catch(error){
-
-    }
+  async function getRelevantFile() {
+    try {
+    } catch (error) {}
   }
 
   async function setNewChatId() {
@@ -201,7 +188,7 @@ function Controller() {
       <ChatController
         inputText={inputText}
         isLoading={isLoading}
-        streamingResponse = {streamingResponse}
+        streamingResponse={streamingResponse}
         messages={chatArray}
         setInputText={setInputText}
         handleClick={sendMessageClick}

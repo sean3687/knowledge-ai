@@ -5,8 +5,8 @@ import { useState, useEffect } from "react";
 function DashboardLayout({ children, accessToken, name }) {
     return (
         <div className="flex flex-col h-screen lg:flex-row">
-            <Navbar accessToken={accessToken} name={name}/>
-            <div className="w-full overflow-y-auto bg-slate-100">
+            <Navbar accessToken={accessToken} name={name} className=""/>
+            <div className="w-full overflow-y-auto bg-slate-100 ">
                 <div className="flex-grow overflow-y-auto">
                     {children}
                 </div>

@@ -272,7 +272,7 @@ function Navbar({ accessToken, name }) {
   function Navigation() {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     return (
-      <div className="flex flex-col h-full relative">
+      <div className="flex flex-col h-full relative bg-slate-50">
         {isDropdownVisible && (
           <div className="absolute mb-1 bottom-12 rounded-lg m-2 left-0 right-0 mx-auto z-20 pb-1 mt-2 origin-top-right bg-gray-100 focus:outline-none border border-gray-200 translate-y-1 animate-expandFromBottom max-w-[95%]">
           <TabItems
@@ -361,7 +361,7 @@ function Navbar({ accessToken, name }) {
 
         <div className="mt-auto">
           <div
-            className="flex items-center justify-between h-12 px-4 border-gray-200 bg-gray-100 hover:bg-gray-200 border-b"
+            className="flex items-center justify-between h-12 px-4 border-gray-200 bg-slate-100 hover:bg-gray-200 border-b"
             onClick={() => {
               setDropdownVisible(!isDropdownVisible);
               console.log("profile section clicked");
