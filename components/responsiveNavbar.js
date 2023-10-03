@@ -20,6 +20,7 @@ import {
   PiChatDuotone,
 } from "react-icons/pi";
 
+import Spinner from "./animation/spinner";
 import { FaFileLines, FaGoogleDrive } from "react-icons/fa6";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -271,16 +272,28 @@ function Navbar({ accessToken, name }) {
 
   function Navigation() {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
+    const [chatAnimatingOut, setChatAnimatingOut] = useState(null);
+    const [deletingChatId, setDeletingChatId] = useState(null);
+
+    const handleDeleteChat = (chat_id, event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      setChatAnimatingOut(chat_id);
+      setTimeout(() => {
+          postDeleteChat(chat_id);
+          setChatAnimatingOut(null); // Reset after animation completes
+      }, 300); // This timeout should match the CSS transition duration
+  };
     return (
       <div className="flex flex-col h-full relative">
         {isDropdownVisible && (
           <div className="absolute mb-1 bottom-12 rounded-lg m-2 left-0 right-0 mx-auto z-20 pb-1 mt-2 origin-top-right bg-gray-100 focus:outline-none border border-gray-200 translate-y-1 animate-expandFromBottom max-w-[95%]">
-          <TabItems
-            setSelectedTabIndex={setSelectedTabIndex}
-            selectedTabIndex={selectedTabIndex}
-            setShowCreateModal={setShowCreateModal}
-          />
-        </div>
+            <TabItems
+              setSelectedTabIndex={setSelectedTabIndex}
+              selectedTabIndex={selectedTabIndex}
+              setShowCreateModal={setShowCreateModal}
+            />
+          </div>
         )}
 
         <div className="overflow-hidden flex flex-col">
@@ -314,11 +327,13 @@ function Navbar({ accessToken, name }) {
                         <li
                           key={chat.chat_id}
                           onClick={() => handleChatClick(chat.chat_id)}
-                          className={
+                          className={`${
                             selectedChatId === chat.chat_id
                               ? "text-blue-800 bg-gray-200 rounded-lg hover:bg-gray-200 relative"
                               : "relative"
-                          }
+                          } ${
+                            deletingChatId === chat.chat_id ? "fade-out" : ""
+                          }`}
                         >
                           <Link
                             href={`/chatbot`}
@@ -343,9 +358,9 @@ function Navbar({ accessToken, name }) {
                             {selectedChatId === chat.chat_id && (
                               <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 pr-2">
                                 <PiTrashDuotone
-                                  onClick={(e) => {
-                                    postDeleteChat(chat.chat_id);
-                                  }}
+                                  onClick={(e) =>
+                                    handleDeleteChat(chat.chat_id, e)
+                                  }
                                 />
                               </div>
                             )}
