@@ -21,6 +21,7 @@ import {
 } from "react-icons/pi";
 
 import { FaFileLines, FaGoogleDrive } from "react-icons/fa6";
+import Spinner from "../components/animation/spinner";
 import axios from "axios";
 import { useRouter } from "next/router";
 import firstLetterCapitalized from "../utils/stringManimupaltion.js";
@@ -219,16 +220,18 @@ function Navbar({ accessToken, name }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [chatList, setChatList] = useState([]);
   const [selectedChatId, setSelectedChatId] = useState(null);
+  const [isDeleteChatLoading, setisDeleteChatLoading] = useState(false);
   const currentChatId = useChatInfoStore((state) => state.currentChatId);
   const setCurrentChatId = useChatInfoStore((state) => state.setCurrentChatId);
   const addChatArray = useChatInfoStore((state) => state.addChatArray);
   const setChatArray = useChatInfoStore((state) => state.setChatArray);
+  
 
   useEffect(() => {
     //Access Token
     setToken(accessToken);
     //From login page
-    setCurrentChatId(sessionStorage.getItem("currentChatId"));
+    
     //Load Chatlist
     getChatList();
 
@@ -341,13 +344,19 @@ function Navbar({ accessToken, name }) {
                               </div>
                             </div>
                             {selectedChatId === chat.chat_id && (
+                              isDeleteChatLoading ? (
                               <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 pr-2">
+                                <Spinner size={`w-5 h-5`}/>
+                              </div>) : (
+                                <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 pr-2">
+                                
                                 <PiTrashDuotone
                                   onClick={(e) => {
                                     postDeleteChat(chat.chat_id);
                                   }}
                                 />
                               </div>
+                              )
                             )}
                           </Link>
                         </li>
@@ -413,7 +422,7 @@ function Navbar({ accessToken, name }) {
         },
       });
       const chatId = response.data.chat_id;
-      await setCurrentChatId(chatId);
+      
       return chatId;
     } catch (error) {
       console.error("Error getting new chat ID", error);
@@ -422,6 +431,8 @@ function Navbar({ accessToken, name }) {
   }
 
   async function postDeleteChat(id) {
+    setisDeleteChatLoading(true);
+    router.push(`/chatbot`);
     try {
       console.log("Function : getNewChatId ", id);
       const response = await axios.post(
@@ -441,44 +452,26 @@ function Navbar({ accessToken, name }) {
       console.error("Error getting new chat ID", error);
       return -1;
     }
+    setisDeleteChatLoading(false);
   }
 
-  async function getChatMessages(id) {
-    try {
-      const response = await axios.post(
-        "/api/chatbot/getChatMessage",
-        { chat_id: id },
-        {
-          headers: {
-            Authorization: `Bearer ${
-              sessionStorage.getItem("accessToken") || ""
-            }`,
-          },
-        }
-      );
-
-      const messages = response.data;
-      setChatArray(messages)
-
-      await getChatList();
-    } catch (error) {
-      console.error("Error getting new chat ID", error);
-      return -1;
-    }
-  }
+ 
 
   async function handleNewConversation() {
     const newChatId = await getNewChatId();
     console.log("New ChatId conversation: ", newChatId);
     setChatArray([]);
+    router.push(`/chatbot/${newChatId}`, undefined, { shallow: true });
     await getChatList();
+    setSelectedChatId(newChatId)
   }
 
   async function handleChatClick(id) {
     setChatArray([]);
     console.log("Chat id Clicked: ", id);
     setSelectedChatId(id);
-    await getChatMessages(id);
+    router.push(`/chatbot/${id}`);
+    
   }
 
   return (

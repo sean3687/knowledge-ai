@@ -9,12 +9,14 @@ import { icons } from "react-icons";
 
 function ChatController({
   inputText,
-  isLoading,
+  isSendChatLoading,
+  isGetChatLoading,
   streamingResponse,
   messages,
   setInputText,
   handleClick,
   handleRefresh,
+  
 }) {
   const router = useRouter();
   const { docId } = router.query;
@@ -64,6 +66,7 @@ function ChatController({
   }, [messages]);
 
   return (
+    
     <div className="w-full">
       <div
         className={
@@ -72,7 +75,7 @@ function ChatController({
       >
         {/* Conversation */}
         {console.log(messages)}
-        {messages.length == 0 && !docId ? (
+        {messages.length == 0 && !isGetChatLoading && !docId ? (
           <div className="h-screen mb-0">
             <div className="flex justify-center items-center font-bold text-8xl pt-10 text-[#cccfef8c]">
               <FaRegComments />
@@ -159,7 +162,7 @@ function ChatController({
           </div>
         )}
 <div>
-  {isLoading ? (
+  {isSendChatLoading ? (
     <>
       <div className=" bg-gray-50 px-20 py-5 flex ">
         <div></div>
@@ -196,9 +199,10 @@ function ChatController({
               style={{ height: "45px", "overflow-y": "hidden" }}
               className="block w-full text-gray-900 placeholder:text-gray-400 text-base font-normal resize-none outline-none px-4 py-4 rounded-t-lg focus:outline-none border-none bg-white"
               placeholder={
-                isLoading ? "Wait a second...." : "Type your message..."
+                isSendChatLoading ? "Wait a second...." : "Type your message..."
               }
               value={inputText}
+              disabled={isSendChatLoading}
               onChange={handleInputChange}
               onKeyDown={handleEnter}
             />
@@ -224,13 +228,13 @@ function ChatController({
               <button
                 className={
                   "transition-all duration-200 relative font-semibold shadow-sm rounded-md px-3 py-1.5 text-sm text-white ring-blue-600 active:ring-0 ring-0 hover:ring-0 outline-none hover:outline-none focus:outline-none border-0 h-full opacity-75" +
-                  (isLoading
+                  (isSendChatLoading
                     ? " opacity-40 text-white "
                     : " bg-blue-600 text-white")
                 }
                 onClick={handleClick}
               >
-                {isLoading ? (
+                {isSendChatLoading ? (
                   <Loading className="px-1 py-2" />
                 ) : (
                   <FaPaperPlane className="text-xl" />

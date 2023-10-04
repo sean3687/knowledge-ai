@@ -6,7 +6,7 @@ function DashboardLayout({ children, accessToken, name }) {
     return (
         <div className="flex flex-col h-screen lg:flex-row">
             <Navbar accessToken={accessToken} name={name} className=""/>
-            <div className="w-full overflow-y-auto bg-slate-100 ">
+            <div className="w-full overflow-y-auto bg-white">
                 <div className="flex-grow overflow-y-auto">
                     {children}
                 </div>
