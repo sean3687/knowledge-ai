@@ -33,9 +33,9 @@ function Controller() {
   }, [chatId]);
 
   const sendMessageClick = async () => {
+    console.log("In progress: sendMessageClick1 ")
     setIsSendChatLoading(true);
     setStreamingResponse(""); // Clear previous streaming response
-    
     const currentInputText = inputText; // Capture the value before clearing
     setInputText("");
   
@@ -49,14 +49,17 @@ function Controller() {
   
     // Only proceed if you have a chatId
     if (chatId) {
-      await sendMessageGivenChatId(chatId, currentInputText);
+      console.log("In progress: sendMessageClick2")
+      await sendMessageGivenChatId(currentInputText);
+      console.log("In progress: sendMessageClick3 ")
     }
   };
 
-  const sendMessageGivenChatId  = async () => {
-
+  const sendMessageGivenChatId  = async (messageText) => {
+    let chatId = router.query.id
+    console.log("In progress: sendMessageGivenChatId ")
     const sendTime = moment().format("h:mm");
-    const myMessage = { sender: "me", message: inputText, time: sendTime };
+    const myMessage = { sender: "me", message: messageText, time: sendTime };
     addChatArray(myMessage); // Add user message to chat array
     try {
       const response = await fetch(
@@ -161,7 +164,6 @@ function Controller() {
       const messages = response.data;
       setChatArray(messages);
 
-      await getChatList();
     } catch (error) {
       console.error("Error getting new chat ID", error);
       return -1;

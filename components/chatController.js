@@ -197,7 +197,7 @@ function ChatController({
             <textarea
               rows="4"
               style={{ height: "45px", "overflow-y": "hidden" }}
-              className="block w-full text-gray-900 placeholder:text-gray-400 text-base font-normal resize-none outline-none px-4 py-4 rounded-t-lg focus:outline-none border-none bg-white"
+              className="block w-full text-gray-900 placeholder:text-gray-400 text-base font-normal resize-none outline-none px-4 py-4 rounded-t-lg focus:outline-none border-none bg-white z-5"
               placeholder={
                 isSendChatLoading ? "Wait a second...." : "Type your message..."
               }

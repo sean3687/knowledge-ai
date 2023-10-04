@@ -432,7 +432,6 @@ function Navbar({ accessToken, name }) {
 
   async function postDeleteChat(id) {
     setisDeleteChatLoading(true);
-    router.push(`/chatbot`);
     try {
       console.log("Function : getNewChatId ", id);
       const response = await axios.post(
@@ -447,12 +446,15 @@ function Navbar({ accessToken, name }) {
         }
       );
       setChatArray([]);
-      await getChatList();
+      
     } catch (error) {
       console.error("Error getting new chat ID", error);
       return -1;
+    } finally{
+      router.push(`/chatbot`, undefined, { shallow: true });
+      setisDeleteChatLoading(false);
     }
-    setisDeleteChatLoading(false);
+   
   }
 
  
@@ -462,16 +464,18 @@ function Navbar({ accessToken, name }) {
     console.log("New ChatId conversation: ", newChatId);
     setChatArray([]);
     router.push(`/chatbot/${newChatId}`, undefined, { shallow: true });
-    await getChatList();
     setSelectedChatId(newChatId)
+    await getChatList();
+    
   }
 
   async function handleChatClick(id) {
     setChatArray([]);
     console.log("Chat id Clicked: ", id);
-    setSelectedChatId(id);
+   
     router.push(`/chatbot/${id}`);
-    
+    setSelectedChatId(id);
+    await getChatList();
   }
 
   return (
@@ -486,10 +490,17 @@ function Navbar({ accessToken, name }) {
       <div className="bg-slate-100 items-center justify-center p-4 relative lg:hidden">
         {drawerOpen && (
           <div
-            className="fixed top-0 left-0 h-full w-full bg-black bg-opacity-50 z-20"
-            onClick={() => setDrawerOpen(false)}
+            className="fixed h-full w-[180px] inset-0 bg-black bg-white flex z-10"
+            style={{ width: "180px" }}
           >
-            <Navigation />
+            <Navigation setDrawerOpen={drawerOpen} />
+            {/* Close Button */}
+            <button 
+                className="self-start p-4 z-10 text-xl" 
+                onClick={() => setDrawerOpen(false)}
+            >
+                <AiOutlineClose />
+            </button>
           </div>
         )}
 
