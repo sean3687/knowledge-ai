@@ -33,33 +33,32 @@ function Controller() {
   }, [chatId]);
 
   const sendMessageClick = async () => {
-    console.log("In progress: sendMessageClick1 ")
+    console.log("In progress: sendMessageClick1 ");
     setIsSendChatLoading(true);
     setStreamingResponse(""); // Clear previous streaming response
     const currentInputText = inputText; // Capture the value before clearing
     setInputText("");
-  
+
     let chatId = router.query.id;
-  
+
     if (!chatId) {
       console.log("ChatId not found");
       await setNewChatId();
-      
+
       chatId = router.query.id; // Assume setNewChatId updates router.query.id synchronously
     }
-  
+
     // Only proceed if you have a chatId
     if (chatId) {
-      console.log("In progress: sendMessageClick2")
+      console.log("In progress: sendMessageClick2");
       await sendMessageGivenChatId(currentInputText);
-      console.log("In progress: sendMessageClick3 ")
+      console.log("In progress: sendMessageClick3 ");
     }
   };
 
-  const sendMessageGivenChatId  = async (messageText) => {
-    
-    let chatId = router.query.id
-    console.log("In progress: sendMessageGivenChatId ")
+  const sendMessageGivenChatId = async (messageText) => {
+    let chatId = router.query.id;
+    console.log("In progress: sendMessageGivenChatId");
     const sendTime = moment().format("h:mm");
     const myMessage = { sender: "me", message: messageText, time: sendTime };
     addChatArray(myMessage); // Add user message to chat array
@@ -75,18 +74,17 @@ function Controller() {
           },
         }
       );
-      
+
       if (!response.body)
         throw Error("ReadableStream not yet supported in this browser.");
       console.log("This is debug input text", inputText);
       const reader = response.body.getReader();
 
       let accumulatedResponse = ""; // Declare a variable to accumulate the response
-      
+
       reader.read().then(function process({ done, value }) {
         if (done) {
-          
-          const aiResponse = accumulatedResponse.replace(/\n\n/g, " ").trim();
+          const aiResponse = accumulatedResponse.replace(/\s+/g, " ").trim(); // Replace multiple spaces with a single space
           const finalBotMessage = {
             sender: "bot",
             message: aiResponse,
@@ -101,9 +99,10 @@ function Controller() {
         }
 
         let decodedValue = new TextDecoder("utf-8").decode(value);
-        let processedValue = decodedValue.split("data: ").join("");
+        let processedValue = decodedValue.split("data: ").join("").trim();
 
-        accumulatedResponse += processedValue; // Add to the accumulated response
+        accumulatedResponse += " " + processedValue; // Add to the accumulated response with a space (to ensure words are separated)
+
         setStreamingResponse(accumulatedResponse);
         console.log("This is newest streaming response", accumulatedResponse);
 
@@ -165,7 +164,6 @@ function Controller() {
 
       const messages = response.data;
       setChatArray(messages);
-
     } catch (error) {
       console.error("Error getting new chat ID", error);
       return -1;
