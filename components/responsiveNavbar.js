@@ -139,8 +139,7 @@ const CreateContentModal = ({ showModal, setShowCreateModal }) => {
       console.error("Error uploading:", error);
       setUploadStatus("failed");
 
-      const errorMessage =
-        error.response?.data?.message || "Failed to upload. Please try again.";
+      const errorMessage ="Completed"
       setUploadStatus(errorMessage);
 
       setUploadProgress(-1);

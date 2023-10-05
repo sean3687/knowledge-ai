@@ -44,6 +44,7 @@ function Controller() {
     if (!chatId) {
       console.log("ChatId not found");
       await setNewChatId();
+      
       chatId = router.query.id; // Assume setNewChatId updates router.query.id synchronously
     }
   
@@ -56,6 +57,7 @@ function Controller() {
   };
 
   const sendMessageGivenChatId  = async (messageText) => {
+    
     let chatId = router.query.id
     console.log("In progress: sendMessageGivenChatId ")
     const sendTime = moment().format("h:mm");
@@ -185,7 +187,7 @@ function Controller() {
       });
       const chatId = response.data.chat_id;
       sessionStorage.setItem("current_chatId", chatId);
-      router.push(`/chatbot/${chatId}`, undefined, { shallow: true });
+      // router.push(`/chatbot/${chatId}`, undefined, { shallow: true });
 
       return chatId;
     } catch (error) {
