@@ -33,10 +33,14 @@ function UploadPage({ accessToken }) {
   const fileInput = useRef(null);
   const [showUploadDropdown, setShowUploadDropdown] = useState(false);
   const dropdownUploadRef = useRef(false);
+  const [hoveredID, setHoveredID] = useState(null); // Step 1
   const setSummarizeId = useChatInfoStore((state) => state.setSummarizeId);
   const [expandedRow, setExpandedRow] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typingTimeout, setTypingTimeout] = useState(null);
+
   const router = useRouter();
 
   // const selectDocument = (fileId) => {
@@ -44,6 +48,14 @@ function UploadPage({ accessToken }) {
   //   console.log("this is document selected " +selectedID )
   // }
 
+  const handleMouseEnter = (id) => {
+    console.log("Mouse entered on", id);
+    setHoveredID(id);
+  };
+  const handleMouseLeave = () => {
+    console.log("Mouse left");
+    setHoveredID(null);
+  };
   const downloadDocumentClick = (fileId) => {
     console.log("this is selected ID from click" + fileId);
     setSelectedID(fileId);
@@ -107,7 +119,6 @@ function UploadPage({ accessToken }) {
   }
 
   function handleFileChange(event) {
-    
     setFilesUpload([...event.target.files]);
     console.log("this is files" + filesUpload.name);
     handleFilesUpload([...event.target.files]);
@@ -126,7 +137,7 @@ function UploadPage({ accessToken }) {
 
     try {
       const response = await axios.post(
-        "https://chitchatrabbit.me/uploadfiles", 
+        "https://chitchatrabbit.me/uploadfiles",
         formData,
         {
           headers: {
@@ -236,6 +247,41 @@ function UploadPage({ accessToken }) {
       alert("Failed to Delete File.");
     }
   }
+  const handleSearchInputChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    console.log("this is search : ", value)
+    if (typingTimeout) clearTimeout(typingTimeout);
+  
+    if (value.trim() !== "") {  // Check if the value is not empty
+      setTypingTimeout(
+        setTimeout(() => {
+          postSearchDocument(value);
+        }, 1000)  // 300ms delay
+      );
+    } else {
+      fetchUploadedDocuments(sessionStorage.getItem("accessToken"));
+    }
+  }
+
+  async function postSearchDocument(search_query) {
+    const response = await axios.post(
+      "/api/upload/postSearchByLabel",
+      { search_query: search_query },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.status === 200) {
+      console.log("this is response from search : ", response.data)
+      setDocumentList(response.data);
+    } else {
+      setDocumentList(response.data);
+    }
+  }
 
   return (
     <div className="">
@@ -296,6 +342,8 @@ function UploadPage({ accessToken }) {
             {/* Input Field */}
             <input
               type="text"
+              value={searchTerm}
+              onChange={handleSearchInputChange}
               className="border rounded-md w-full pl-10 pr-4 py-2 focus:border-blue-400 focus:outline-none"
               placeholder="Search content"
             />
@@ -318,14 +366,24 @@ function UploadPage({ accessToken }) {
                   <th className="text-left text-xs font-semibold text-gray-700 uppercase">
                     Created Date
                   </th>
-                  <th className="w-12 px-3.5 py-3.5 bg-gray-50"></th>
+                  <th className=" text-xs font-semibold text-gray-700 uppercase">
+                    Meta Data
+                  </th>
+                  <th className=" text-xs font-semibold text-gray-700 uppercase">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {documentList &&
                   documentList.map((item, index) => (
                     <>
-                      <tr key={index} className="hover:bg-gray-100">
+                      <tr
+                        key={index}
+                        className="hover:bg-gray-100"
+                        onMouseEnter={() => handleMouseEnter(item.id)}
+                        onMouseLeave={handleMouseLeave}
+                      >
                         <td className="">
                           <label className="flex items-center justify-center">
                             <input
@@ -355,13 +413,27 @@ function UploadPage({ accessToken }) {
                         <td className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
                           {formatDate(item.upload_time)}
                         </td>
-                        <td className="py-3 px-4 flex space-x-4">
-                          <div className="flex"></div>
+                        <td className="relative whitespace-nowrap pr-3 py-4 text-sm text-gray-700 max-w-[10rem] text-center">
+                          <button className="relative transform transition-transform hover:scale-105 active:scale-95 px-2">
+                            <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white">
+                              {item.labels[0]}
+                              {/* <div className="absolute left-100% top-1/2 transform -translate-y-1/2 px-3 py-1 bg-gray-700 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-30">
+                                {item.labels.map((label, idx) => (
+                                  <div key={idx} className="z-30">
+                                    {label}
+                                  </div>
+                                ))}
+                              </div> */}
+                            </div>
+                          </button>
+                        </td>
+
+                        <td className="py-3 flex justify-center">
                           <button
                             onClick={() => {
                               downloadDocumentClick(item.id);
                             }}
-                            className="relative transform transition-transform hover:scale-105 active:scale-95"
+                            className="relative transform transition-transform hover:scale-105 active:scale-95 px-2"
                           >
                             <div className="relative group">
                               <PiDownloadSimpleDuotone />
@@ -375,6 +447,7 @@ function UploadPage({ accessToken }) {
                             onClick={() => {
                               summarizeDocumentClick(item.id, index);
                             }}
+                            className="px-2"
                           >
                             <div className="relative group">
                               <PiQueueDuotone />
@@ -388,6 +461,7 @@ function UploadPage({ accessToken }) {
                             onClick={() => {
                               deleteDocumentClick(item.id);
                             }}
+                            className="px-2"
                           >
                             <div className="relative group">
                               <PiTrashDuotone />
@@ -447,13 +521,20 @@ function UploadPage({ accessToken }) {
                       </tr>
                       {expandedRow === index && (
                         <tr>
-                          <td colSpan={5} className="p-4">
+                          <td colSpan={6} className="p-4">
                             {summaryLoading ? (
-                              <div>Summary is loading...</div>
+                              <Spinner
+                                className="mr-5"
+                                size={`w-5 h-5`}
+                                tintColor={"fill-cyan-600"}
+                                bgColor={"dark:text-gray-200"}
+                              />
                             ) : (
                               <>
-                                <div>Summary</div>
-                                <div className={`scaleUp `}>{summaryData}</div>
+                                <div className="text-sm font-bold">Summary</div>
+                                <div className={`scaleUp text-sm`}>
+                                  {summaryData}
+                                </div>
                               </>
                             )}
                           </td>
@@ -465,7 +546,7 @@ function UploadPage({ accessToken }) {
             </table>
           </div>
           <div className="text-lg font-bold p-2 ">
-            {documentList.length} Files Found
+            {/* {documentList.length || 0} Files Found */}
           </div>
         </div>
       </div>

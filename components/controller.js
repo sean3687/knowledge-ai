@@ -64,74 +64,79 @@ function Controller() {
     addChatArray(myMessage); // Add user message to chat array
 
     try {
-        const response = await fetch(
-            `https://chitchatrabbit.me/chain/${chatId}/${encodeURIComponent(inputText)}`,
-            {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-                },
-            }
-        );
+      const response = await fetch(
+        `https://chitchatrabbit.me/chain/${chatId}/${encodeURIComponent(
+          inputText
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          },
+        }
+      );
 
-        if (!response.body) throw Error("ReadableStream not yet supported in this browser.");
-        console.log("This is debug input text", inputText);
-        const reader = response.body.getReader();
+      if (!response.body)
+        throw Error("ReadableStream not yet supported in this browser.");
+      console.log("This is debug input text", inputText);
+      const reader = response.body.getReader();
 
-        let accumulatedResponse = "";
+      let accumulatedResponse = "";
 
-        reader.read().then(async function process({ done, value }) {
-            if (done) {
-              const fileData = await getRelevantFile(chatId, inputText, accumulatedResponse);
-                
-              const finalBotMessage = {
-                  sender: "bot",
-                  message: accumulatedResponse,
-                  time: sendTime,
-                  file_id: fileData.file_id || -1,
-                  file_name: fileData.file_name || ""
-              };
+      reader.read().then(async function process({ done, value }) {
+        if (done) {
+          const fileData = await getRelevantFile(
+            chatId,
+            inputText,
+            accumulatedResponse
+          );
 
-                getChatTitle(chatId);
-                console.log("this is finalBot Message", finalBotMessage)
-                addChatArray(finalBotMessage);
-                setIsSendChatLoading(false);
-                setStreamingResponse("");
-                return;
-            }
-
-            let decodedValue = new TextDecoder("utf-8").decode(value);
-            let processedValues = decodedValue.split("data: "); // Split based on "data:"
-
-            // Iterate over the processed values
-            for (let val of processedValues) {
-              console.log("here is word by word", processedValues)
-                if (val.startsWith(" ")) {
-                    accumulatedResponse += val;  // Directly append if it starts with a space
-                } else {
-                    accumulatedResponse = accumulatedResponse.trimEnd() + val;  // Merge with the preceding word if no space at the start
-                }
-            }
-
-            setStreamingResponse(accumulatedResponse);
-            console.log("This is newest streaming response", accumulatedResponse);
-
-            return reader.read().then(process); // Continue processing the stream
-        });
-    } catch (error) {
-        popChatArray(); // Remove bot loading message from chat array in case of error
-        setStreamingResponse("");
-        const errorMessage = {
+          const finalBotMessage = {
             sender: "bot",
-            message: error.message,
+            message: accumulatedResponse,
             time: sendTime,
-        };
-        addChatArray(errorMessage); // Add error message to chat array
-        console.error("Fetch Error:", error);
+            file_id: fileData.file_id || -1,
+            file_name: fileData.file_name || "",
+          };
+
+          getChatTitle(chatId);
+          console.log("this is finalBot Message", finalBotMessage);
+          addChatArray(finalBotMessage);
+          setIsSendChatLoading(false);
+          setStreamingResponse("");
+          return;
+        }
+        console.log("here is value : ", value);
+        let decodedValue = new TextDecoder("utf-8").decode(value);
+        console.log("here is decoded value", decodedValue);
+
+        let processedValues = decodedValue.split("data: "); // Split based on "data:
+
+        for (let val of processedValues) {
+          console.log("this is val", val);
+          if (val.endsWith("\n\n")) {
+            val = val.slice(0, -2); // Remove the ending newline characters
+          }
+          accumulatedResponse = accumulatedResponse + val;
+        }
+
+        setStreamingResponse(accumulatedResponse);
+        console.log("This is newest streaming response", accumulatedResponse);
+
+        return reader.read().then(process); // Continue processing the stream
+      });
+    } catch (error) {
+      popChatArray(); // Remove bot loading message from chat array in case of error
+      setStreamingResponse("");
+      const errorMessage = {
+        sender: "bot",
+        message: error.message,
+        time: sendTime,
+      };
+      addChatArray(errorMessage); // Add error message to chat array
+      console.error("Fetch Error:", error);
     }
-};
-
-
+  };
 
   async function getRelevantFile(chatId, inputText, aiResponse) {
     const body = {

@@ -291,7 +291,7 @@ function Navbar({ accessToken, name }) {
               className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-blue-600 text-white ring-0 ring-blue-600 hover:ring-2 active:ring-0 w-full"
               onClick={() => {}}
             >
-              <div onClick={handleNewConversation}>+ New Conversation</div>
+              <div onClick={handleNewConversation}>+ New Chat</div>
             </button>
           </div>
 
