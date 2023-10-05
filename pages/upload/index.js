@@ -51,23 +51,22 @@ function UploadPage({ accessToken }) {
   };
 
   async function summarizeDocumentClick(fileId, index) {
-    setSummaryLoading(true)
+    setSummaryLoading(true);
     setExpandedRow(index);
     setSelectedID(fileId);
     setSummarizeId(fileId);
-    setSummaryData("")
+    setSummaryData("");
     setExpandedRow(expandedRow === index ? null : index); // Toggle the expanded row
 
     if (expandedRow !== index) {
-      const data = await getSummary(fileId); 
+      const data = await getSummary(fileId);
       setSummaryData(data);
     }
-    setSummaryLoading(false)
+    setSummaryLoading(false);
   }
 
   const getSummary = async (id) => {
     const selectedId = id;
-    
 
     try {
       const response = await axios.post(
@@ -125,7 +124,7 @@ function UploadPage({ accessToken }) {
 
     try {
       const response = await axios.post(
-        "/api/upload/postFilesUpload",
+        "https://chitchatrabbit.me/uploadfiles", 
         formData,
         {
           headers: {
@@ -446,18 +445,17 @@ function UploadPage({ accessToken }) {
                       </tr>
                       {expandedRow === index && (
                         <tr>
-                        <td colSpan={5} className="p-4">
-                          {summaryLoading ? (
-                            <div>Summary is loading...</div>
-                          ) : (
-                            <>
-                              <div>Summary</div>
-                              <div className={`scaleUp `}>{summaryData}</div>
-                            </>
-                            
-                          )}
-                        </td>
-                      </tr>
+                          <td colSpan={5} className="p-4">
+                            {summaryLoading ? (
+                              <div>Summary is loading...</div>
+                            ) : (
+                              <>
+                                <div>Summary</div>
+                                <div className={`scaleUp `}>{summaryData}</div>
+                              </>
+                            )}
+                          </td>
+                        </tr>
                       )}
                     </>
                   ))}
