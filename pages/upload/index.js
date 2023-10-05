@@ -107,11 +107,13 @@ function UploadPage({ accessToken }) {
   }
 
   function handleFileChange(event) {
+    
     setFilesUpload([...event.target.files]);
     console.log("this is files" + filesUpload.name);
     handleFilesUpload([...event.target.files]);
     setShowPopup(true);
     setShowUploadDropdown(null);
+    event.target.value = null;
   }
 
   async function handleFilesUpload(files) {
