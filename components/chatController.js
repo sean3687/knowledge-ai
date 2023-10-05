@@ -106,8 +106,8 @@ function ChatController({
 
                 if (item.sender === "bot") {
                   displayMessage = item.message.message;
-                  displayFileId = item.message.file_id;
-                  displayFileName = item.message.file_name || "Not Available";
+                  displayFileId = item.file_id;
+                  displayFileName = item.file_name || "Not Available";
                 }
 
                 return item.sender == "me" ? (
@@ -140,7 +140,7 @@ function ChatController({
                             {item.time}
                           </time>
                         </div>
-                        {/* <div className="flex text-xs ">
+                        <div className="flex text-xs ">
                           {displayFileId > -1 && (
                             <div className="text-sm font-bold flex items-center justify-center">
                               Learn more :
@@ -151,7 +151,7 @@ function ChatController({
                               </div>
                             </div>
                           )}
-                        </div> */}
+                        </div>
                       </div>
                     </div>
                     <div className="border-t border-gray-300"></div>

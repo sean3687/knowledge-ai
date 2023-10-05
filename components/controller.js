@@ -80,17 +80,23 @@ function Controller() {
 
         let accumulatedResponse = "";
 
-        reader.read().then(function process({ done, value }) {
+        reader.read().then(async function process({ done, value }) {
             if (done) {
-                const finalBotMessage = {
-                    sender: "bot",
-                    message: accumulatedResponse,
-                    time: sendTime,
-                };
+              const fileData = await getRelevantFile(chatId, inputText, accumulatedResponse);
+                
+              const finalBotMessage = {
+                  sender: "bot",
+                  message: accumulatedResponse,
+                  time: sendTime,
+                  file_id: fileData.file_id || -1,
+                  file_name: fileData.file_name || ""
+              };
 
-                addChatArray(finalBotMessage);
+                
                 getRelevantFile(chatId, inputText, accumulatedResponse);
                 getChatTitle(chatId);
+                console.log("this is finalBot Message", finalBotMessage)
+                addChatArray(finalBotMessage);
                 setIsSendChatLoading(false);
                 setStreamingResponse("");
                 return;
