@@ -407,7 +407,9 @@ function UploadPage({ accessToken }) {
                             </div>
                           )}
                         </td>
-                        <td className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
+                        <td className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]" onClick={() => {
+                              downloadDocumentClick(item.id);
+                            }}>
                           {item.file_name}
                         </td>
                         <td className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
