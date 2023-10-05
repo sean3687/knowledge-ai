@@ -62,64 +62,72 @@ function Controller() {
     const sendTime = moment().format("h:mm");
     const myMessage = { sender: "me", message: messageText, time: sendTime };
     addChatArray(myMessage); // Add user message to chat array
+
     try {
-      const response = await fetch(
-        `https://chitchatrabbit.me/chain/${chatId}/${encodeURIComponent(
-          inputText
-        )}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-          },
-        }
-      );
+        const response = await fetch(
+            `https://chitchatrabbit.me/chain/${chatId}/${encodeURIComponent(inputText)}`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+                },
+            }
+        );
 
-      if (!response.body)
-        throw Error("ReadableStream not yet supported in this browser.");
-      console.log("This is debug input text", inputText);
-      const reader = response.body.getReader();
+        if (!response.body) throw Error("ReadableStream not yet supported in this browser.");
+        console.log("This is debug input text", inputText);
+        const reader = response.body.getReader();
 
-      let accumulatedResponse = ""; // Declare a variable to accumulate the response
+        let accumulatedResponse = "";
 
-      reader.read().then(function process({ done, value }) {
-        if (done) {
-          const aiResponse = accumulatedResponse.replace(/\s+/g, " ").trim(); // Replace multiple spaces with a single space
-          const finalBotMessage = {
-            sender: "bot",
-            message: aiResponse,
-            time: sendTime,
-          };
-          addChatArray(finalBotMessage);
-          getRelevantFile(chatId, inputText, aiResponse);
-          getChatTitle(chatId);
-          setIsSendChatLoading(false);
-          setStreamingResponse("");
-          return;
-        }
+        reader.read().then(function process({ done, value }) {
+            if (done) {
+                const finalBotMessage = {
+                    sender: "bot",
+                    message: accumulatedResponse,
+                    time: sendTime,
+                };
 
-        let decodedValue = new TextDecoder("utf-8").decode(value);
-        let processedValue = decodedValue.split("data: ").join("").trim();
+                addChatArray(finalBotMessage);
+                getRelevantFile(chatId, inputText, accumulatedResponse);
+                getChatTitle(chatId);
+                setIsSendChatLoading(false);
+                setStreamingResponse("");
+                return;
+            }
 
-        accumulatedResponse += " " + processedValue; // Add to the accumulated response with a space (to ensure words are separated)
+            let decodedValue = new TextDecoder("utf-8").decode(value);
+            let processedValues = decodedValue.split("data: "); // Split based on "data:"
 
-        setStreamingResponse(accumulatedResponse);
-        console.log("This is newest streaming response", accumulatedResponse);
+            // Iterate over the processed values
+            for (let val of processedValues) {
+              console.log("here is word by word", processedValues)
+                if (val.startsWith(" ")) {
+                    accumulatedResponse += val;  // Directly append if it starts with a space
+                } else {
+                    accumulatedResponse = accumulatedResponse.trimEnd() + val;  // Merge with the preceding word if no space at the start
+                }
+            }
 
-        return reader.read().then(process); // Continue processing the stream
-      });
+            setStreamingResponse(accumulatedResponse);
+            console.log("This is newest streaming response", accumulatedResponse);
+
+            return reader.read().then(process); // Continue processing the stream
+        });
     } catch (error) {
-      popChatArray(); // Remove bot loading message from chat array in case of error
-      setStreamingResponse("");
-      const errorMessage = {
-        sender: "bot",
-        message: error.message,
-        time: sendTime,
-      };
-      addChatArray(errorMessage); // Add error message to chat array
-      console.error("Fetch Error:", error);
+        popChatArray(); // Remove bot loading message from chat array in case of error
+        setStreamingResponse("");
+        const errorMessage = {
+            sender: "bot",
+            message: error.message,
+            time: sendTime,
+        };
+        addChatArray(errorMessage); // Add error message to chat array
+        console.error("Fetch Error:", error);
     }
-  };
+};
+
+
 
   async function getRelevantFile(chatId, inputText, aiResponse) {
     const body = {
