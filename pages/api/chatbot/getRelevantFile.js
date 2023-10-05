@@ -2,12 +2,17 @@ import axios from "axios";
 
 export default async function handler(req, res) {
   const token = req.headers.authorization.split(" ")[1];
+  const { chat_id, human_message, ai_message } = req.body;
 
-  const { chat_id } = req.body;
+  const body = {
+    "chat_id": chat_id,
+    "human_message": human_message,
+    "ai_message": ai_message
+  }
 
   try {
-    const response = await axios.get(
-      `http://54.193.180.218:8000/get_chat_message/${chat_id}`,
+    const response = await axios.post(
+      `https://chitchatrabbit.me/get_relevant_file`,body,
       {
         headers: {
           "Content-Type": "application/json",
@@ -15,8 +20,8 @@ export default async function handler(req, res) {
         },
       }
     );
-    res.status(200).json({ messages: response.data });
-
+    
+    res.status(200).json(response.data);
   } catch (error) {
     res.status(500).json({
       message: "Failed to load messages",

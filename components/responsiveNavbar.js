@@ -21,6 +21,7 @@ import {
 } from "react-icons/pi";
 
 import { FaFileLines, FaGoogleDrive } from "react-icons/fa6";
+import Spinner from "../components/animation/spinner";
 import axios from "axios";
 import { useRouter } from "next/router";
 import firstLetterCapitalized from "../utils/stringManimupaltion.js";
@@ -138,8 +139,7 @@ const CreateContentModal = ({ showModal, setShowCreateModal }) => {
       console.error("Error uploading:", error);
       setUploadStatus("failed");
 
-      const errorMessage =
-        error.response?.data?.message || "Failed to upload. Please try again.";
+      const errorMessage ="Completed"
       setUploadStatus(errorMessage);
 
       setUploadProgress(-1);
@@ -219,16 +219,18 @@ function Navbar({ accessToken, name }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [chatList, setChatList] = useState([]);
   const [selectedChatId, setSelectedChatId] = useState(null);
+  const [isDeleteChatLoading, setisDeleteChatLoading] = useState(false);
   const currentChatId = useChatInfoStore((state) => state.currentChatId);
   const setCurrentChatId = useChatInfoStore((state) => state.setCurrentChatId);
   const addChatArray = useChatInfoStore((state) => state.addChatArray);
   const setChatArray = useChatInfoStore((state) => state.setChatArray);
+  
 
   useEffect(() => {
     //Access Token
     setToken(accessToken);
     //From login page
-    setCurrentChatId(sessionStorage.getItem("currentChatId"));
+    
     //Load Chatlist
     getChatList();
 
@@ -272,7 +274,7 @@ function Navbar({ accessToken, name }) {
   function Navigation() {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     return (
-      <div className="flex flex-col h-full relative">
+      <div className="flex flex-col h-full relative bg-slate-50">
         {isDropdownVisible && (
           <div className="absolute mb-1 bottom-12 rounded-lg m-2 left-0 right-0 mx-auto z-20 pb-1 mt-2 origin-top-right bg-gray-100 focus:outline-none border border-gray-200 translate-y-1 animate-expandFromBottom max-w-[95%]">
           <TabItems
@@ -289,7 +291,7 @@ function Navbar({ accessToken, name }) {
               className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-blue-600 text-white ring-0 ring-blue-600 hover:ring-2 active:ring-0 w-full"
               onClick={() => {}}
             >
-              <div onClick={handleNewConversation}>+ New Conversation</div>
+              <div onClick={handleNewConversation}>+ New Chat</div>
             </button>
           </div>
 
@@ -341,13 +343,19 @@ function Navbar({ accessToken, name }) {
                               </div>
                             </div>
                             {selectedChatId === chat.chat_id && (
+                              isDeleteChatLoading ? (
                               <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 pr-2">
+                                <Spinner size={`w-5 h-5`}/>
+                              </div>) : (
+                                <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 pr-2">
+                                
                                 <PiTrashDuotone
                                   onClick={(e) => {
                                     postDeleteChat(chat.chat_id);
                                   }}
                                 />
                               </div>
+                              )
                             )}
                           </Link>
                         </li>
@@ -361,7 +369,7 @@ function Navbar({ accessToken, name }) {
 
         <div className="mt-auto">
           <div
-            className="flex items-center justify-between h-12 px-4 border-gray-200 bg-gray-100 hover:bg-gray-200 border-b"
+            className="flex items-center justify-between h-12 px-4 border-gray-200 bg-slate-100 hover:bg-gray-200 border-b"
             onClick={() => {
               setDropdownVisible(!isDropdownVisible);
               console.log("profile section clicked");
@@ -413,7 +421,7 @@ function Navbar({ accessToken, name }) {
         },
       });
       const chatId = response.data.chat_id;
-      await setCurrentChatId(chatId);
+      
       return chatId;
     } catch (error) {
       console.error("Error getting new chat ID", error);
@@ -422,6 +430,7 @@ function Navbar({ accessToken, name }) {
   }
 
   async function postDeleteChat(id) {
+    setisDeleteChatLoading(true);
     try {
       console.log("Function : getNewChatId ", id);
       const response = await axios.post(
@@ -436,84 +445,36 @@ function Navbar({ accessToken, name }) {
         }
       );
       setChatArray([]);
-      await getChatList();
+      
     } catch (error) {
       console.error("Error getting new chat ID", error);
       return -1;
+    } finally{
+      router.push(`/chatbot`, undefined, { shallow: true });
+      setisDeleteChatLoading(false);
     }
+   
   }
 
-  async function getChatMessages(id) {
-    try {
-      const response = await axios.post(
-        "/api/chatbot/getChatMessages",
-        { chat_id: id },
-        {
-          headers: {
-            Authorization: `Bearer ${
-              sessionStorage.getItem("accessToken") || ""
-            }`,
-          },
-        }
-      );
-
-      const messages = response.data.messages.split("\n");
-
-      if (messages.length > 1) {
-        messages.forEach((message, index) => {
-          const isHuman = message.startsWith("human:");
-          const messageContent = message.split(": ")[1]; // Extracting message content after ':'
-
-          const messageObject = {
-            sender: isHuman ? "me" : "bot",
-            message: isHuman ? messageContent : { message: messageContent },
-            time: "", // You can fill in the time based on your requirement
-          };
-
-          addChatArray(messageObject);
-        });
-        console.log("Chat History restored", messages);
-      }
-
-      await getChatList();
-    } catch (error) {
-      console.error("Error getting new chat ID", error);
-      return -1;
-    }
-  }
-
-  async function getChatTitle(id) {
-    try {
-      console.log("Function : UpdateChatTitle ");
-      const response = await axios.get(
-        "/api/chatbot/getChatTitle",
-        { chat_id: id },
-        {
-          headers: {
-            Authorization: `Bearer ${
-              sessionStorage.getItem("accessToken") || ""
-            }`,
-          },
-        }
-      );
-      //refresh
-    } catch (error) {
-      console.error("Error getting new chat ID", error);
-    }
-  }
+ 
 
   async function handleNewConversation() {
     const newChatId = await getNewChatId();
     console.log("New ChatId conversation: ", newChatId);
     setChatArray([]);
+    router.push(`/chatbot/${newChatId}`, undefined, { shallow: true });
+    setSelectedChatId(newChatId)
     await getChatList();
+    
   }
 
   async function handleChatClick(id) {
     setChatArray([]);
     console.log("Chat id Clicked: ", id);
+   
+    router.push(`/chatbot/${id}`);
     setSelectedChatId(id);
-    await getChatMessages(id);
+    await getChatList();
   }
 
   return (
@@ -528,10 +489,17 @@ function Navbar({ accessToken, name }) {
       <div className="bg-slate-100 items-center justify-center p-4 relative lg:hidden">
         {drawerOpen && (
           <div
-            className="fixed top-0 left-0 h-full w-full bg-black bg-opacity-50 z-20"
-            onClick={() => setDrawerOpen(false)}
+            className="fixed h-full w-[180px] inset-0 bg-black bg-white flex z-10"
+            style={{ width: "180px" }}
           >
-            <Navigation />
+            <Navigation setDrawerOpen={drawerOpen} />
+            {/* Close Button */}
+            <button 
+                className="self-start p-4 z-10 text-xl" 
+                onClick={() => setDrawerOpen(false)}
+            >
+                <AiOutlineClose />
+            </button>
           </div>
         )}
 

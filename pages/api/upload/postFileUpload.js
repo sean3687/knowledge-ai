@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "http://54.193.180.218:8000";  // The address of your external server
+const baseURL = "https://chitchatrabbit.me";  // The address of your external server
 
 export const config = {
   api: {
