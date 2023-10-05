@@ -92,8 +92,6 @@ function Controller() {
                   file_name: fileData.file_name || ""
               };
 
-                
-                getRelevantFile(chatId, inputText, accumulatedResponse);
                 getChatTitle(chatId);
                 console.log("this is finalBot Message", finalBotMessage)
                 addChatArray(finalBotMessage);
