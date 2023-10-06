@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AuthNotFound from "../../components/authNotfound";
 import useAccountInfoStore from "../../stores/store";
+import withLayout from "../../components/layouts/withLayout";
 
 function ProfilePage() {
   const [message, setMessage] = useState("Show Info");
@@ -139,4 +140,4 @@ function ProfilePage() {
   );
 }
 
-export default ProfilePage;
+export default withLayout(ProfilePage, "dashboard")

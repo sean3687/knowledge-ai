@@ -29,11 +29,6 @@ import useChatInfoStore from "../stores/chatStore.js";
 
 const tabs = [
   {
-    icon: <PiUploadDuotone className="w-4 h-4" />,
-    text: "Manage Document",
-    link: "/upload",
-  },
-  {
     icon: <PiChatTeardropTextDuotone className="w-4 h-4" />,
     text: "Conversation",
     link: "/chatbot",
@@ -52,15 +47,8 @@ const TabItems = ({
 }) => {
   return (
     <div className="rounded-lg">
-      <div className="flex justify-center align-middle px-5 pt-4 pb-3 ">
-        <button
-          className="transition-all bg-gray-200 duration-200 relative font-semibold  outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm border-gray-600 text-gray-500 ring-0 ring-gray-200 hover:ring-2 active:ring-0 w-full"
-          onClick={() => setShowCreateModal(true)}
-        >
-          Upload documents
-        </button>
-      </div>
-      <div className="border-b bg-gray-100">
+      
+      <div className="border-b bg-gray-100 mt-2">
         {tabs.map((tab, index) => (
           <div
             key={index}
@@ -139,7 +127,7 @@ const CreateContentModal = ({ showModal, setShowCreateModal }) => {
       console.error("Error uploading:", error);
       setUploadStatus("failed");
 
-      const errorMessage ="Completed"
+      const errorMessage = "Completed";
       setUploadStatus(errorMessage);
 
       setUploadProgress(-1);
@@ -224,13 +212,12 @@ function Navbar({ accessToken, name }) {
   const setCurrentChatId = useChatInfoStore((state) => state.setCurrentChatId);
   const addChatArray = useChatInfoStore((state) => state.addChatArray);
   const setChatArray = useChatInfoStore((state) => state.setChatArray);
-  
 
   useEffect(() => {
     //Access Token
     setToken(accessToken);
     //From login page
-    
+
     //Load Chatlist
     getChatList();
 
@@ -277,22 +264,31 @@ function Navbar({ accessToken, name }) {
       <div className="flex flex-col h-full relative bg-slate-50">
         {isDropdownVisible && (
           <div className="absolute mb-1 bottom-12 rounded-lg m-2 left-0 right-0 mx-auto z-20 pb-1 mt-2 origin-top-right bg-gray-100 focus:outline-none border border-gray-200 translate-y-1 animate-expandFromBottom max-w-[95%]">
-          <TabItems
-            setSelectedTabIndex={setSelectedTabIndex}
-            selectedTabIndex={selectedTabIndex}
-            setShowCreateModal={setShowCreateModal}
-          />
-        </div>
+            <TabItems
+              setSelectedTabIndex={setSelectedTabIndex}
+              selectedTabIndex={selectedTabIndex}
+              setShowCreateModal={setShowCreateModal}
+            />
+          </div>
         )}
 
         <div className="overflow-hidden flex flex-col">
-          <div className="flex justify-center align-middle px-5 pt-4 pb-3">
+          <div className="justify-center align-middle px-5 pt-4 pb-3">
             <button
-              className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-blue-600 text-white ring-0 ring-blue-600 hover:ring-2 active:ring-0 w-full"
+              className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-gray-400 text-white ring-0 ring-gray-400 hover:ring-2 active:ring-0 w-full"
+              onClick={() => {}}
+            >
+              <Link href={"/upload"} className="w-full text-sm">
+                Manage Document
+              </Link>
+            </button>
+            <button
+              className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-blue-600 mt-2 text-white ring-0 ring-blue-600 hover:ring-2 active:ring-0 w-full"
               onClick={() => {}}
             >
               <div onClick={handleNewConversation}>+ New Chat</div>
             </button>
+            
           </div>
 
           <div className="overflow-y-auto flex-grow">
@@ -342,21 +338,20 @@ function Navbar({ accessToken, name }) {
                                 </div>
                               </div>
                             </div>
-                            {selectedChatId === chat.chat_id && (
-                              isDeleteChatLoading ? (
-                              <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 pr-2">
-                                <Spinner size={`w-5 h-5`}/>
-                              </div>) : (
+                            {selectedChatId === chat.chat_id &&
+                              (isDeleteChatLoading ? (
                                 <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 pr-2">
-                                
-                                <PiTrashDuotone
-                                  onClick={(e) => {
-                                    postDeleteChat(chat.chat_id);
-                                  }}
-                                />
-                              </div>
-                              )
-                            )}
+                                  <Spinner size={`w-5 h-5`} />
+                                </div>
+                              ) : (
+                                <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 pr-2">
+                                  <PiTrashDuotone
+                                    onClick={(e) => {
+                                      postDeleteChat(chat.chat_id);
+                                    }}
+                                  />
+                                </div>
+                              ))}
                           </Link>
                         </li>
                       ))}
@@ -421,7 +416,7 @@ function Navbar({ accessToken, name }) {
         },
       });
       const chatId = response.data.chat_id;
-      
+
       return chatId;
     } catch (error) {
       console.error("Error getting new chat ID", error);
@@ -445,33 +440,28 @@ function Navbar({ accessToken, name }) {
         }
       );
       setChatArray([]);
-      
     } catch (error) {
       console.error("Error getting new chat ID", error);
       return -1;
-    } finally{
+    } finally {
       router.push(`/chatbot`, undefined, { shallow: true });
       setisDeleteChatLoading(false);
     }
-   
   }
-
- 
 
   async function handleNewConversation() {
     const newChatId = await getNewChatId();
     console.log("New ChatId conversation: ", newChatId);
     setChatArray([]);
     router.push(`/chatbot/${newChatId}`, undefined, { shallow: true });
-    setSelectedChatId(newChatId)
+    setSelectedChatId(newChatId);
     await getChatList();
-    
   }
 
   async function handleChatClick(id) {
     setChatArray([]);
     console.log("Chat id Clicked: ", id);
-   
+
     router.push(`/chatbot/${id}`);
     setSelectedChatId(id);
     await getChatList();
@@ -494,11 +484,11 @@ function Navbar({ accessToken, name }) {
           >
             <Navigation setDrawerOpen={drawerOpen} />
             {/* Close Button */}
-            <button 
-                className="self-start p-4 z-10 text-xl" 
-                onClick={() => setDrawerOpen(false)}
+            <button
+              className="self-start p-4 z-10 text-xl"
+              onClick={() => setDrawerOpen(false)}
             >
-                <AiOutlineClose />
+              <AiOutlineClose />
             </button>
           </div>
         )}
@@ -519,10 +509,10 @@ function Navbar({ accessToken, name }) {
         <div className="clear-both"></div>
       </div>
 
-      <CreateContentModal
+      {/* <CreateContentModal
         showModal={showCreateModal}
         setShowCreateModal={setShowCreateModal}
-      />
+      /> */}
     </div>
   );
 }
