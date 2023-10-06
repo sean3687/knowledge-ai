@@ -60,14 +60,14 @@ function LoginPage() {
 
       <div className="flex-1 flex flex-col items-center justify-center p-10 md:px-30 bg-blue-600">
         <div className="absolute top-1 left-6 text-white text-xl font-bold p-6">
-          Knowledge AI
+          KLIB
         </div>
         <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white w-full text-center mt-40">
           Empower Your Documents with AI
         </h1>
         <p className="text-gray-200 mb-4 text-center">
           Upload your documents and let our AI analyze them. We&lsquo;ll find
-          the right documents for you, provide valuable accounting information,
+          the right documents for you, provide valuable information,
           and more.
         </p>
         <LottieAnimation
@@ -81,7 +81,7 @@ function LoginPage() {
       <div className="flex-1 flex p-6 md:p-5">
         <div className="bg-white p-4 w-full lg:mt-40 md:p-8 md:min-w-[400px] ">
           <h2 className="text-2xl md:text-3xl font-bold  mb-10">
-            Login to KnowledgeAI
+            Login to KLIB
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
