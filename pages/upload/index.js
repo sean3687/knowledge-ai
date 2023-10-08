@@ -18,6 +18,10 @@ import Spinner from "../../components/animation/spinner";
 import useChatInfoStore from "../../stores/chatStore";
 import withLayout from "../../components/layouts/withLayout";
 import formatDate from "../../utils/dateFormat";
+import UploadStatusChecker from "../../components/uploadStatusModal";
+
+
+
 
 function UploadPage({ accessToken }) {
   const [filesUpload, setFilesUpload] = useState([]);
@@ -26,13 +30,11 @@ function UploadPage({ accessToken }) {
   const [selectedID, setSelectedID] = useState(null);
   const [deleteStatus, setDeleteStatus] = useState("");
   const [uploadStatus, setUploadStatus] = useState("");
-  const [uploadMessage, setUploadMessage] = useState("");
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadIneQueue, setUploadIneQueue] = useState([]);
 
   const [showPopup, setShowPopup] = useState(false);
   const fileInput = useRef(null);
   const [showUploadDropdown, setShowUploadDropdown] = useState(false);
-  const dropdownUploadRef = useRef(false);
   const [hoveredID, setHoveredID] = useState(null); // Step 1
   const setSummarizeId = useChatInfoStore((state) => state.setSummarizeId);
   const [expandedRow, setExpandedRow] = useState(null);
@@ -49,11 +51,11 @@ function UploadPage({ accessToken }) {
   // }
 
   const handleMouseEnter = (id) => {
-    console.log("Mouse entered on", id);
+   
     setHoveredID(id);
   };
   const handleMouseLeave = () => {
-    console.log("Mouse left");
+
     setHoveredID(null);
   };
   const downloadDocumentClick = (fileId) => {
@@ -143,22 +145,17 @@ function UploadPage({ accessToken }) {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-          onUploadProgress: (progressEvent) => {
-            setUploadProgress(progressEvent);
-            console.log(progressEvent);
-          },
         }
       );
-
-      setUploadStatus("completed");
+      console.log("this is upload quque", response.data)
+      setUploadIneQueue(response.data)
       console.log("upload completed");
       fetchUploadedDocuments(accessToken);
     } catch (error) {
       console.error("Error uploading:", error);
       setUploadStatus("failed");
       const errorMessage = "Failed to upload";
-      setUploadMessage(errorMessage);
-      setUploadProgress(-1);
+
       fetchUploadedDocuments(accessToken);
     }
   }
@@ -250,19 +247,20 @@ function UploadPage({ accessToken }) {
   const handleSearchInputChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    console.log("this is search : ", value)
+    console.log("this is search : ", value);
     if (typingTimeout) clearTimeout(typingTimeout);
-  
-    if (value.trim() !== "") {  // Check if the value is not empty
+
+    if (value.trim() !== "") {
+      // Check if the value is not empty
       setTypingTimeout(
         setTimeout(() => {
           postSearchDocument(value);
-        }, 1000)  // 300ms delay
+        }, 1000) // 300ms delay
       );
     } else {
       fetchUploadedDocuments(sessionStorage.getItem("accessToken"));
     }
-  }
+  };
 
   async function postSearchDocument(search_query) {
     const response = await axios.post(
@@ -276,12 +274,41 @@ function UploadPage({ accessToken }) {
       }
     );
     if (response.status === 200) {
-      console.log("this is response from search : ", response.data)
+      console.log("this is response from search : ", response.data);
       setDocumentList(response.data);
     } else {
       setDocumentList(response.data);
     }
   }
+
+  function StatusIndication({ fileStatus }) {
+  
+    return (
+      <div>
+        {fileStatus === "uploading" ? (
+          <button className="relative transform transition-transform hover:scale-105 active:scale-95 px-2">
+            <div className="relative group text-xs bg-orange-500 px-2 py-1 rounded-lg text-white">
+              In-progress
+            </div>
+          </button>
+        ) : fileStatus === "completed" ? (
+          <button className="relative transform transition-transform hover:scale-105 active:scale-95 px-2">
+            <div className="relative group text-xs bg-green-500 px-2 py-1 rounded-lg text-white">
+              Completed
+            </div>
+          </button>
+        ) : (
+          <button className="relative transform transition-transform hover:scale-105 active:scale-95 px-2">
+            <div className="relative group text-xs bg-red-500 px-2 py-1 rounded-lg text-white">
+              Error
+            </div>
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  async function checkUploadStatus() {}
 
   return (
     <div className="">
@@ -367,7 +394,10 @@ function UploadPage({ accessToken }) {
                     Created Date
                   </th>
                   <th className=" text-xs font-semibold text-gray-700 uppercase">
-                    Meta Data
+                    Status
+                  </th>
+                  <th className=" text-xs font-semibold text-gray-700 uppercase">
+                    MetaData
                   </th>
                   <th className=" text-xs font-semibold text-gray-700 uppercase">
                     Actions
@@ -407,15 +437,21 @@ function UploadPage({ accessToken }) {
                             </div>
                           )}
                         </td>
-                        <td className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]" onClick={() => {
-                              downloadDocumentClick(item.id);
-                            }}>
+                        <td
+                          className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]"
+                          onClick={() => {
+                            downloadDocumentClick(item.id);
+                          }}
+                        >
                           {item.file_name}
                         </td>
                         <td className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
                           {formatDate(item.upload_time)}
                         </td>
-                        <td className="relative whitespace-nowrap pr-3 py-4 text-sm text-gray-700 max-w-[10rem] text-center">
+                        <td className="whitespace-nowrap text-center py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
+                          <StatusIndication fileStatus={item.status} />
+                        </td>
+                        <td className="relative whitespace-nowrap py-4 text-sm text-gray-700 max-w-[10rem] text-center">
                           <button className="relative transform transition-transform hover:scale-105 active:scale-95 px-2">
                             <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white">
                               {item.labels[0]}
@@ -555,30 +591,6 @@ function UploadPage({ accessToken }) {
       {showPopup && (
         <div className="fixed bottom-4 right-4 w-2/3 lg:w-1/4 p-4 bg-white border rounded-lg shadow-xl">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold overflow-hidden truncate">
-              {uploadStatus === "completed" ? (
-                "Completed"
-              ) : uploadStatus === "in-progress" ? (
-                <div className="flex items-center justify-center">
-                  <Spinner className="" size={`w-5 h-5`} />{" "}
-                  <div className="ml-1 text-xl">Uploading</div>{" "}
-                </div>
-              ) : uploadStatus === "redundant" ? (
-                <div>
-                  <div className="flex items-center justify-center">
-                    <PiWarningDuotone className="text-xl mr-1" />
-                    <div>{uploadMessage}</div>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex items-center justify-center">
-                    <PiWarningDuotone className="mr-1" />
-                    <div>{uploadMessage}</div>
-                  </div>
-                </div>
-              )}
-            </h2>
             <button
               onClick={() => setShowPopup(false)}
               className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
@@ -586,27 +598,9 @@ function UploadPage({ accessToken }) {
               <AiOutlineClose />
             </button>
           </div>
-          <div className="flex justify-between items-center mb-4 ">
-            <h2 className="text-xs overflow-hidden truncate">
-              {filesUpload ? (
-                <div> {filesUpload[0].name}</div>
-              ) : (
-                <div>Null</div>
-              )}{" "}
-            </h2>
-            <p className="font-bold text-xs">
-              {(uploadProgress.progress * 100).toFixed(0)}%
-            </p>
-          </div>
-
-          <div className="bg-gray-300 w-full h-4 rounded mt-2">
-            <div
-              className="bg-blue-500 h-4 rounded"
-              style={{
-                width: `${(uploadProgress.progress * 100).toFixed(0)}%`,
-              }}
-            ></div>
-          </div>
+          <div>
+              <UploadStatusChecker jsonData={uploadIneQueue}/>
+            </div>
         </div>
       )}
     </div>

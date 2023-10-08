@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       
         res.status(200).json({
             success: true,
-            message: "Document List loaded",
+            message: "getQueryLabel API successfully called",
             response: response.data
 
         });

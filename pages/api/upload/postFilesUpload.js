@@ -27,30 +27,16 @@ async function handler(req, res) {
           const { data } = await axios.post('https://chitchatrabbit.me/uploadfiles', req, axiosConfig);
           data.pipe(res);  
           res.status(200).json({
-              success: true,
-              message: "Upload Completed",
+              file: data.response,
+              message: "File upload in queue"
           });
       } catch (error) {
-          // Handle errors from the backend server
+          
 
-          let errorMessage;
-
-        //   if (error.response?.data?.detail) {
-        //       // Check specific error messages
-        //       if (error.response.data.detail.includes("FileType.UNK file type is not supported")) {
-        //           errorMessage = "Unsupported file type.";
-        //       } else if (error.response.data.detail.includes("File name conflict")) {
-        //           errorMessage = "Same file found.";
-        //       } else {
-        //           errorMessage = error.response.data.detail;
-        //       }
-        //   } else {
-        //       errorMessage = "Failed to upload";
-        //   }
 
           res.status(500).json({
-              message: errorMessage,
-              success: false
+              file: [],
+              message: "File upload failed"
           });
       }
   } else {
