@@ -6,6 +6,7 @@ import Loading from "./animation/loading";
 import ScrollButton from "./scrollBottom";
 import { FaPaperPlane, FaTrashCan, FaRegComments } from "react-icons/fa6";
 import { icons } from "react-icons";
+import axios from "axios";
 
 function ChatController({
   inputText,
@@ -16,7 +17,6 @@ function ChatController({
   setInputText,
   handleClick,
   handleRefresh,
-  
 }) {
   const router = useRouter();
   const { docId } = router.query;
@@ -50,13 +50,46 @@ function ChatController({
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
+  async function getDownloadDocument(id) {
+
+    console.log("this is id", id)
+    if (!id) return;
+
+    console.log("this is download document id" + id);
+    try {
+      const response = await axios.post(
+        `/api/upload/getDownloadDocument`,
+        { selectedId: id },
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+          responseType: "arraybuffer", 
+        }
+      );
+      
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const blobURL = URL.createObjectURL(blob);
+
+      window.open(blobURL, "_blank");
+
+      if (response.status === 200) {
+        console.log("Document Opened");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  }
+
   const handleEnter = (event) => {
     if (event.key === "Enter") {
       if (event.shiftKey) {
-        
       } else {
-        event.preventDefault(); 
-        handleClick(); 
+        event.preventDefault();
+        handleClick();
       }
     }
   };
@@ -66,7 +99,6 @@ function ChatController({
   }, [messages]);
 
   return (
-    
     <div className="w-full">
       <div
         className={
@@ -101,14 +133,6 @@ function ChatController({
             <div className="">
               {messages?.map((item, key) => {
                 let displayMessage = item.message;
-                let displayFileId = -1;
-                let displayFileName = "Not Available";
-
-                if (item.sender === "bot") {
-                  displayMessage = item.message.message;
-                  displayFileId = item.file_id;
-                  displayFileName = item.file_name || "Not Available";
-                }
 
                 return item.sender == "me" ? (
                   <>
@@ -140,18 +164,28 @@ function ChatController({
                             {item.time}
                           </time>
                         </div>
-                        <div className="flex text-xs ">
-                          {displayFileId > -1 && (
-                            <div className="text-sm font-bold flex items-center justify-center">
-                              Learn more :
-                              <div className="bg-indigo-600 bg-opacity-25 text-indigo-600 ml-2 rounded">
-                                <div className="text-opacity-100 px-2 py-1 ">
-                                  {displayFileName}
-                                </div>
+                        {item.sender === "bot" &&
+                          item.fileData &&
+                          item.fileData.length > 0 && (
+                            <div className="flex text-xs items-center">
+                              <span className="text-sm font-bold mr-2">
+                                Learn more:
+                              </span>
+                              <div className="flex flex-wrap items-center">
+                                {" "}
+                                {/* Add 'items-center' class */}
+                                {item.fileData.map((data) => (
+                                  <button class="relative transform transition-transform px-2  mr-2 max-w-[130px] " onClick={() => {
+                                    getDownloadDocument(data.file_id);
+                                  }}>
+                                    <div class="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white truncate max-w-[130px] hover:max-w-full">
+                                      {data.file_name}
+                                    </div>
+                                  </button>
+                                ))}
                               </div>
                             </div>
                           )}
-                        </div>
                       </div>
                     </div>
                     <div className="border-t border-gray-300"></div>
@@ -161,27 +195,27 @@ function ChatController({
             </div>
           </div>
         )}
-<div>
-  {isSendChatLoading ? (
-    <>
-      <div className=" bg-gray-50 px-20 py-5 flex ">
-        <div></div>
-        <div className="text-white">
-          <AiOutlineRobot className="text-4xl fill-current bg-indigo-600 rounded p-1" />
+        <div>
+          {isSendChatLoading ? (
+            <>
+              <div className=" bg-gray-50 px-20 py-5 flex ">
+                <div></div>
+                <div className="text-white">
+                  <AiOutlineRobot className="text-4xl fill-current bg-indigo-600 rounded p-1" />
+                </div>
+                <div className="chat-bubble chat-bubble-primary ml-5">
+                  {streamingResponse}
+                  <div className="chat-bubble items-center chat-bubble-primary">
+                    <Loading />
+                  </div>
+                </div>
+              </div>
+              <div className="border-t border-gray-300"></div>
+            </>
+          ) : (
+            <></>
+          )}
         </div>
-        <div className="chat-bubble chat-bubble-primary ml-5">
-          {streamingResponse}
-          <div className="chat-bubble items-center chat-bubble-primary">
-            <Loading />
-          </div>
-        </div>
-      </div>
-      <div className="border-t border-gray-300"></div>
-    </>
-  ) : (
-    <></>
-  )}
-</div>
       </div>
 
       <div

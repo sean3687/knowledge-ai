@@ -95,8 +95,7 @@ function Controller() {
             sender: "bot",
             message: accumulatedResponse,
             time: sendTime,
-            file_id: fileData.file_id || -1,
-            file_name: fileData.file_name || "",
+            fileData: fileData,
           };
 
           getChatTitle(chatId);
@@ -153,6 +152,7 @@ function Controller() {
       });
       if (response.status === 200) {
         const releventFile = response.data;
+        console.log("Relevent file is : ", releventFile);
         setFileObject(releventFile);
         return releventFile;
       }
@@ -255,7 +255,7 @@ function Controller() {
         isGetChatLoading={isGetChatLoading}
         streamingResponse={streamingResponse}
         messages={chatArray}
-        getRelevantFile={fileObject}
+        // getRelevantFile={fileObject}
         setInputText={setInputText}
         handleClick={sendMessageClick}
         handleRefresh={handleRefresh}
