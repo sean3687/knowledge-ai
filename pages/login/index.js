@@ -66,7 +66,7 @@ function LoginPage() {
         </h1>
         <p className="text-gray-200 mb-4 text-center">
           Simply upload your documents and let our advanced AI delve deep into
-          them. KLIB's cutting-edge AI dives deep into your documents, extract
+          them. KLIB&apos;s cutting-edge AI dives deep into your documents, extract
           critical insights, and elevate your data experience. <br></br>
           <br></br>Dive into the future of knowledge library today!
         </p>
