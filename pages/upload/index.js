@@ -355,8 +355,6 @@ function UploadPage({ accessToken }) {
     );
   }
 
-  async function checkUploadStatus() {}
-
   return (
     <div className="">
       <div className="bg-white ">
@@ -429,7 +427,7 @@ function UploadPage({ accessToken }) {
           </div>
           <div className="outline outline-1 outline-gray-200 rounded-lg w-full">
             <div className="w-full space-y-1"></div>
-            <table className="min-w-full divide-y divide-gray-200 border rounded-md">
+            <table className="min-w-full divide-y divide-gray-200  rounded-md">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="w-12 p-3.5"></th>
@@ -444,7 +442,7 @@ function UploadPage({ accessToken }) {
                     Status
                   </th>
                   <th className=" text-xs font-semibold text-gray-700 uppercase">
-                    MetaData
+                    Keywords
                   </th>
                   <th className=" text-xs font-semibold text-gray-700 uppercase">
                     Actions
@@ -631,7 +629,7 @@ function UploadPage({ accessToken }) {
                         <tr>
                           <td colSpan={6} className="p-4">
                             <div className="text-sm font-bold mb-2">
-                              MetaData
+                              Keywords
                             </div>
                             <div>
                               {item.labels.map((label, index) => (
@@ -653,9 +651,7 @@ function UploadPage({ accessToken }) {
               </tbody>
             </table>
           </div>
-          <div className="text-lg font-bold p-2 ">
-            {/* {documentList.length || 0} Files Found */}
-          </div>
+          
         </div>
       </div>
       {/* {showPopup && (

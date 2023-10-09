@@ -62,13 +62,14 @@ function LoginPage() {
           KLIB
         </div>
         <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white w-full text-center mt-40">
-          Unlock the Potential of Your Documents with AI
+          Unlock Your Documents&apos; Potential with AI 
         </h1>
         <p className="text-gray-200 mb-4 text-center">
-          Simply upload your documents and let our advanced AI delve deep into
+        Upload your documents and let KLIB&apos;s leading AI extract vital insights, enhancing your data experience. Experience the future of the knowledge library today!
+          {/* Simply upload your documents and let our advanced AI delve deep into
           them. KLIB&apos;s cutting-edge AI dives deep into your documents, extract
           critical insights, and elevate your data experience. <br></br>
-          <br></br>Dive into the future of knowledge library today!
+          <br></br>Dive into the future of knowledge library today! */}
         </p>
         <LottieAnimation
           animationData={animationData}
