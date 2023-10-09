@@ -20,9 +20,6 @@ import withLayout from "../../components/layouts/withLayout";
 import formatDate from "../../utils/dateFormat";
 import UploadStatusChecker from "../../components/uploadStatusModal";
 
-
-
-
 function UploadPage({ accessToken }) {
   const [filesUpload, setFilesUpload] = useState([]);
   const [documentList, setDocumentList] = useState([]);
@@ -35,9 +32,10 @@ function UploadPage({ accessToken }) {
   const [showPopup, setShowPopup] = useState(false);
   const fileInput = useRef(null);
   const [showUploadDropdown, setShowUploadDropdown] = useState(false);
-  const [hoveredID, setHoveredID] = useState(null); // Step 1
+  const [hoveredID, setHoveredID] = useState(null);
   const setSummarizeId = useChatInfoStore((state) => state.setSummarizeId);
-  const [expandedRow, setExpandedRow] = useState(null);
+  const [expandedSummarizeRow, setExpandedSummarizeRow] = useState(null);
+  const [expandedMetadataRow, setExpandedMetadataRow] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,11 +49,9 @@ function UploadPage({ accessToken }) {
   // }
 
   const handleMouseEnter = (id) => {
-   
     setHoveredID(id);
   };
   const handleMouseLeave = () => {
-
     setHoveredID(null);
   };
   const downloadDocumentClick = (fileId) => {
@@ -66,17 +62,24 @@ function UploadPage({ accessToken }) {
 
   async function summarizeDocumentClick(fileId, index) {
     setSummaryLoading(true);
-    setExpandedRow(index);
+    setExpandedSummarizeRow(index);
     setSelectedID(fileId);
     setSummarizeId(fileId);
     setSummaryData("");
-    setExpandedRow(expandedRow === index ? null : index); // Toggle the expanded row
+    setExpandedSummarizeRow(expandedSummarizeRow === index ? null : index); // Toggle the expanded row
 
-    if (expandedRow !== index) {
+    if (expandedSummarizeRow !== index) {
       const data = await getSummary(fileId);
       setSummaryData(data);
     }
     setSummaryLoading(false);
+  }
+
+  async function metadataClick(fileId, index) {
+    setExpandedMetadataRow(index);
+    // setSelectedID(fileId);
+    // setSummarizeId(fileId);
+    setExpandedMetadataRow(expandedMetadataRow === index ? null : index); // Toggle the expanded row
   }
 
   const getSummary = async (id) => {
@@ -98,7 +101,6 @@ function UploadPage({ accessToken }) {
       console.log("this is summary ", summary);
       return summary;
     } catch (err) {
-      popChatArray();
       console.log(err);
       return "Failed";
     }
@@ -129,6 +131,28 @@ function UploadPage({ accessToken }) {
     event.target.value = null;
   }
 
+  async function handleCheckStatus(inqueue) {
+    console.log("handleCheckStatus " + inqueue);
+    const interval = setInterval(async () => {
+      console.log("this is interval " + inqueue);
+      // const response = await axios.post(
+      //   "/api/upload/postFileUploadStatus",
+      //   { file_id: inqueue },
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${accessToken}`,
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
+      console.log("this is response from check status", response.data);
+      // if (response.data.upload_status === "completed") {
+      //   clearInterval(interval);
+      //   fetchUploadedDocuments(accessToken);
+      // }
+    }, 1000);
+  }
+
   async function handleFilesUpload(files) {
     setUploadStatus("in-progress");
     console.log("handleFilesUpload " + filesUpload);
@@ -147,15 +171,16 @@ function UploadPage({ accessToken }) {
           },
         }
       );
-      console.log("this is upload quque", response.data)
-      setUploadIneQueue(response.data)
+      console.log("this is upload", response.data);
+      setUploadIneQueue(response.data);
+      // handleCheckStatus(response.data);
       console.log("upload completed");
       fetchUploadedDocuments(accessToken);
     } catch (error) {
       console.error("Error uploading:", error);
       setUploadStatus("failed");
       const errorMessage = "Failed to upload";
-
+      window.alert(error);
       fetchUploadedDocuments(accessToken);
     }
   }
@@ -282,7 +307,6 @@ function UploadPage({ accessToken }) {
   }
 
   function StatusIndication({ fileStatus }) {
-  
     return (
       <div>
         {fileStatus === "uploading" ? (
@@ -452,18 +476,20 @@ function UploadPage({ accessToken }) {
                           <StatusIndication fileStatus={item.status} />
                         </td>
                         <td className="relative whitespace-nowrap py-4 text-sm text-gray-700 max-w-[10rem] text-center">
-                          <button className="relative transform transition-transform hover:scale-105 active:scale-95 px-2">
-                            <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white">
-                              {item.labels[0]}
-                              {/* <div className="absolute left-100% top-1/2 transform -translate-y-1/2 px-3 py-1 bg-gray-700 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-30">
-                                {item.labels.map((label, idx) => (
-                                  <div key={idx} className="z-30">
-                                    {label}
-                                  </div>
-                                ))}
-                              </div> */}
-                            </div>
-                          </button>
+                          {item.labels.length === 0 ? (
+                            <div>-</div>
+                          ) : (
+                            <button
+                              className="relative transform transition-transform hover:scale-105 active:scale-95 px-2"
+                              onClick={() => {
+                                metadataClick(item.id, index);
+                              }}
+                            >
+                              <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white">
+                                {item.labels[0]}
+                              </div>
+                            </button>
+                          )}
                         </td>
 
                         <td className="py-3 flex justify-center">
@@ -557,7 +583,7 @@ function UploadPage({ accessToken }) {
                           </button>
                         </td>
                       </tr>
-                      {expandedRow === index && (
+                      {expandedSummarizeRow === index && (
                         <tr>
                           <td colSpan={6} className="p-4">
                             {summaryLoading ? (
@@ -575,6 +601,22 @@ function UploadPage({ accessToken }) {
                                 </div>
                               </>
                             )}
+                          </td>
+                        </tr>
+                      )}
+                      {expandedMetadataRow === index && (
+                        <tr>
+                          <td colSpan={6} className="p-4">
+                          <div className="text-sm font-bold mb-2">MetaData</div>
+                            <div>
+                              {item.labels.map((label) => (
+                                <button className="relative transform transition-transform px-2 mb-2">
+                                  <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white">
+                                    {label}
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
                           </td>
                         </tr>
                       )}
@@ -599,8 +641,8 @@ function UploadPage({ accessToken }) {
             </button>
           </div>
           <div>
-              <UploadStatusChecker jsonData={uploadIneQueue}/>
-            </div>
+            <UploadStatusChecker jsonData={uploadIneQueue} />
+          </div>
         </div>
       )}
     </div>

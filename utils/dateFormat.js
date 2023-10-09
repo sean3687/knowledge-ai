@@ -1,19 +1,20 @@
+import moment from "moment";
+
 export default function formatDate(uploadTimeStr) {
-    const uploadTime = new Date(uploadTimeStr);
-    const now = new Date();
-    const timeDiff = (now - uploadTime) / 1000; // Difference in seconds
-  
-    if (timeDiff < 60) {
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const now = moment().tz(userTimeZone);
+  const uploadTime = moment.utc(uploadTimeStr).tz(userTimeZone);
+
+  const timeDiffSeconds = now.diff(uploadTime, "seconds");
+
+  if (timeDiffSeconds < 60) {
       return 'Just-now';
-    }
-  
-    if (
-      uploadTime.getDate() === now.getDate() &&
-      uploadTime.getMonth() === now.getMonth() &&
-      uploadTime.getFullYear() === now.getFullYear()
-    ) {
-      return uploadTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' ,hour12: true, });
-    }
-  
-    return uploadTime.toLocaleDateString([], { month: '2-digit', day: '2-digit',year: '2-digit' });
   }
+
+  const isSameDay = now.isSame(uploadTime, "day");
+  if (isSameDay) {
+      return uploadTime.format('hh:mm A'); // This will give you a format like "05:00 PM"
+  }
+
+  return uploadTime.format('MM-DD-YY'); // This will give you a format like "10-08-23"
+}
