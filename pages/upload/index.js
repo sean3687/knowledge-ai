@@ -492,7 +492,7 @@ function UploadPage({ accessToken }) {
                           )}
                         </td>
 
-                        <td className="py-3 flex justify-center">
+                        <td className="py-3 flex justify-center items-center">
                           <button
                             onClick={() => {
                               downloadDocumentClick(item.id);
@@ -609,8 +609,8 @@ function UploadPage({ accessToken }) {
                           <td colSpan={6} className="p-4">
                           <div className="text-sm font-bold mb-2">MetaData</div>
                             <div>
-                              {item.labels.map((label) => (
-                                <button className="relative transform transition-transform px-2 mb-2">
+                              {item.labels.map((label, index) => (
+                                <button key= {index} className="relative transform transition-transform px-2 mb-2">
                                   <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white">
                                     {label}
                                   </div>
