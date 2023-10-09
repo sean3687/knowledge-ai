@@ -658,7 +658,7 @@ function UploadPage({ accessToken }) {
           </div>
         </div>
       </div>
-      {showPopup && (
+      {/* {showPopup && (
         <div className="fixed bottom-4 right-4 w-2/3 lg:w-1/4 p-4 bg-white border rounded-lg shadow-xl">
           <div className="flex justify-between items-center mb-4">
             <button
@@ -672,7 +672,7 @@ function UploadPage({ accessToken }) {
             <UploadStatusChecker jsonData={uploadIneQueue} />
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
