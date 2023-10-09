@@ -6,7 +6,6 @@ import withLayout from "../../components/layouts/withLayout";
 import LottieAnimation from "../../components/animation/lottie-animation";
 import animationData from "../../public/accounting-lottie.json";
 
-
 function LoginPage() {
   const [message, setMessage] = useState("");
 
@@ -33,9 +32,9 @@ function LoginPage() {
       //load profile
       await getProfile(accessToken);
       //create new chat id and set
-      console.log("move to login page" );
+      console.log("move to login page");
       window.location.href = "/chatbot";
-      console.log("move finished" +chatid);
+      console.log("move finished" + chatid);
     } catch (error) {
       // setMessage(error.response.data.message);
     }
@@ -63,12 +62,13 @@ function LoginPage() {
           KLIB
         </div>
         <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white w-full text-center mt-40">
-          Empower Your Documents with AI
+          Unlock the Potential of Your Documents with AI
         </h1>
         <p className="text-gray-200 mb-4 text-center">
-          Upload your documents and let our AI analyze them. We&lsquo;ll find
-          the right documents for you, provide valuable information,
-          and more.
+          Simply upload your documents and let our advanced AI delve deep into
+          them. KLIB's cutting-edge AI dives deep into your documents, extract
+          critical insights, and elevate your data experience. <br></br>
+          <br></br>Dive into the future of knowledge library today!
         </p>
         <LottieAnimation
           animationData={animationData}

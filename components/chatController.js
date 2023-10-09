@@ -51,8 +51,7 @@ function ChatController({
   };
 
   async function getDownloadDocument(id) {
-
-    console.log("this is id", id)
+    console.log("this is id", id);
     if (!id) return;
 
     console.log("this is download document id" + id);
@@ -65,10 +64,10 @@ function ChatController({
             Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
             "Content-Type": "application/json",
           },
-          responseType: "arraybuffer", 
+          responseType: "arraybuffer",
         }
       );
-      
+
       const blob = new Blob([response.data], {
         type: response.headers["content-type"],
       });
@@ -173,11 +172,14 @@ function ChatController({
                               </span>
                               <div className="flex flex-wrap items-center">
                                 {" "}
-                                {/* Add 'items-center' class */}
                                 {item.fileData.map((data, index) => (
-                                  <button key={index} className="relative transform transition-transform px-2  mr-2 max-w-[130px] " onClick={() => {
-                                    getDownloadDocument(data.file_id);
-                                  }}>
+                                  <button
+                                    key={index}
+                                    className="relative transform transition-transform px-2  mr-2 max-w-[130px] "
+                                    onClick={() => {
+                                      getDownloadDocument(data.file_id);
+                                    }}
+                                  >
                                     <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white truncate max-w-[130px] hover:max-w-full">
                                       {data.file_name}
                                     </div>

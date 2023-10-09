@@ -77,8 +77,6 @@ function UploadPage({ accessToken }) {
 
   async function metadataClick(fileId, index) {
     setExpandedMetadataRow(index);
-    // setSelectedID(fileId);
-    // setSummarizeId(fileId);
     setExpandedMetadataRow(expandedMetadataRow === index ? null : index); // Toggle the expanded row
   }
 
@@ -91,7 +89,7 @@ function UploadPage({ accessToken }) {
         { selectedId: selectedId },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
         }
@@ -131,26 +129,45 @@ function UploadPage({ accessToken }) {
     event.target.value = null;
   }
 
-  async function handleCheckStatus(inqueue) {
-    console.log("handleCheckStatus " + inqueue);
-    const interval = setInterval(async () => {
-      console.log("this is interval " + inqueue);
-      // const response = await axios.post(
-      //   "/api/upload/postFileUploadStatus",
-      //   { file_id: inqueue },
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${accessToken}`,
-      //       "Content-Type": "application/json",
-      //     },
-      //   }
-      // );
-      console.log("this is response from check status", response.data);
-      // if (response.data.upload_status === "completed") {
-      //   clearInterval(interval);
-      //   fetchUploadedDocuments(accessToken);
-      // }
-    }, 1000);
+  async function getFileUploadStatus(fileId) {
+    console.log("getFileUploadStatus 1", fileId);
+    try {
+      const response = await axios.get(
+        `/api/upload/getFileUploadStatus?file_id=${fileId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("getFileUploadStatus :", response.data.upload_status);
+      return response.data.upload_status;
+    } catch (error) {
+      console.error("Error getting file upload status:", error);
+      return "error";
+    }
+  }
+
+  async function processFiles(inqueue) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    fetchUploadedDocuments(accessToken);
+    for (let i = 0; i < inqueue.length; i++) {
+      let status = await getFileUploadStatus(inqueue[i].file_id);
+      console.log("processFiles getFileUploadStatus", status);
+
+      while (status === "uploading") {
+        console.log("processFiles getFileUploadStatus uploading", status);
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // wait for 5 seconds
+        status = await getFileUploadStatus(inqueue[i].file_id);
+      }
+
+      if (status === "completed" || status === "error") {
+        console.log("processFiles getFileUploadStatus error", status);
+        await fetchUploadedDocuments(accessToken);
+        continue; // move to the next file
+      }
+    }
   }
 
   async function handleFilesUpload(files) {
@@ -173,7 +190,7 @@ function UploadPage({ accessToken }) {
       );
       console.log("this is upload", response.data);
       setUploadIneQueue(response.data);
-      // handleCheckStatus(response.data);
+      await processFiles(response.data);
       console.log("upload completed");
       fetchUploadedDocuments(accessToken);
     } catch (error) {
@@ -211,7 +228,7 @@ function UploadPage({ accessToken }) {
         { selectedId: id },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
           responseType: "arraybuffer", // Ensure the response type is arraybuffer
@@ -244,7 +261,7 @@ function UploadPage({ accessToken }) {
         { selectedId: selectedID },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${accessToken})}`,
             "Content-Type": "application/json",
           },
         }
@@ -283,7 +300,7 @@ function UploadPage({ accessToken }) {
         }, 1000) // 300ms delay
       );
     } else {
-      fetchUploadedDocuments(sessionStorage.getItem("accessToken"));
+      fetchUploadedDocuments(accessToken);
     }
   };
 
@@ -293,7 +310,7 @@ function UploadPage({ accessToken }) {
       { search_query: search_query },
       {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       }
@@ -311,8 +328,14 @@ function UploadPage({ accessToken }) {
       <div>
         {fileStatus === "uploading" ? (
           <button className="relative transform transition-transform hover:scale-105 active:scale-95 px-2">
-            <div className="relative group text-xs bg-orange-500 px-2 py-1 rounded-lg text-white">
-              In-progress
+            <div className="relative group text-xs bg-orange-500 px-2 py-1 rounded-lg text-white flex items-center">
+              <Spinner
+                className=""
+                size={`w-3 h-3`}
+                tintColor={"fill-orange-500"}
+                bgColor={"dark:text-white"}
+              />
+              <div className="ml-1">In-progress</div>
             </div>
           </button>
         ) : fileStatus === "completed" ? (
@@ -607,10 +630,15 @@ function UploadPage({ accessToken }) {
                       {expandedMetadataRow === index && (
                         <tr>
                           <td colSpan={6} className="p-4">
-                          <div className="text-sm font-bold mb-2">MetaData</div>
+                            <div className="text-sm font-bold mb-2">
+                              MetaData
+                            </div>
                             <div>
                               {item.labels.map((label, index) => (
-                                <button key= {index} className="relative transform transition-transform px-2 mb-2">
+                                <button
+                                  key={index}
+                                  className="relative transform transition-transform px-2 mb-2"
+                                >
                                   <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white">
                                     {label}
                                   </div>
