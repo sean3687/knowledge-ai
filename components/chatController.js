@@ -174,11 +174,11 @@ function ChatController({
                               <div className="flex flex-wrap items-center">
                                 {" "}
                                 {/* Add 'items-center' class */}
-                                {item.fileData.map((data) => (
-                                  <button class="relative transform transition-transform px-2  mr-2 max-w-[130px] " onClick={() => {
+                                {item.fileData.map((data, index) => (
+                                  <button key={index} className="relative transform transition-transform px-2  mr-2 max-w-[130px] " onClick={() => {
                                     getDownloadDocument(data.file_id);
                                   }}>
-                                    <div class="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white truncate max-w-[130px] hover:max-w-full">
+                                    <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white truncate max-w-[130px] hover:max-w-full">
                                       {data.file_name}
                                     </div>
                                   </button>
