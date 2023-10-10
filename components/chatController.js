@@ -91,6 +91,7 @@ function ChatController({
       } else {
         event.preventDefault();
         handleClick();
+        scrollToBottom()
       }
     }
   };
