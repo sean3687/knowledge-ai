@@ -184,7 +184,7 @@ function ChatController({
                                         getDownloadDocument(data.file_id);
                                       }}
                                     >
-                                      <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white truncate max-w-[130px] hover:max-w-full">
+                                      <div className="relative group text-xs bg-blue-500 px-2 py-1 rounded-lg text-white truncate max-w-[130px] hover:max-w-full">
                                         {data.file_name}
                                       </div>
                                     </button>
