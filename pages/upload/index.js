@@ -296,7 +296,7 @@ function UploadPage({ accessToken }) {
       // Check if the value is not empty
       setTypingTimeout(
         setTimeout(() => {
-          postSearchDocument(value);
+          getSearchGeneral(value);
         }, 1000) // 300ms delay
       );
     } else {
@@ -321,6 +321,26 @@ function UploadPage({ accessToken }) {
     } else {
       setDocumentList(response.data);
     }
+  }
+
+  async function getSearchGeneral(search_query) {
+   
+      const response = await axios.get(
+        `/api/upload/getSearchGeneral/?search_query=${search_query}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("getFileUploadStatus :", response.data.upload_status);
+      if (response.status === 200) {
+        console.log("this is response from search : ", response.data);
+        setDocumentList(response.data);
+      } else {
+        setDocumentList(response.data);
+      }
   }
 
   function StatusIndication({ fileStatus }) {
@@ -484,10 +504,12 @@ function UploadPage({ accessToken }) {
                         </td>
                         <td
                           className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]"
+                          
                           onClick={() => {
                             downloadDocumentClick(item.id);
                           }}
                         >
+                        
                           {item.file_name}
                         </td>
                         <td className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
