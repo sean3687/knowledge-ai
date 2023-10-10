@@ -26,9 +26,14 @@ function Controller() {
   const chatId = router.query.id;
 
   useEffect(() => {
-    if (chatId) {
+    const savedChatId = sessionStorage.getItem("current_chatId");
+    console.log("Chatid From Session Storage", savedChatId);
+    console.log("chatid from router", chatId);
+    if (savedChatId!==chatId) {
       // Fetch messages or perform some other action when chatId changes
+      setChatArray([]);
       getChatMessages(chatId);
+      sessionStorage.setItem("current_chatId", chatId);
     }
   }, [chatId]);
 

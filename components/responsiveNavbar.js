@@ -459,9 +459,7 @@ function Navbar({ accessToken, name }) {
   }
 
   async function handleChatClick(id) {
-    setChatArray([]);
     console.log("Chat id Clicked: ", id);
-
     router.push(`/chatbot/${id}`);
     setSelectedChatId(id);
     await getChatList();
