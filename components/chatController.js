@@ -209,7 +209,7 @@ function ChatController({
               <div className=" bg-gray-50 p-5 flex ">
               
                 <div className="text-white">
-                  <PiBrainDuotone className="text-4xl fill-current bg-indigo-600 rounded p-1" />
+                  <PiBrainDuotone className="text-4xl fill-current bg-orange-600 rounded p-1" />
                 </div>
                 <div className="chat-bubble chat-bubble-primary ml-5">
                   {streamingResponse}
