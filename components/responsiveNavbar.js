@@ -275,7 +275,7 @@ function Navbar({ accessToken, name }) {
         <div className="overflow-hidden flex flex-col">
           <div className="justify-center align-middle px-5 pt-4 pb-3">
             <button
-              className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-gray-400 text-white ring-0 ring-gray-400 hover:ring-2 active:ring-0 w-full"
+              className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-blue-400 text-white ring-0 ring-blue-400 hover:ring-2 active:ring-0 w-full"
               onClick={() => {}}
             >
               <Link href={"/upload"} className="w-full text-sm">

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Loading from "./animation/loading";
 import ScrollButton from "./scrollBottom";
 import { FaPaperPlane, FaTrashCan, FaRegComments } from "react-icons/fa6";
+import {PiBrainDuotone, PiArrowDown} from "react-icons/pi";
 import { icons } from "react-icons";
 import axios from "axios";
 
@@ -46,6 +47,7 @@ function ChatController({
     setInputText(itemText);
   };
   const messagesEndRef = useRef(null);
+
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
@@ -129,32 +131,34 @@ function ChatController({
           <div className="flex flex-col justify-between h-full">
             <div className="p-6"></div>
             <div className="border-t border-gray-300"></div>
-            <div className="">
+            <div className="justify-center">
               {messages?.map((item, key) => {
                 let displayMessage = item.message;
 
                 return item.sender == "me" ? (
-                  <>
-                    <div className="bg-white px-20 py-5 flex" key={key}>
-                      <div className="text-white">
-                        <AiOutlineUser className="text-4xl fill-current bg-blue-400 rounded p-1" />
-                      </div>
-                      <div className="ml-5">
-                        {displayMessage}
-                        <div>
-                          <time className="text-xs opacity-50">
-                            {item.time}
-                          </time>
+                  <div className="border-b">
+                    <div className="m-auto max-w-3xl p-5">
+                      <div className="bg-white flex" key={key}>
+                        <div className="text-white">
+                          <AiOutlineUser className="text-4xl fill-current bg-blue-400 rounded p-1" />
+                        </div>
+                        <div className="ml-5">
+                          {displayMessage}
+                          <div>
+                            <time className="text-xs opacity-50">
+                              {item.time}
+                            </time>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div className="border-t border-gray-300"></div>
-                  </>
+                  </div>
                 ) : (
-                  <>
-                    <div className="bg-gray-50 px-20 py-5 flex" key={key}>
+                  <div className="border-b bg-gray-50 ">
+                    <div className="m-auto max-w-3xl p-5">
+                    <div className=" flex" key={key}>
                       <div className="text-white">
-                        <AiOutlineRobot className="text-4xl fill-current bg-indigo-600 rounded p-1" />
+                        <PiBrainDuotone className="text-4xl fill-current bg-blue-600 rounded p-1" />
                       </div>
                       <div className="ml-5">
                         {item.message}
@@ -190,10 +194,11 @@ function ChatController({
                           )}
                       </div>
                     </div>
-                    <div className="border-t border-gray-300"></div>
-                  </>
+                    </div>
+                  </div>
                 );
               })}
+              <div className=" border-gray-300"></div>
             </div>
           </div>
         )}
@@ -203,7 +208,7 @@ function ChatController({
               <div className=" bg-gray-50 px-20 py-5 flex ">
                 <div></div>
                 <div className="text-white">
-                  <AiOutlineRobot className="text-4xl fill-current bg-indigo-600 rounded p-1" />
+                  <PiBrainDuotone className="text-4xl fill-current bg-indigo-600 rounded p-1" />
                 </div>
                 <div className="chat-bubble chat-bubble-primary ml-5">
                   {streamingResponse}
@@ -221,14 +226,26 @@ function ChatController({
       </div>
 
       <div
-        className="lg:w-[calc(100%-256px)] w-full flex opacity-bottom-0 absolute bottom-0 px-4 items-center"
+        className="lg:w-[calc(100%-256px)] w-full flex opacity-bottom-0 absolute bottom-0 px-4 items-center flex-col"
         style={{
           background:
             "linear-gradient(rgba(255,255,255,0), rgba(220, 220, 220,1))",
         }}
       >
-        <div className="mx-4 mb-5 flex flex-col w-full @sm:pb-5 max-w-7xl m-auto border rounded-lg">
+        {messages.length !== 0 ?
+        (<button
+            className="relative mb-5 font-semibold shadow-sm rounded-full px-3 py-3 text-white ring-0 outline-none border-0 h-full opacity-75 bg-blue-600 mb-2 w-10 ml-auto mr-5" 
+            onClick={scrollToBottom}
+            
+        >
+            <PiArrowDown/>
+        </button>) : (<></>) 
+        }
+       
+       
+        <div className="mx-4 mb-5 flex flex-col w-full @sm:pb-5 max-w-7xl m-auto">
           {/* Textarea/Input Box */}
+          <div className="border rounded-lg">
           <div className="">
             <textarea
               rows="4"
@@ -279,7 +296,10 @@ function ChatController({
             </div>
           </div>
         </div>
+        </div>
+       
       </div>
+      
       <div ref={messagesEndRef} />
     </div>
   );
