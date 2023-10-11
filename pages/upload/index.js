@@ -324,23 +324,22 @@ function UploadPage({ accessToken }) {
   }
 
   async function getSearchGeneral(search_query) {
-   
-      const response = await axios.get(
-        `/api/upload/getSearchGeneral/?search_query=${search_query}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("getFileUploadStatus :", response.data.upload_status);
-      if (response.status === 200) {
-        console.log("this is response from search : ", response.data);
-        setDocumentList(response.data);
-      } else {
-        setDocumentList(response.data);
+    const response = await axios.get(
+      `/api/upload/getSearchGeneral/?search_query=${search_query}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
       }
+    );
+    console.log("getFileUploadStatus :", response.data.upload_status);
+    if (response.status === 200) {
+      console.log("this is response from search : ", response.data);
+      setDocumentList(response.data);
+    } else {
+      setDocumentList(response.data);
+    }
   }
 
   function StatusIndication({ fileStatus }) {
@@ -445,9 +444,9 @@ function UploadPage({ accessToken }) {
               <FaSearch />
             </div>
           </div>
-          <div className="outline outline-1 outline-gray-200 rounded-lg w-full">
+          <div className=" outline-gray-200 rounded-lg w-full">
             <div className="w-full space-y-1"></div>
-            <table className="min-w-full divide-y divide-gray-200  rounded-md">
+            <table className="min-w-full divide-y divide-gray-200 outline outline-1 outline-gray-200 rounded-md">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="w-12 p-3.5"></th>
@@ -504,12 +503,10 @@ function UploadPage({ accessToken }) {
                         </td>
                         <td
                           className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]"
-                          
                           onClick={() => {
                             downloadDocumentClick(item.id);
                           }}
                         >
-                        
                           {item.file_name}
                         </td>
                         <td className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
@@ -518,17 +515,17 @@ function UploadPage({ accessToken }) {
                         <td className="whitespace-nowrap text-center py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
                           <StatusIndication fileStatus={item.status} />
                         </td>
-                        <td className="relative whitespace-nowrap py-4 text-sm text-gray-700 max-w-[10rem] text-center">
+                        <td className="relative whitespace-nowrap py-4 text-sm text-gray-700 overflow-hidden text-center">
                           {item.labels.length === 0 ? (
                             <div>-</div>
                           ) : (
                             <button
-                              className="relative transform transition-transform hover:scale-105 active:scale-95 px-2"
+                              className="relative transform transition-transform hover:scale-105 active:scale-95"
                               onClick={() => {
                                 metadataClick(item.id, index);
                               }}
                             >
-                              <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white">
+                              <div className="relative group text-xs bg-cyan-500 px-2 py-1 rounded-lg text-white truncate">
                                 {item.labels[0]}
                               </div>
                             </button>
@@ -673,7 +670,6 @@ function UploadPage({ accessToken }) {
               </tbody>
             </table>
           </div>
-          
         </div>
       </div>
       {/* {showPopup && (
