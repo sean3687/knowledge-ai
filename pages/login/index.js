@@ -36,7 +36,7 @@ function LoginPage() {
       window.location.href = "/chatbot";
       console.log("move finished" + chatid);
     } catch (error) {
-      // setMessage(error.response.data.message);
+      setMessage("ID or Password is incorrect");
     }
   };
 
