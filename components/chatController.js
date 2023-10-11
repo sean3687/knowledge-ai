@@ -23,22 +23,22 @@ function ChatController({
   const { docId } = router.query;
   const Instruction = [
     {
-      title: "Access Documents",
-      text: "Please show me and provide a summary of the July 2023 Bicat Report.",
+      title: "Weather Forecast",
+      text: "Can you show me the weather forecast for today in Irvine?",
     },
     {
-      title: "Expense Tracking",
-      text: "what are my income and expenses for Q1 2023?",
+      title: "Document Retrieval",
+      text: "Please retrieve and provide a summary of the [ your-document ] document.",
     },
     {
-      title: "Tax-Preparation",
-      text: "Can you provide me financial statements, to send to my CPA for 2022 tax filing?",
+      title: "Category Retrieval",
+      text: "Find me documents in our database fall under the 'Receipt' category",
     },
     {
-      title: "Investment Basics",
-      text: "what is our household's total net worth at the end of 2022?",
+      title: "Document Summarization",
+      text: "Can you summarize the main points from the [ your-document ] for me?",
     },
-  ];
+];
   const handleInputChange = (event) => {
     setInputText(event.target.value);
   };

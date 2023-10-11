@@ -413,7 +413,7 @@ function UploadPage({ accessToken }) {
                   multiple
                 ></input>
               </button>
-              <button className="p-4 ring-1 ring-gray-200 rounded-2xl text-left space-y-3 hover:ring-gray-300 active:ring-gray-400">
+              <button className="p-4 ring-1 ring-gray-200 rounded-2xl text-left space-y-3 hover:ring-gray-300 active:ring-gray-400 opacity-50">
                 <div className="flex items-center space-x-3">
                   <FaGoogleDrive className="w-4 h-4 text-red-800" />
                   <div className="text-red-700 text-base font-semibold">
