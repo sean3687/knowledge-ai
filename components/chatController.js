@@ -1,12 +1,11 @@
-import { AiOutlineSend, AiOutlineRobot, AiOutlineUser } from "react-icons/ai";
-import { BsTrash } from "react-icons/bs";
+
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Loading from "./animation/loading";
-import ScrollButton from "./scrollBottom";
 import { FaPaperPlane, FaTrashCan, FaRegComments } from "react-icons/fa6";
-import { PiBrainDuotone, PiArrowDown } from "react-icons/pi";
-import { icons } from "react-icons";
+import { PiUserDuotone, PiBrainDuotone, PiArrowDown } from "react-icons/pi";
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css';  // choose a style of your preference
 import axios from "axios";
 
 function ChatController({
@@ -38,7 +37,7 @@ function ChatController({
       title: "Document Summarization",
       text: "Can you summarize the main points from the [ your-document ] for me?",
     },
-];
+  ];
   const handleInputChange = (event) => {
     setInputText(event.target.value);
   };
@@ -85,13 +84,27 @@ function ChatController({
     }
   }
 
+function markdownToHtml(str) {
+    // Convert bold text
+    str = str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // Convert code blocks with syntax highlighting
+    str = str.replace(/```(.*?)\n(.*?)```/gs, function(match, lang, code) {
+        const highlightedCode = hljs.highlight(lang, code).value;
+        return `<pre><code class="hljs ${lang}">${highlightedCode}</code></pre>`;
+    });
+
+    return str;
+}
+
+
   const handleEnter = (event) => {
     if (event.key === "Enter") {
       if (event.shiftKey) {
       } else {
         event.preventDefault();
         handleClick();
-        scrollToBottom()
+        scrollToBottom();
       }
     }
   };
@@ -141,7 +154,7 @@ function ChatController({
                     <div className="m-auto max-w-3xl p-5">
                       <div className="bg-white flex" key={key}>
                         <div className="text-white">
-                          <AiOutlineUser className="text-4xl fill-current bg-blue-400 rounded p-1" />
+                          <PiUserDuotone className="text-4xl fill-current bg-blue-400 rounded p-1" />
                         </div>
                         <div className="ml-5">
                           {displayMessage}
@@ -157,12 +170,17 @@ function ChatController({
                 ) : (
                   <div className="border-b bg-gray-50 ">
                     <div className="m-auto max-w-3xl p-5">
-                      <div className=" flex" key={key}>
+                      <div className="flex" key={key}>
                         <div className="text-white">
                           <PiBrainDuotone className="text-4xl fill-current bg-blue-600 rounded p-1" />
                         </div>
                         <div className="ml-5">
-                          {item.message}
+                          <div
+                            style={{ whiteSpace: "pre-line" }}
+                            dangerouslySetInnerHTML={{
+                              __html: markdownToHtml(item.message),
+                            }}
+                          ></div>
                           <div>
                             <time className="text-xs opacity-50">
                               {item.time}
@@ -176,7 +194,6 @@ function ChatController({
                                   Learn more:
                                 </span>
                                 <div className="flex flex-wrap items-center">
-                                  {" "}
                                   {item.fileData.map((data, index) => (
                                     <button
                                       key={index}
@@ -207,19 +224,24 @@ function ChatController({
           {isSendChatLoading ? (
             <div className="border-b bg-gray-50">
               <div className="m-auto max-w-3xl">
-              <div className=" bg-gray-50 p-5 flex ">
-              
-                <div className="text-white">
-                  <PiBrainDuotone className="text-4xl fill-current bg-orange-600 rounded p-1" />
-                </div>
-                <div className="chat-bubble chat-bubble-primary ml-5">
-                  {streamingResponse}
-                  <div className="chat-bubble items-center chat-bubble-primary mt-3">
-                    <Loading />
+                <div className=" bg-gray-50 p-5 flex ">
+                  <div className="text-white">
+                    <PiBrainDuotone className="text-4xl fill-current bg-orange-600 rounded p-1" />
+                  </div>
+                  <div
+                    className="chat-bubble chat-bubble-primary ml-5"
+                    style={{ whiteSpace: "pre-line" }}
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: markdownToHtml(streamingResponse),
+                      }}
+                    ></div>
+                    <div className="chat-bubble items-center chat-bubble-primary mt-3">
+                      <Loading />
+                    </div>
                   </div>
                 </div>
-              </div>
-              
               </div>
             </div>
           ) : (
