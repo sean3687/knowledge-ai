@@ -5,7 +5,7 @@ import Loading from "./animation/loading";
 import { FaPaperPlane, FaTrashCan, FaRegComments } from "react-icons/fa6";
 import { PiUserDuotone, PiBrainDuotone, PiArrowDown } from "react-icons/pi";
 import hljs from 'highlight.js';
-import 'highlight.js/styles/github.css';  // choose a style of your preference
+import 'highlight.js/styles/panda-syntax-dark.css';  // choose a style of your preference
 import axios from "axios";
 
 function ChatController({
