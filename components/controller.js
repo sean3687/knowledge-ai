@@ -134,7 +134,7 @@ function Controller() {
       setStreamingResponse("");
       const errorMessage = {
         sender: "bot",
-        message: error.message,
+        message: "Sorry, something went wrong. Please try again.",
         time: sendTime,
       };
       addChatArray(errorMessage); // Add error message to chat array
