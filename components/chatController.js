@@ -1,12 +1,18 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Loading from "./animation/loading";
 import { FaPaperPlane, FaTrashCan, FaRegComments } from "react-icons/fa6";
-import { PiUserDuotone, PiBrainDuotone, PiArrowDown } from "react-icons/pi";
-import hljs from 'highlight.js';
-import 'highlight.js/styles/panda-syntax-dark.css';  // choose a style of your preference
+import {
+  PiUserDuotone,
+  PiBrainDuotone,
+  PiArrowDown,
+  PiFolderUserDuotone,
+  PiGlobeSimpleDuotone,
+} from "react-icons/pi";
+import hljs from "highlight.js";
+import "highlight.js/styles/panda-syntax-dark.css"; // choose a style of your preference
 import axios from "axios";
+import Spinner from "./animation/spinner";
 
 function ChatController({
   inputText,
@@ -16,6 +22,7 @@ function ChatController({
   messages,
   setInputText,
   handleClick,
+  responseStatus,
   handleRefresh,
 }) {
   const router = useRouter();
@@ -38,6 +45,50 @@ function ChatController({
       text: "Can you summarize the main points from the [ your-document ] for me?",
     },
   ];
+
+  const renderBasedOnResponseStatus = () => {
+    console.log("responseStatus", responseStatus);
+    switch (responseStatus[0]) {
+      case !responseStatus.length || (responseStatus[0]?.trim().length === 0):
+    return <Loading className="mt-2" />;
+      case "External_Search":
+        return (
+          <div className="bg-indigo-300 flex p-2 rounded-lg justify-center items-center max-w-fit">
+            <PiGlobeSimpleDuotone className="w-5 h-5 mr-2 text-gray-800" />
+            <div className="text-gray- text-xs font-bold mr-2">
+              Exploring the web...
+            </div>
+            <Spinner
+              className=""
+              size={`w-4 h-4`}
+              tintColor={"fill-white"}
+              bgColor={"dark:text-indigo-300"}
+            />
+          </div>
+        );
+      case "Document_QA_System":
+        return (
+
+          <div className="bg-green-300 flex p-2 rounded-lg justify-center items-center max-w-fit">
+            <PiFolderUserDuotone className="w-5 h-5 mr-2 text-gray-800" />
+            <div className="text-gray- text-xs font-bold mr-2">
+              Reading your documents...
+            </div>
+            <Spinner
+              className=""
+              size={`w-4 h-4`}
+              tintColor={"fill-white"}
+              bgColor={"dark:text-indigo-300"}
+            />
+          </div>
+          
+        );
+      default:
+        return <div className="mt-4">
+          <Loading  />
+        </div>; 
+    }
+  };
   const handleInputChange = (event) => {
     setInputText(event.target.value);
   };
@@ -84,19 +135,18 @@ function ChatController({
     }
   }
 
-function markdownToHtml(str) {
+  function markdownToHtml(str) {
     // Convert bold text
-    str = str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    str = str.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
 
     // Convert code blocks with syntax highlighting
-    str = str.replace(/```(.*?)\n(.*?)```/gs, function(match, lang, code) {
-        const highlightedCode = hljs.highlight(lang, code).value;
-        return `<pre><code class="hljs ${lang}">${highlightedCode}</code></pre>`;
+    str = str.replace(/```(.*?)\n(.*?)```/gs, function (match, lang, code) {
+      const highlightedCode = hljs.highlight(lang, code).value;
+      return `<pre><code class="hljs ${lang}">${highlightedCode}</code></pre>`;
     });
 
     return str;
-}
-
+  }
 
   const handleEnter = (event) => {
     if (event.key === "Enter") {
@@ -237,8 +287,12 @@ function markdownToHtml(str) {
                         __html: markdownToHtml(streamingResponse),
                       }}
                     ></div>
-                    <div className="chat-bubble items-center chat-bubble-primary mt-3">
-                      <Loading />
+
+                    <div>
+                      
+                      <div className="max-width-[150px]">
+                        {renderBasedOnResponseStatus()}
+                      </div>
                     </div>
                   </div>
                 </div>

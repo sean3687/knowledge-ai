@@ -10,14 +10,10 @@ function Controller() {
   // const [inputText, setInputText] = useState("");
   const [isSendChatLoading, setIsSendChatLoading] = useState(false);
   const [isGetChatLoading, setIsGetChatLoading] = useState(false);
+  const [responseStatus, setResponseStatus] = useState("");
   const [fileObject, setFileObject] = useState();
-
-  // State to hold user input
   const [inputText, setInputText] = useState("");
-
-  // State to hold streaming response
   const [streamingResponse, setStreamingResponse] = useState("");
-
   const chatArray = useChatInfoStore((state) => state.chatArray);
   const setChatArray = useChatInfoStore((state) => state.setChatArray);
   const addChatArray = useChatInfoStore((state) => state.addChatArray);
@@ -29,19 +25,37 @@ function Controller() {
     const savedChatId = sessionStorage.getItem("current_chatId");
     console.log("Chatid From Session Storage", savedChatId);
     console.log("chatid from router", chatId);
-    if (savedChatId!==chatId) {
-      // Fetch messages or perform some other action when chatId changes
+
+    if (savedChatId !== chatId) {
+
       setChatArray([]);
       getChatMessages(chatId);
       sessionStorage.setItem("current_chatId", chatId);
     }
-  }, [chatId]);
+
+    let intervalId;
+
+    if (isSendChatLoading) {
+      intervalId = setInterval(async () => {
+        if (chatId) {
+          await getChatStatus(chatId);
+          console.log("this is response status", responseStatus);
+        }
+      }, 1000); 
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [chatId, isSendChatLoading]);
 
   const sendMessageClick = async () => {
-    console.log("In progress: sendMessageClick1 ");
     setIsSendChatLoading(true);
-    setStreamingResponse(""); // Clear previous streaming response
-    const currentInputText = inputText; // Capture the value before clearing
+    console.log("In progress: sendMessageClick1 ", isSendChatLoading);
+    setStreamingResponse(""); 
+    const currentInputText = inputText; 
     setInputText("");
 
     let chatId = router.query.id;
@@ -50,14 +64,12 @@ function Controller() {
       console.log("ChatId not found");
       await setNewChatId();
 
-      chatId = router.query.id; // Assume setNewChatId updates router.query.id synchronously
+      chatId = router.query.id;
     }
 
-    // Only proceed if you have a chatId
+   
     if (chatId) {
-      console.log("In progress: sendMessageClick2");
-      await sendMessageGivenChatId(currentInputText);
-      console.log("In progress: sendMessageClick3 ");
+      sendMessageGivenChatId(currentInputText);
     }
   };
 
@@ -66,7 +78,7 @@ function Controller() {
     console.log("In progress: sendMessageGivenChatId");
     const sendTime = moment().format("h:mm");
     const myMessage = { sender: "me", message: messageText, time: sendTime };
-    addChatArray(myMessage); // Add user message to chat array
+    addChatArray(myMessage); 
 
     try {
       const response = await fetch(
@@ -110,11 +122,9 @@ function Controller() {
           setStreamingResponse("");
           return;
         }
-        console.log("here is value : ", value);
+   
         let decodedValue = new TextDecoder("utf-8").decode(value);
-        console.log("here is decoded value", decodedValue);
-
-        let processedValues = decodedValue.split("data: "); // Split based on "data:
+        let processedValues = decodedValue.split("data: "); 
 
         for (let val of processedValues) {
           console.log("this is val", val);
@@ -125,12 +135,12 @@ function Controller() {
         }
 
         setStreamingResponse(accumulatedResponse);
-        console.log("This is newest streaming response", accumulatedResponse);
+       
 
         return reader.read().then(process); // Continue processing the stream
       });
     } catch (error) {
-      popChatArray(); // Remove bot loading message from chat array in case of error
+      popChatArray(); 
       setStreamingResponse("");
       const errorMessage = {
         sender: "bot",
@@ -141,6 +151,27 @@ function Controller() {
       console.error("Fetch Error:", error);
     }
   };
+
+  async function getChatStatus(chatId) {
+    try {
+      const response = await axios.get(
+        `/api/chatbot/getChatStatus?chat_id=${chatId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              sessionStorage.getItem("accessToken") || ""
+            }`,
+          },
+        }
+      );
+      const chatStatus = response.data;
+      setResponseStatus(chatStatus);
+      return;
+    } catch (error) {
+      setResponseStatus("");
+      return "";
+    }
+  }
 
   async function getRelevantFile(chatId, inputText, aiResponse) {
     const body = {
@@ -261,6 +292,7 @@ function Controller() {
         streamingResponse={streamingResponse}
         messages={chatArray}
         // getRelevantFile={fileObject}
+        responseStatus={responseStatus}
         setInputText={setInputText}
         handleClick={sendMessageClick}
         handleRefresh={handleRefresh}
