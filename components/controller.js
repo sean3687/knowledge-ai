@@ -27,7 +27,6 @@ function Controller() {
     console.log("chatid from router", chatId);
 
     if (savedChatId !== chatId) {
-
       setChatArray([]);
       getChatMessages(chatId);
       sessionStorage.setItem("current_chatId", chatId);
@@ -41,7 +40,7 @@ function Controller() {
           await getChatStatus(chatId);
           console.log("this is response status", responseStatus);
         }
-      }, 1000); 
+      }, 1000);
     }
 
     return () => {
@@ -54,8 +53,8 @@ function Controller() {
   const sendMessageClick = async () => {
     setIsSendChatLoading(true);
     console.log("In progress: sendMessageClick1 ", isSendChatLoading);
-    setStreamingResponse(""); 
-    const currentInputText = inputText; 
+    setStreamingResponse("");
+    const currentInputText = inputText;
     setInputText("");
 
     let chatId = router.query.id;
@@ -67,7 +66,6 @@ function Controller() {
       chatId = router.query.id;
     }
 
-   
     if (chatId) {
       sendMessageGivenChatId(currentInputText);
     }
@@ -78,7 +76,7 @@ function Controller() {
     console.log("In progress: sendMessageGivenChatId");
     const sendTime = moment().format("h:mm");
     const myMessage = { sender: "me", message: messageText, time: sendTime };
-    addChatArray(myMessage); 
+    addChatArray(myMessage);
 
     try {
       const response = await fetch(
@@ -98,15 +96,25 @@ function Controller() {
       console.log("This is debug input text", inputText);
       const reader = response.body.getReader();
 
+      let isDispDetected = false;
       let accumulatedResponse = "";
 
       reader.read().then(async function process({ done, value }) {
         if (done) {
-          const fileData = await getRelevantFile(
-            chatId,
-            inputText,
-            accumulatedResponse
-          );
+          let fileData;
+          if (isDispDetected) {
+            fileData = await displayRelevantFile(
+              chatId,
+              inputText,
+              accumulatedResponse
+            );
+          } else {
+            fileData = await getRelevantFile(
+              chatId,
+              inputText,
+              accumulatedResponse
+            );
+          }
 
           const finalBotMessage = {
             sender: "bot",
@@ -122,9 +130,20 @@ function Controller() {
           setStreamingResponse("");
           return;
         }
-   
+
         let decodedValue = new TextDecoder("utf-8").decode(value);
-        let processedValues = decodedValue.split("data: "); 
+
+        // Check for "disp:" only if not already detected
+        console.log("this is devoded value", decodedValue);
+        if (!isDispDetected && decodedValue.startsWith("disp: ")) {
+          let dispValues = decodedValue.split("disp: ")[1];
+          dispValues = dispValues.replace(/\n\n$/, '');
+          accumulatedResponse = accumulatedResponse + dispValues;
+          isDispDetected = true;
+          return reader.read().then(process); // Skip further processing for this chunk and continue reading
+        }
+
+        let processedValues = decodedValue.split("data: ");
 
         for (let val of processedValues) {
           console.log("this is val", val);
@@ -135,12 +154,11 @@ function Controller() {
         }
 
         setStreamingResponse(accumulatedResponse);
-       
 
         return reader.read().then(process); // Continue processing the stream
       });
     } catch (error) {
-      popChatArray(); 
+      popChatArray();
       setStreamingResponse("");
       const errorMessage = {
         sender: "bot",
@@ -170,6 +188,37 @@ function Controller() {
     } catch (error) {
       setResponseStatus("");
       return "";
+    }
+  }
+
+  async function displayRelevantFile(chatId, inputText, aiResponse) {
+    const body = {
+      chat_id: chatId,
+      human_message: inputText,
+      ai_message: aiResponse,
+    };
+    try {
+      const response = await axios.post(
+        "/api/chatbot/getDisplayRelevantFile",
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200) {
+        const releventFile = response.data;
+        console.log("Relevent file is : ", releventFile);
+        setFileObject(releventFile);
+        return releventFile;
+      }
+    } catch (error) {
+      return setFileObject({
+        file_id: -1,
+        file_name: "No relevant file found",
+      });
     }
   }
 
