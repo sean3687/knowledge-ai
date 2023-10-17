@@ -77,3 +77,11 @@ pre {
 code.hljs {
   font-family: 'Courier New', Courier, monospace;
 }
+
+.dot {
+  width: 4px;
+  height: 4px;
+  background-color: #525252; /* Adjust the color as needed */
+  border-radius: 10%;
+  margin-right: 4px; /* Adjust the spacing between dots as needed */
+}

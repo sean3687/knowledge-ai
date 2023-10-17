@@ -13,6 +13,7 @@ import hljs from "highlight.js";
 import "highlight.js/styles/panda-syntax-dark.css"; // choose a style of your preference
 import axios from "axios";
 import Spinner from "./animation/spinner";
+import LoadingDots from "./animation/loadingDots";
 
 function ChatController({
   inputText,
@@ -49,44 +50,62 @@ function ChatController({
   const renderBasedOnResponseStatus = () => {
     console.log("responseStatus", responseStatus);
     switch (responseStatus[0]) {
-      case !responseStatus.length || (responseStatus[0]?.trim().length === 0):
-    return <Loading className="mt-2" />;
+      case !responseStatus.length || responseStatus[0]?.trim().length === 0:
+        return <Loading className="mt-2" />;
       case "External_Search":
         return (
-          <div className="bg-indigo-300 flex p-2 rounded-lg justify-center items-center max-w-fit">
-            <PiGlobeSimpleDuotone className="w-5 h-5 mr-2 text-gray-800" />
-            <div className="text-gray- text-xs font-bold mr-2">
-              Exploring the web...
+          <div className="border border-purple-500/75 border-1 flex rounded-lg justify-center items-center max-w-fit">
+            <div className="flex">
+              <PiGlobeSimpleDuotone className="w-6 h-6 mx-4 my-2 text-purple-500" />
             </div>
-            <Spinner
-              className=""
-              size={`w-4 h-4`}
-              tintColor={"fill-white"}
-              bgColor={"dark:text-indigo-300"}
-            />
+            <div className="my-2 mr-5">
+              <div className="flex items-center">
+                <div className="text-gray text-xs font-bold flex aligns-center">
+                  <span className="mr-2">Browsing...</span>
+                </div>
+                <Spinner
+                  className=""
+                  size={`w-3 h-3`}
+                  tintColor={"fill-black"}
+                  bgColor={"dark:text-purple-300"}
+                />
+              </div>
+              <div className="text-gray text-xs font-medium mr-2">Web</div>
+            </div>
           </div>
         );
       case "Document_QA_System":
         return (
-
-          <div className="bg-green-300 flex p-2 rounded-lg justify-center items-center max-w-fit">
-            <PiFolderUserDuotone className="w-5 h-5 mr-2 text-gray-800" />
-            <div className="text-gray- text-xs font-bold mr-2">
-              Reading your documents...
-            </div>
-            <Spinner
-              className=""
-              size={`w-4 h-4`}
-              tintColor={"fill-white"}
-              bgColor={"dark:text-indigo-300"}
-            />
-          </div>
           
+
+          <div className="border border-blue-500/75 border-1 flex rounded-lg justify-center items-center max-w-fit">
+            <div className="flex">
+              <PiFolderUserDuotone className="w-6 h-6 mx-4 my-2 text-blue-500" />
+            </div>
+            <div className="my-2 mr-5">
+              <div className="flex items-center">
+                <div className="text-gray text-xs font-bold flex aligns-center">
+                  <span className="mr-2">Browsing...</span>
+                </div>
+                <Spinner
+                  className=""
+                  size={`w-3 h-3`}
+                  tintColor={"fill-black"}
+                  bgColor={"dark:text-blue-300"}
+                />
+              </div>
+              <div className="text-gray text-xs font-medium mr-2">
+                Your documents
+              </div>
+            </div>
+          </div>
         );
       default:
-        return <div className="mt-4">
-          <Loading  />
-        </div>; 
+        return (
+          <div className="mt-4">
+            <LoadingDots />
+          </div>
+        );
     }
   };
   const handleInputChange = (event) => {
@@ -157,6 +176,7 @@ function ChatController({
         scrollToBottom();
       }
     }
+    
   };
 
   useEffect(() => {
@@ -282,18 +302,16 @@ function ChatController({
                     className="chat-bubble chat-bubble-primary ml-5"
                     style={{ whiteSpace: "pre-line" }}
                   >
+                    <div>
+                      <div className="max-width-[150px] mb-2">
+                        {renderBasedOnResponseStatus()}
+                      </div>
+                    </div>
                     <div
                       dangerouslySetInnerHTML={{
                         __html: markdownToHtml(streamingResponse),
                       }}
                     ></div>
-
-                    <div>
-                      
-                      <div className="max-width-[150px]">
-                        {renderBasedOnResponseStatus()}
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -327,8 +345,12 @@ function ChatController({
           <div className="border rounded-lg">
             <div className="">
               <textarea
-                rows="4"
-                style={{ height: "45px", "overflow-y": "hidden" }}
+                rows="1"
+                style={{
+                  "max-height": "400px",
+                  height: "56px",
+                  "overflow-y": "hidden",
+                }}
                 className="block w-full text-gray-900 placeholder:text-gray-400 text-base font-normal resize-none outline-none px-4 py-4 rounded-t-lg focus:outline-none border-none bg-white z-5"
                 placeholder={
                   isSendChatLoading
@@ -361,7 +383,7 @@ function ChatController({
                 </div>
                 <button
                   className={
-                    "transition-all duration-200 relative font-semibold shadow-sm rounded-md px-3 py-1.5 text-sm text-white ring-blue-600 active:ring-0 ring-0 hover:ring-0 outline-none hover:outline-none focus:outline-none border-0 h-full opacity-75" +
+                    "transition-all duration-200 relative font-semibold rounded-md px-3 py-1.5 text-sm text-white ring-blue-600 active:ring-0 ring-0 hover:ring-0 outline-none hover:outline-none focus:outline-none border-0 h-full opacity-75" +
                     (isSendChatLoading
                       ? " opacity-40 text-white "
                       : " bg-blue-600 text-white")
@@ -369,7 +391,7 @@ function ChatController({
                   onClick={handleClick}
                 >
                   {isSendChatLoading ? (
-                    <Loading className="px-1 py-2" />
+                    <LoadingDots className="text-black px-1 py-2" />
                   ) : (
                     <FaPaperPlane className="text-xl" />
                   )}

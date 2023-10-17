@@ -26,7 +26,7 @@ function Controller() {
     console.log("Chatid From Session Storage", savedChatId);
     console.log("chatid from router", chatId);
 
-    if (savedChatId !== chatId) {
+    if (savedChatId !== chatId && chatId) {
       setChatArray([]);
       getChatMessages(chatId);
       sessionStorage.setItem("current_chatId", chatId);
