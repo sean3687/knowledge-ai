@@ -71,7 +71,7 @@ function ChatController({
                   bgColor={"dark:text-purple-300"}
                 />
               </div>
-              <div className="text-gray text-xs font-medium mr-2">Web</div>
+              <div className="text-gray text-xs font-medium mr-2">External sources</div>
             </div>
           </div>
         );
