@@ -75,7 +75,7 @@ function Controller() {
     let chatId = router.query.id;
     console.log("In progress: sendMessageGivenChatId");
     const sendTime = moment().format("h:mm");
-    const myMessage = { sender: "me", message: messageText, time: sendTime };
+    const myMessage = { sender: "human", message: messageText, time: sendTime };
     addChatArray(myMessage);
 
     try {
@@ -117,7 +117,7 @@ function Controller() {
           }
 
           const finalBotMessage = {
-            sender: "bot",
+            sender: "ai",
             message: accumulatedResponse,
             time: sendTime,
             fileData: fileData,
@@ -161,7 +161,7 @@ function Controller() {
       popChatArray();
       setStreamingResponse("");
       const errorMessage = {
-        sender: "bot",
+        sender: "ai",
         message: "Sorry, something went wrong. Please try again.",
         time: sendTime,
       };
@@ -249,12 +249,12 @@ function Controller() {
     }
   }
 
-  async function getChatMessages(id) {
+  async function getChatMessages(chatId) {
     setIsGetChatLoading(true);
     try {
-      const response = await axios.post(
-        "/api/chatbot/getChatMessage",
-        { chat_id: id },
+      const response = await axios.get(
+        `/api/chatbot/getChatMessage?chat_id=${chatId}`,
+        
         {
           headers: {
             Authorization: `Bearer ${
@@ -268,7 +268,7 @@ function Controller() {
       setChatArray(messages);
     } catch (error) {
       console.error("Error getting new chat ID", error);
-      return -1;
+      return [];
     } finally {
       setIsGetChatLoading(false);
     }

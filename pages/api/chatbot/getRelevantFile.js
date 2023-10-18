@@ -2,11 +2,10 @@ import axios from "axios";
 
 export default async function handler(req, res) {
   const token = req.headers.authorization.split(" ")[1];
-  const { chat_id, human_message, ai_message } = req.body;
+  const { chat_id, ai_message } = req.body;
 
   const body = {
     "chat_id": chat_id,
-    "human_message": human_message,
     "ai_message": ai_message
   }
 

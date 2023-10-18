@@ -14,6 +14,7 @@ import "highlight.js/styles/panda-syntax-dark.css"; // choose a style of your pr
 import axios from "axios";
 import Spinner from "./animation/spinner";
 import LoadingDots from "./animation/loadingDots";
+import formatDate from "../utils/dateFormat"
 
 function ChatController({
   inputText,
@@ -76,8 +77,6 @@ function ChatController({
         );
       case "Document_QA_System":
         return (
-          
-
           <div className="border border-blue-500/75 border-1 flex rounded-lg justify-center items-center max-w-fit">
             <div className="flex">
               <PiFolderUserDuotone className="w-6 h-6 mx-4 my-2 text-blue-500" />
@@ -176,7 +175,6 @@ function ChatController({
         scrollToBottom();
       }
     }
-    
   };
 
   useEffect(() => {
@@ -219,7 +217,7 @@ function ChatController({
               {messages?.map((item, key) => {
                 let displayMessage = item.message;
 
-                return item.sender == "me" ? (
+                return item.sender == "human" ? (
                   <div className="border-b">
                     <div className="m-auto max-w-3xl p-5">
                       <div className="bg-white flex" key={key}>
@@ -230,7 +228,7 @@ function ChatController({
                           {displayMessage}
                           <div>
                             <time className="text-xs opacity-50">
-                              {item.time}
+                              {formatDate(item.timestamp)}
                             </time>
                           </div>
                         </div>
@@ -253,18 +251,22 @@ function ChatController({
                           ></div>
                           <div>
                             <time className="text-xs opacity-50">
-                              {item.time}
+                              {formatDate(item.timestamp)}
                             </time>
                           </div>
-                          {item.sender === "bot" &&
-                            item.fileData &&
-                            item.fileData.length > 0 && (
-                              <div className="flex text-xs items-center">
+                          {item.sender === "ai" && (
+                            <div className="flex text-xs items-center">
+                              {(item.fileData && item.fileData.length > 0) ||
+                              (item.relevant_files &&
+                                item.relevant_files.length > 0) ? (
                                 <span className="text-sm font-bold mr-2">
                                   Learn more:
                                 </span>
-                                <div className="flex flex-wrap items-center">
-                                  {item.fileData.map((data, index) => (
+                              ) : null}
+                              <div className="flex flex-wrap items-center">
+                                {item.fileData &&
+                                  item.fileData.length > 0 &&
+                                  item.fileData.map((data, index) => (
                                     <button
                                       key={index}
                                       className="relative transform transition-transform px-1 mr-1 max-w-[130px] "
@@ -277,9 +279,26 @@ function ChatController({
                                       </div>
                                     </button>
                                   ))}
-                                </div>
                               </div>
-                            )}
+                              <div className="flex flex-wrap items-center">
+                                {item.relevant_files &&
+                                  item.relevant_files.length > 0 &&
+                                  item.relevant_files.map((data, index) => (
+                                    <button
+                                      key={index}
+                                      className="relative transform transition-transform px-1 mr-1 max-w-[130px] "
+                                      onClick={() => {
+                                        getDownloadDocument(data.file_id);
+                                      }}
+                                    >
+                                      <div className="relative group text-xs bg-blue-500 px-2 py-1 rounded-lg text-white truncate max-w-[130px] hover:max-w-full">
+                                        {data.file_name}
+                                      </div>
+                                    </button>
+                                  ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

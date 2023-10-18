@@ -16,5 +16,5 @@ export default function formatDate(uploadTimeStr) {
       return uploadTime.format('hh:mm A'); // This will give you a format like "05:00 PM"
   }
 
-  return uploadTime.format('MM-DD-YY'); // This will give you a format like "10-08-23"
+  return uploadTime.format('MM/DD/YY'); // This will give you a format like "10/08/23"
 }
