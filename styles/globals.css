@@ -85,3 +85,7 @@ code.hljs {
   border-radius: 10%;
   margin-right: 4px; /* Adjust the spacing between dots as needed */
 }
+
+.transition-max-height {
+  transition: max-height 0.3s ease-in-out;
+}

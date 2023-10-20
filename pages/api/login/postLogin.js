@@ -29,14 +29,27 @@ export default async function handler(req, res) {
       message: "Logged in successfully!",
       accessToken: accessToken,
     });
+    
   } catch (error) {
-    const errorMessage =
-      error.response && error.response.data && error.response.data.message
-        ? error.response.data.message
-        : error.message || "An error occurred during login.";
-    res.status(500).json({
-      success: false,
-      message: errorMessage,
-    });
+    if (error.response && error.response.status === 404) {
+      // If the login fails due to incorrect ID or password, return a 404 response.
+      res.status(404).json({
+        success: false,
+        message: "ID or Password is incorrect",
+      });
+     
+    } else {
+      // Handle other errors (e.g., 500 Internal Server Error) with a 500 response.
+      const errorMessage =
+        error.response && error.response.data && error.response.data.message
+          ? error.response.data.message
+          : "Please try again later.";
+      res.status(500).json({
+        success: false,
+        message: errorMessage,
+      });
+      
+    }
+  
   }
 }

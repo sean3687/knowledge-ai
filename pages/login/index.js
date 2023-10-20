@@ -5,9 +5,9 @@ import useAccountInfoStore from "../../stores/store";
 import withLayout from "../../components/layouts/withLayout";
 import LottieAnimation from "../../components/animation/lottie-animation";
 import animationData from "../../public/accounting-lottie.json";
+import { toast, Toaster } from "react-hot-toast";
 
 function LoginPage() {
-  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,26 +17,35 @@ function LoginPage() {
 
     console.log("this is username" + username);
     console.log("this is password" + password);
+
     try {
       const response = await axios.post("/api/login/postLogin", {
         username: username,
         password: password,
       });
 
-      //set Login Sucess Message
-      setMessage(response.data.message);
-      //set access token on session storage
+      // If the login is successful, display a success toast message.
+      toast.success("Successfully Login!");
+
+      // Set access token on session storage.
       const accessToken = response.data.accessToken;
       sessionStorage.setItem("accessToken", accessToken);
-      console.log("getprofile here");
-      //load profile
+
+      // Load profile (assuming this function exists).
       await getProfile(accessToken);
-      //create new chat id and set
-      console.log("move to login page");
+
+      // Redirect to the chatbot page.
+      console.log("Move to chatbot page");
       window.location.href = "/chatbot";
-      console.log("move finished" + chatid);
+      console.log("Move finished" + chatid);
     } catch (error) {
-      setMessage("ID or Password is incorrect");
+      if (error.response && error.response.status === 404) {
+        // If the status code is 404, display a specific error message for incorrect ID or password.
+        toast.error("ID or Password is incorrect");
+      } else {
+        // For other errors (status code 500), display a generic error message.
+        toast.error("An error occurred. Please try again later");
+      }
     }
   };
 
@@ -56,16 +65,19 @@ function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-skyblue-300 ">
       {/* Left Side Content */}
+      <Toaster position="top-center" reverseOrder={false} />
 
       <div className="flex-1 flex flex-col items-center justify-center p-10 md:px-30 bg-blue-600">
         <div className="absolute top-1 left-6 text-white text-xl font-bold p-6">
           KLIB
         </div>
         <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white w-full text-center mt-40">
-          Unlock Your Documents&apos; Potential with AI 
+          Unlock Your Documents&apos; Potential with AI
         </h1>
         <p className="text-gray-200 mb-4 text-center">
-        Upload your documents and let KLIB&apos;s leading AI extract vital insights, enhancing your data experience. Experience the future of the knowledge library today!
+          Upload your documents and let KLIB&apos;s leading AI extract vital
+          insights, enhancing your data experience. Experience the future of the
+          knowledge library today!
           {/* Simply upload your documents and let our advanced AI delve deep into
           them. KLIB&apos;s cutting-edge AI dives deep into your documents, extract
           critical insights, and elevate your data experience. <br></br>
@@ -115,7 +127,6 @@ function LoginPage() {
                 required
               />
             </div>
-            {message && <p className="text-xs text-red-500 mb-3">{message}</p>}
             <div className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 mt-10">
               <button
                 className="w-full text-white font-bold py-2 px-4 rounded"

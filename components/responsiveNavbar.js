@@ -48,7 +48,7 @@ const TabItems = ({
   return (
     <div className="rounded-lg">
       
-      <div className="border-b bg-gray-100 mt-2">
+      <div className="border-b bg-white mt-2">
         {tabs.map((tab, index) => (
           <div
             key={index}
@@ -56,7 +56,7 @@ const TabItems = ({
               selectedTabIndex === index
                 ? "text-blue-800 text-sm font-medium"
                 : ""
-            } mx-4 flex py-2 items-center justify-center align-center rounded hover:bg-gray-100 font-medium transition duration-300`}
+            } mx-2 flex py-2 items-center justify-center align-center rounded hover:bg-gray-100 font-medium transition duration-300`}
             onClick={() => setSelectedTabIndex(index)}
           >
             <div className="ml-3 text-sm mr-3">{tab.icon}</div>
@@ -67,7 +67,7 @@ const TabItems = ({
         ))}
       </div>
       <div
-        className="mx-4 flex py-2 items-center justify-center align-center rounded hover:bg-gray-100 font-medium transition duration-300 cursor-pointer"
+        className="mx-2 flex py-2 items-center justify-center align-center rounded hover:bg-gray-100 font-medium transition duration-300 cursor-pointer"
         onClick={handleLogout}
       >
         <PiPowerDuotone className="ml-3 text-xl mr-3" />
@@ -145,9 +145,9 @@ function Navbar({ accessToken, name }) {
   function Navigation() {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     return (
-      <div className="flex flex-col h-full relative bg-slate-50">
+      <div className="flex flex-col h-full relative bg-slate-100 shadow-md">
         {isDropdownVisible && (
-          <div className="absolute mb-1 bottom-12 rounded-lg m-2 left-0 right-0 mx-auto z-20 pb-1 mt-2 origin-top-right bg-gray-100 focus:outline-none border border-gray-200 translate-y-1 animate-expandFromBottom max-w-[95%]">
+          <div className="absolute mb-1 bottom-12 rounded-lg m-2 left-0 right-0 mx-auto z-20 pb-1 mt-2 origin-top-right bg-white focus:outline-none border border-gray-200 translate-y-1 animate-expandFromBottom max-w-[95%]">
             <TabItems
               setSelectedTabIndex={setSelectedTabIndex}
               selectedTabIndex={selectedTabIndex}
@@ -159,7 +159,7 @@ function Navbar({ accessToken, name }) {
         <div className="overflow-hidden flex flex-col">
           <div className="justify-center align-middle px-5 pt-4 pb-3">
             <button
-              className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-blue-400 text-white ring-0 ring-blue-400 hover:ring-2 active:ring-0 w-full"
+              className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-blue-500 text-white ring-0 ring-blue-500 hover:ring-2 active:ring-0 w-full"
               onClick={() => {}}
             >
               <Link href={"/upload"} className="w-full text-sm">
@@ -245,10 +245,10 @@ function Navbar({ accessToken, name }) {
             )}
           </div>
         </div>
-
-        <div className="mt-auto">
+                                  
+        <div className="mt-auto border-t">
           <div
-            className="flex items-center justify-between h-12 px-4 border-gray-200 bg-slate-100 hover:bg-gray-200 border-b"
+            className="flex items-center justify-between h-12 px-4 border-gray-200 bg-white hover:bg-gray-200 border-b"
             onClick={() => {
               setDropdownVisible(!isDropdownVisible);
               console.log("profile section clicked");

@@ -196,7 +196,7 @@ function ChatController({
               <FaRegComments />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 align-center mt-20 justify-center  p-10">
+            <div className="grid grid-cols-2 gap-4 align-center mt-40 justify-center max-w-5xl p-10 m-auto">
               {Instruction.map((item, index) => (
                 <div
                   key={index}
@@ -359,7 +359,7 @@ function ChatController({
           <></>
         )}
 
-        <div className="mx-4 mb-5 flex flex-col w-full @sm:pb-5 max-w-7xl m-auto">
+        <div className="mx-4 mb-5 flex flex-col w-full @sm:pb-5 max-w-5xl m-auto">
           {/* Textarea/Input Box */}
           <div className="border rounded-lg">
             <div className="">
@@ -368,7 +368,7 @@ function ChatController({
                 style={{
                   "max-height": "400px",
                   height: "56px",
-                  "overflow-y": "hidden",
+                  "overflow-y": "",
                 }}
                 className="block w-full text-gray-900 placeholder:text-gray-400 text-base font-normal resize-none outline-none px-4 py-4 rounded-t-lg focus:outline-none border-none bg-white z-5"
                 placeholder={
