@@ -38,16 +38,17 @@ function LoginPage() {
       setIsLoading(false);
 
     } catch (error) {
+      if(!setIsLoading){
+        // For other errors (status code 500), display a generic error message.
+        toast.error("Please Try Again Later");
+       
+      }
       if (error.response && error.response.status === 401) {
         // If the status code is 404, display a specific error message for incorrect ID or password.
         toast.error("ID or Password is incorrect");
         setIsLoading(false);
-      } else {
-        // For other errors (status code 500), display a generic error message.
-        toast.error("Please Try Again Later");
-        toast.error("An error occurred. Please try again later");
-        setIsLoading(false);
       }
+      
     } finally {
       setIsLoading(false);
     }
