@@ -18,7 +18,7 @@ import Spinner from "../../components/animation/spinner";
 import useChatInfoStore from "../../stores/chatStore";
 import withLayout from "../../components/layouts/withLayout";
 import formatDate from "../../utils/dateFormat";
-import UploadStatusChecker from "../../components/uploadStatusModal";
+import { toast, Toaster} from "react-hot-toast";
 
 function UploadPage({ accessToken }) {
   const [filesUpload, setFilesUpload] = useState([]);
@@ -172,6 +172,7 @@ function UploadPage({ accessToken }) {
 
   async function handleFilesUpload(files) {
     setUploadStatus("in-progress");
+    toast.success("Upload Initiated!");
     console.log("handleFilesUpload " + filesUpload);
     const formData = new FormData();
     files.forEach((file) => {
@@ -304,24 +305,7 @@ function UploadPage({ accessToken }) {
     }
   };
 
-  async function postSearchDocument(search_query) {
-    const response = await axios.post(
-      "/api/upload/postSearchByLabel",
-      { search_query: search_query },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (response.status === 200) {
-      console.log("this is response from search : ", response.data);
-      setDocumentList(response.data);
-    } else {
-      setDocumentList(response.data);
-    }
-  }
+ 
 
   async function getSearchGeneral(search_query) {
     const response = await axios.get(
@@ -376,6 +360,7 @@ function UploadPage({ accessToken }) {
 
   return (
     <div className="">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="bg-white ">
         <div className="border-b">
           <div className="text-3xl text-gray-800 font-bold pl-10 pt-5">
