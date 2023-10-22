@@ -54,65 +54,52 @@ function Chat() {
     },
   ];
 
-  const [expandedIndex, setExpandedIndex] = useState(-1);
 
-  const toggleItemExpansion = (index) => {
-    if (expandedIndex === index) {
-      // If the same item is clicked again, close it
-      setExpandedIndex(-1);
-    } else {
-      setExpandedIndex(index);
-    }
-  };
   return (
     <div className="w-full h-screen bg-white flex items-center justify-center">
       <div className="max-w-4xl text-center">
-        <div className="text-5xl font-bold text-gray-600">Welcome to K-LIB</div>
-
-        <div className="text-lg mt-4">
-          Introducing K-LIB, our AI chatbot! Upload documents for detailed
-          analysis, seamlessly retrieve them through conversations, harness the
-          power of ChatGPT for web searches, and watch as it crafts responses
-          using your uploaded documents.
+        <div className="text-5xl font-bold text-gray-600">
+          Welcome to KLIB🌟
         </div>
-        <div className="flex w-full justify-center">
-          {keyFeature.map((item, index) => (
-            <div
-              className="flex flex-row items-center justify-center mt-8 mx-5"
-              key={index}
-            >
-              <div
-                className={`cursor-pointer transform hover:scale-110 transition-transform ${
-                  expandedIndex === index ? "text-2xl" : ""
-                }`}
-                onClick={() => toggleItemExpansion(index)}
-              >
-                {
-                  expandedIndex === index
-                    ? item.text // Render text when expanded
-                    : item.icon // Render icon when not expanded
-                }
-              </div>
+        <div className="mx-4">
+          <div className="text-left">
+            <div className="text-2xl font-bold mt-8">
+              Meet KLIB: Your AI-powered chat companion! 🤖
             </div>
-          ))}
-        </div>
-        <div className="text-2xl font-bold mt-8">Instructions</div>
-        <div className="mt-2">
-          1. Click{" "}
-          <Link href={"/upload"} className="">
-            <strong className="text-blue-500">Manage Documents</strong>
-          </Link>{" "}
-          to upload your files.
-        </div>
-        <div className="mt-2">
-          2. Wait as K-LIB meticulously analyzes your documents.
-        </div>
-        <div className="mt-2">
-          3. Click <strong className="text-blue-500">+ New Chat</strong> button
-          to start a conversation.
-        </div>
-        <div className="mt-2">
-          4. Engage with K-LIB and explore the possibilities!
+            <div className="mt-2">
+              ✅ Upload documents for in-depth insights.
+            </div>
+            <div className="mt-2">✅ Effortlessly fetch them during chats.</div>
+            <div className="mt-2">
+              ✅ Leverage ChatGPT for precise web searches.
+            </div>
+            <div className="mt-2">
+              ✅ Experience tailored responses using your uploaded content.
+            </div>
+            <div className="mt-2">
+              Jump in and let KLIB elevate your chat experience! 🚀
+            </div>
+          </div>
+          <div className="text-left">
+            <div className="text-2xl font-bold mt-8 ">How to Get Started:</div>
+            <div className="mt-2">
+              1. 📤{" "}
+              <Link href={"/upload"} className="">
+                <strong className="text-blue-500">Manage Documents</strong>
+              </Link>{" "}
+              to upload your files.
+            </div>
+            <div className="mt-2">
+              2. 🕐 Hold tight! KLIB is diving deep into your documents.
+            </div>
+            <div className="mt-2">
+              3. Tab <strong className="text-blue-500">+ New Chat</strong> to
+              spark a conversation.
+            </div>
+            <div className="mt-2">
+              4. 🌟 Dive in with KLIB and uncover endless possibilities!
+            </div>
+          </div>
         </div>
       </div>
     </div>

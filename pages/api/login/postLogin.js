@@ -31,9 +31,9 @@ export default async function handler(req, res) {
     });
     
   } catch (error) {
-    if (error.response && error.response.status === 404) {
+    if (error.response.status === 401) {
       // If the login fails due to incorrect ID or password, return a 404 response.
-      res.status(404).json({
+      res.status(401).json({
         success: false,
         message: "ID or Password is incorrect",
       });

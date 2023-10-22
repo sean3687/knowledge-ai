@@ -24,27 +24,21 @@ function LoginPage() {
         password: password,
       });
 
-      // If the login is successful, display a success toast message.
       toast.success("Successfully Login!");
 
-      // Set access token on session storage.
       const accessToken = response.data.accessToken;
       sessionStorage.setItem("accessToken", accessToken);
-
-      // Load profile (assuming this function exists).
       await getProfile(accessToken);
 
-      // Redirect to the chatbot page.
-      console.log("Move to chatbot page");
       window.location.href = "/chatbot";
-      console.log("Move finished" + chatid);
+      
     } catch (error) {
-      if (error.response && error.response.status === 404) {
+      if (error.response && error.response.status === 401) {
         // If the status code is 404, display a specific error message for incorrect ID or password.
         toast.error("ID or Password is incorrect");
       } else {
         // For other errors (status code 500), display a generic error message.
-        toast.error("An error occurred. Please try again later");
+        toast.error("Please Try Again Later");
       }
     }
   };
