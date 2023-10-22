@@ -26,6 +26,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import firstLetterCapitalized from "../utils/stringManimupaltion.js";
 import useChatInfoStore from "../stores/chatStore.js";
+import extractUsername from "../utils/usernameExtracter";
 
 const tabs = [
   {
@@ -262,10 +263,10 @@ function Navbar({ accessToken, name }) {
                 {firstLetterCapitalized(name)}
               </div>
               <div className="text-black-800 truncate ml-2 font-medium">
-                {name}
+                {extractUsername(name)}
               </div>
             </div>
-            <div></div>
+            
           </div>
         </div>
       </div>
@@ -391,10 +392,6 @@ function Navbar({ accessToken, name }) {
         <div className="clear-both"></div>
       </div>
 
-      {/* <CreateContentModal
-        showModal={showCreateModal}
-        setShowCreateModal={setShowCreateModal}
-      /> */}
     </div>
   );
 }

@@ -6,11 +6,14 @@ import withLayout from "../../components/layouts/withLayout";
 import LottieAnimation from "../../components/animation/lottie-animation";
 import animationData from "../../public/accounting-lottie.json";
 import { toast, Toaster } from "react-hot-toast";
+import Spinner from "../../components/animation/spinner";
 
 function LoginPage() {
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const formData = new FormData(e.target);
     const username = formData.get("username");
     const password = formData.get("password");
@@ -31,15 +34,28 @@ function LoginPage() {
       await getProfile(accessToken);
 
       window.location.href = "/chatbot";
+<<<<<<< HEAD
       
+=======
+      console.log("Move finished" + chatid);
+      setIsLoading(false);
+>>>>>>> 5e355cd663fa2d544d5e1211dffefb045d9b0628
     } catch (error) {
       if (error.response && error.response.status === 401) {
         // If the status code is 404, display a specific error message for incorrect ID or password.
         toast.error("ID or Password is incorrect");
+        setIsLoading(false);
       } else {
         // For other errors (status code 500), display a generic error message.
+<<<<<<< HEAD
         toast.error("Please Try Again Later");
+=======
+        toast.error("An error occurred. Please try again later");
+        setIsLoading(false);
+>>>>>>> 5e355cd663fa2d544d5e1211dffefb045d9b0628
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -121,12 +137,17 @@ function LoginPage() {
                 required
               />
             </div>
-            <div className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 mt-10">
+            <div className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 mt-5">
               <button
-                className="w-full text-white font-bold py-2 px-4 rounded"
+                className="w-full text-white font-bold py-2 px-4 rounded flex justify-center items-center"
                 type="submit"
               >
-                Log In
+                {isLoading ? <Spinner
+                  className=""
+                  size={`w-6 h-6`}
+                  tintColor={"fill-white"}
+                  bgColor={"dark:text-blue-300"}
+                /> : "Log In"}
               </button>
             </div>
           </form>
