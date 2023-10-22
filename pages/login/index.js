@@ -36,19 +36,16 @@ function LoginPage() {
       window.location.href = "/chatbot";
       console.log("Move finished" + chatid);
       setIsLoading(false);
-
     } catch (error) {
-      if(!setIsLoading){
+      if (!setIsLoading) {
         // For other errors (status code 500), display a generic error message.
         toast.error("Please Try Again Later");
-       
       }
       if (error.response && error.response.status === 401) {
         // If the status code is 404, display a specific error message for incorrect ID or password.
         toast.error("ID or Password is incorrect");
         setIsLoading(false);
       }
-      
     } finally {
       setIsLoading(false);
     }
@@ -137,12 +134,19 @@ function LoginPage() {
                 className="w-full text-white font-bold py-2 px-4 rounded flex justify-center items-center"
                 type="submit"
               >
-                {isLoading ? <Spinner
-                  className=""
-                  size={`w-6 h-6`}
-                  tintColor={"fill-white"}
-                  bgColor={"dark:text-blue-300"}
-                /> : "Log In"}
+                {isLoading ? (
+                  <dib className="flex items-center">
+                    <Spinner
+                      className=""
+                      size={`w-6 h-6`}
+                      tintColor={"fill-white"}
+                      bgColor={"dark:text-blue-300"}
+                    />
+                    <div className="ml-2">Logging in...</div>
+                  </dib>
+                ) : (
+                  "Log In"
+                )}
               </button>
             </div>
           </form>
