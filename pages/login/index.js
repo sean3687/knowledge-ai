@@ -34,12 +34,9 @@ function LoginPage() {
       await getProfile(accessToken);
 
       window.location.href = "/chatbot";
-<<<<<<< HEAD
-      
-=======
       console.log("Move finished" + chatid);
       setIsLoading(false);
->>>>>>> 5e355cd663fa2d544d5e1211dffefb045d9b0628
+
     } catch (error) {
       if (error.response && error.response.status === 401) {
         // If the status code is 404, display a specific error message for incorrect ID or password.
@@ -47,12 +44,9 @@ function LoginPage() {
         setIsLoading(false);
       } else {
         // For other errors (status code 500), display a generic error message.
-<<<<<<< HEAD
         toast.error("Please Try Again Later");
-=======
         toast.error("An error occurred. Please try again later");
         setIsLoading(false);
->>>>>>> 5e355cd663fa2d544d5e1211dffefb045d9b0628
       }
     } finally {
       setIsLoading(false);
