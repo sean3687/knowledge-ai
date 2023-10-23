@@ -123,7 +123,7 @@ function Chat() {
             <div className="mt-2">
               ✅ Upload documents for in-depth insights.
             </div>
-            <div className="mt-2">✅ Effortlessly fetch them during chats.</div>
+            <div className="mt-2">✅ Easily retrieve them during conversations.</div>
             <div className="mt-2">
               ✅ Leverage ChatGPT for precise web searches.
             </div>
@@ -131,7 +131,7 @@ function Chat() {
               ✅ Experience tailored responses using your uploaded content.
             </div>
             <div className="mt-2">
-              Jump in and let KLIB elevate your chat experience! 🚀
+              Jump in and let KLIB enhance your interaction 🚀
             </div>
           </div>
           <div className="text-left">
