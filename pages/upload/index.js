@@ -18,7 +18,7 @@ import Spinner from "../../components/animation/spinner";
 import useChatInfoStore from "../../stores/chatStore";
 import withLayout from "../../components/layouts/withLayout";
 import formatDate from "../../utils/dateFormat";
-import { toast, Toaster} from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 
 function UploadPage({ accessToken }) {
   const [filesUpload, setFilesUpload] = useState([]);
@@ -84,9 +84,8 @@ function UploadPage({ accessToken }) {
     const selectedId = id;
 
     try {
-      const response = await axios.post(
-        `/api/chatbot/getSummary`,
-        { selectedId: selectedId },
+      const response = await axios.get(
+        `/api/chatbot/getSummary/?selectedId=${selectedId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -100,7 +99,7 @@ function UploadPage({ accessToken }) {
       return summary;
     } catch (err) {
       console.log(err);
-      return "Failed";
+      return "Error occured during summary";
     }
   };
 
@@ -305,8 +304,6 @@ function UploadPage({ accessToken }) {
     }
   };
 
- 
-
   async function getSearchGeneral(search_query) {
     const response = await axios.get(
       `/api/upload/getSearchGeneral/?search_query=${search_query}`,
@@ -367,10 +364,16 @@ function UploadPage({ accessToken }) {
             Your content{" "}
           </div>
           <div className="pl-10 pt-2 mb-5 text-gray-500 text-regular">
-            Once a document is uploaded, the chatbot can access and reference
-            its content during conversations, ensuring a more personalized and
-            knowledgeable response system. It supports formats such as .pdf,
-            .png, and .html.
+            After uploading a document, the chatbot can read and refer to its
+            content in conversations for a tailored and informed response.
+            Supported file types include:
+            <ul>
+              <li>
+                Text and Documents: .pdf, .html, .doc (Word), .xls (Excel), .ppt
+                (PowerPoint), and .md (Markdown).
+              </li>
+              <li>Images: .jpg, .jpeg, .png, among others.</li>
+            </ul>
           </div>
         </div>
 
@@ -388,7 +391,8 @@ function UploadPage({ accessToken }) {
                   </div>
                 </div>
                 <div>
-                  Upload your files from local device (.pdf, .png, .html)
+                  Upload your files from local device (.pdf, .png, .html and
+                  more)
                 </div>
                 <input
                   type="file"

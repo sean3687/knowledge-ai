@@ -4,7 +4,7 @@ import moment from "moment";
 export default async function handler(req, res) {
     const token = req.headers.authorization.split(" ")[1];
     console.log("this is token "+token)
-    const {selectedId}  = req.body
+    const { selectedId }  = req.query
     console.log("this is selected id " + selectedId)
     try {
         const response = await axios.get(`https://chitchatrabbit.me/summary/${selectedId}`, {
