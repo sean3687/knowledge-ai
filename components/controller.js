@@ -77,12 +77,15 @@ function Controller() {
     const sendTime = moment().format("h:mm");
     const myMessage = { sender: "human", message: messageText, time: sendTime };
     addChatArray(myMessage);
+    const encodeURIInputText = encodeURIComponent(messageText);
+    console.log("THis is frontend encodeURIInputText", encodeURIInputText);
 
     try {
       const response = await fetch(
         `https://chitchatrabbit.me/chain/${chatId}/?message=${encodeURIComponent(
           inputText
         )}`,
+
         {
           method: "GET",
           headers: {
@@ -158,6 +161,7 @@ function Controller() {
         return reader.read().then(process); // Continue processing the stream
       });
     } catch (error) {
+      console.log("error occured");
       popChatArray();
       setStreamingResponse("");
       const errorMessage = {
@@ -166,7 +170,7 @@ function Controller() {
         time: sendTime,
       };
       addChatArray(errorMessage); // Add error message to chat array
-      console.error("Fetch Error:", error);
+      
     }
   };
 
@@ -251,6 +255,7 @@ function Controller() {
 
   async function getChatMessages(chatId) {
     setIsGetChatLoading(true);
+    console.log("setIsGetChatLoading : true")
     try {
       const response = await axios.get(
         `/api/chatbot/getChatMessage?chat_id=${chatId}`,
@@ -271,6 +276,7 @@ function Controller() {
       return [];
     } finally {
       setIsGetChatLoading(false);
+      console.log("setIsGetChatLoading : false")
     }
   }
 

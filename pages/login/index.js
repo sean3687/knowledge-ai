@@ -4,7 +4,7 @@ import axios from "axios";
 import useAccountInfoStore from "../../stores/store";
 import withLayout from "../../components/layouts/withLayout";
 import LottieAnimation from "../../components/animation/lottie-animation";
-import animationData from "../../public/accounting-lottie.json";
+import accountingLottie from "../../public/accounting-lottie.json";
 import { toast, Toaster } from "react-hot-toast";
 import Spinner from "../../components/animation/spinner";
 
@@ -86,7 +86,7 @@ function LoginPage() {
           <br></br>Dive into the future of knowledge library today! */}
         </p>
         <LottieAnimation
-          animationData={animationData}
+          animationData={accountingLottie}
           width={500}
           height={500}
         />

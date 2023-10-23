@@ -14,7 +14,9 @@ import "highlight.js/styles/panda-syntax-dark.css"; // choose a style of your pr
 import axios from "axios";
 import Spinner from "./animation/spinner";
 import LoadingDots from "./animation/loadingDots";
-import formatDate from "../utils/dateFormat"
+import formatDate from "../utils/dateFormat";
+import LottieAnimation from "./animation/lottie-animation";
+import documentlottie from "../public/document-loading.json";
 
 function ChatController({
   inputText,
@@ -31,20 +33,20 @@ function ChatController({
   const { docId } = router.query;
   const Instruction = [
     {
-      title: "Weather Forecast",
-      text: "Can you show me the weather forecast for today in Irvine?",
+      title: "Casual Conversation",
+      text: "Tell me a random fun fact about the Roman Empire.",
     },
     {
-      title: "Document Retrieval",
-      text: "Please retrieve and provide a summary of the [ your-document ] document.",
+      title: "Chat with your Documents",
+      text: "From my files, [your custom query]",
     },
     {
-      title: "Category Retrieval",
-      text: "Find me documents in our database fall under the 'Receipt' category",
+      title: "Retrieve Specific Documents",
+      text: "Find me documents related to [Your Specific Detail]",
     },
     {
-      title: "Document Summarization",
-      text: "Can you summarize the main points from the [ your-document ] for me?",
+      title: "On-the-Spot Info Fetch",
+      text: "What is the weather today in Irvine, CA?",
     },
   ];
 
@@ -71,7 +73,9 @@ function ChatController({
                   bgColor={"dark:text-purple-300"}
                 />
               </div>
-              <div className="text-gray text-xs font-medium mr-2">External sources</div>
+              <div className="text-gray text-xs font-medium mr-2">
+                External sources
+              </div>
             </div>
           </div>
         );
@@ -172,7 +176,7 @@ function ChatController({
       } else {
         event.preventDefault();
         handleClick();
-        scrollToBottom();
+        
       }
     }
   };
@@ -188,26 +192,9 @@ function ChatController({
           messages.length == 0 && !docId ? "w-full mb-0" : " w-full mb-40"
         }
       >
-        {/* Conversation */}
-        {console.log(messages)}
         {messages.length == 0 && !isGetChatLoading && !docId ? (
-          <div className="h-screen mb-0">
-            <div className="flex justify-center items-center font-bold text-8xl pt-10 text-[#cccfef8c]">
-              <FaRegComments />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 align-center mt-40 justify-center max-w-5xl p-10 m-auto">
-              {Instruction.map((item, index) => (
-                <div
-                  key={index}
-                  className="border rounded-xl p-5 text-xs hover:bg-gray-200"
-                  onClick={handleHandleInstruction(item.text)}
-                >
-                  <div className="font-bold text-gray-700">{item.title}</div>
-                  <div className="text-gray-400">{item.text}</div>
-                </div>
-              ))}
-            </div>
+          <div className="flex justify-center items-center font-bold text-9xl mt-20 text-[#cccfef8c]">
+            <FaRegComments />
           </div>
         ) : (
           <div className="flex flex-col justify-between h-full">
@@ -341,6 +328,7 @@ function ChatController({
         </div>
       </div>
 
+    {/* Bottom Floating Area part */}
       <div
         className="lg:w-[calc(100%-256px)] w-full flex opacity-bottom-0 absolute bottom-0 px-4 items-center flex-col"
         style={{
@@ -348,7 +336,26 @@ function ChatController({
             "linear-gradient(rgba(255,255,255,0), rgba(220, 220, 220,1))",
         }}
       >
-        {messages.length !== 0 ? (
+        {messages.length === 0 && !isGetChatLoading && !docId ? (
+          //Instruction
+          
+            <div className="mb-5 relative w-full">
+              <div className=" grid grid-cols-2 gap-4 align-center mt-10 justify-center max-w-5xl  m-auto">
+                {Instruction.map((item, index) => (
+                  <div
+                    key={index}
+                    className="border rounded-xl border-gray-300 p-5 text-xs hover:bg-gray-200"
+                    onClick={handleHandleInstruction(item.text)}
+                  >
+                    <div className="font-bold text-gray-700">{item.title}</div>
+                    <div className="text-gray-400">{item.text}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          
+        ) : !isGetChatLoading ? (
+          //Scroll to bottom button
           <button
             className="relative mb-5 font-semibold shadow-sm rounded-full px-3 py-3 text-white ring-0 outline-none border-0 h-full opacity-75 bg-blue-600 mb-2 w-10 ml-auto mr-5"
             onClick={scrollToBottom}
@@ -356,12 +363,18 @@ function ChatController({
             <PiArrowDown />
           </button>
         ) : (
-          <></>
+          //document loading animation
+          <LottieAnimation
+          animationData={documentlottie}
+          width={300}
+          height={300}
+          className="mb-5"
+        />
         )}
 
         <div className="mx-4 mb-5 flex flex-col w-full @sm:pb-5 max-w-5xl m-auto">
           {/* Textarea/Input Box */}
-          <div className="border rounded-lg">
+          <div className="border rounded-lg ">
             <div className="">
               <textarea
                 rows="1"
