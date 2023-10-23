@@ -99,7 +99,7 @@ function UploadPage({ accessToken }) {
       return summary;
     } catch (err) {
       console.log(err);
-      return "Error occured during summary";
+      return "Error occured during summary. Please Try again.";
     }
   };
 

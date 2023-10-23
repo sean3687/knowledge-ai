@@ -25,7 +25,7 @@ export default async function handler(req, res) {
                 : "Not authenticated";
         res.status(500).json({
     
-         message : errorMessage,
+         message : "Please Try again",
            
         });
     }
