@@ -10,8 +10,13 @@ import {
   PiFolderUserDuotone,
   PiGlobeSimpleDuotone,
 } from "react-icons/pi";
+import { useRouter } from "next/router";
+import useChatInfoStore from "../../stores/chatStore";
 
 function Chat() {
+  const [selectedChatId, setSelectedChatId] = useState(null);
+  const setChatArray = useChatInfoStore((state) => state.setChatArray);
+  const router = useRouter(); // Get the router object
   const keyFeature = [
     {
       icon: (
@@ -53,6 +58,55 @@ function Chat() {
       ),
     },
   ];
+
+  async function getChatList() {
+    try {
+      console.log("Function :getChatList");
+      const response = await axios.get("/api/chatbot/getChatList", {
+        headers: {
+          Authorization: `Bearer ${
+            sessionStorage.getItem("accessToken") || ""
+          }`,
+        },
+      });
+      console.log("chatlist response :", response.data);
+      setChatList(response.data);
+    } catch (error) {
+      console.error("Error getting new chat ID", error);
+    }
+  }
+
+  async function getNewChatId() {
+    try {
+      console.log("Function : getNewChatId ");
+      const response = await axios.get("/api/chatbot/postCreateNewChat", {
+        headers: {
+          Authorization: `Bearer ${
+            sessionStorage.getItem("accessToken") || ""
+          }`,
+        },
+      });
+      const chatId = response.data.chat_id;
+
+      return chatId;
+    } catch (error) {
+      console.error("Error getting new chat ID", error);
+      return -1;
+    }
+  }
+
+  async function handleNewConversation() {
+    const newChatId = await getNewChatId();
+    console.log("New ChatId conversation: ", newChatId);
+    setSelectedChatId(newChatId);
+    setChatArray([]);
+    setTimeout(() => {
+      router.push(`/chatbot/${newChatId}`, undefined, { shallow: true });
+    }, 2000);
+    
+    
+    
+  }
 
 
   return (

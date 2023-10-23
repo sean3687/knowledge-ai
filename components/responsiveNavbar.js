@@ -1,22 +1,14 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import moment from "moment-timezone";
-import {
-  AiOutlineMenu,
-  AiOutlineClose,
-  AiOutlineUser,
-  AiOutlineCloudUpload,
-  AiOutlineLogin,
-} from "react-icons/ai";
+import { AiOutlineMenu, AiOutlineClose, AiOutlineUser } from "react-icons/ai";
 
 import {
-  PiUploadDuotone,
   PiChatTeardropTextDuotone,
   PiUserCircleDuotone,
   PiPowerDuotone,
   PiTrashDuotone,
-  PiCaretUpDuotone,
-  PiCaretDownDuotone,
+  PiFolderUserDuotone,
   PiChatDuotone,
 } from "react-icons/pi";
 
@@ -48,7 +40,6 @@ const TabItems = ({
 }) => {
   return (
     <div className="rounded-lg">
-      
       <div className="border-b bg-white mt-2">
         {tabs.map((tab, index) => (
           <div
@@ -158,25 +149,32 @@ function Navbar({ accessToken, name }) {
         )}
 
         <div className="overflow-hidden flex flex-col">
-          <div className="justify-center align-middle px-5 pt-4 pb-3">
+          <div className="justify-center align-middle px-4 pt-4 pb-3 border-b w-full">
             <button
-              className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-blue-500 text-white ring-0 ring-blue-500 hover:ring-2 active:ring-0 w-full"
+              className="mx-auto p-4 py-3 ring-1 ring-gray-300 rounded-xl text-left space-y-4 hover:ring-gray-300 active:ring-gray-400 min-w-fit-content w-full"
               onClick={() => {}}
             >
-              <Link href={"/upload"} className="w-full text-sm">
-                Manage Document
+              <Link
+                href={"/upload"}
+                className="w-full text-sm items-center flex"
+              >
+                <PiFolderUserDuotone className="text-xl mr-2" />
+                <div className="font-bold"> Manage Document</div>
               </Link>
             </button>
+          </div>
+          <div className="w-full flex justify-center mb-2">
             <button
-              className="transition-all duration-200 relative font-semibold shadow-sm outline-none hover:outline-none focus:outline-none rounded-md px-3 py-1.5 text-sm bg-blue-600 mt-2 text-white ring-0 ring-blue-600 hover:ring-2 active:ring-0 w-full"
+              className="w-full max-w-xs mx-4 mt-2 font-semibold text-sm py-2
+              bg-blue-600 text-white shadow-sm rounded-md ring-0 ring-blue-600 hover:ring-2 active:ring-0
+              transition-all duration-200 outline-none hover:outline-none focus:outline-none"
               onClick={() => {}}
             >
               <div onClick={handleNewConversation}>+ New Chat</div>
             </button>
-            
           </div>
 
-          <div className="overflow-y-auto flex-grow">
+          <div className="overflow-y-auto flex-grow ">
             {[
               { label: "Today", chats: groupedChats.today },
               { label: "Yesterday", chats: groupedChats.yesterday },
@@ -246,7 +244,7 @@ function Navbar({ accessToken, name }) {
             )}
           </div>
         </div>
-                                  
+
         <div className="mt-auto border-t">
           <div
             className="flex items-center justify-between h-12 px-4 border-gray-200 bg-white hover:bg-gray-200 border-b"
@@ -266,7 +264,6 @@ function Navbar({ accessToken, name }) {
                 {extractUsername(name)}
               </div>
             </div>
-            
           </div>
         </div>
       </div>
@@ -287,25 +284,6 @@ function Navbar({ accessToken, name }) {
       setChatList(response.data);
     } catch (error) {
       console.error("Error getting new chat ID", error);
-    }
-  }
-
-  async function getNewChatId() {
-    try {
-      console.log("Function : getNewChatId ");
-      const response = await axios.get("/api/chatbot/postCreateNewChat", {
-        headers: {
-          Authorization: `Bearer ${
-            sessionStorage.getItem("accessToken") || ""
-          }`,
-        },
-      });
-      const chatId = response.data.chat_id;
-
-      return chatId;
-    } catch (error) {
-      console.error("Error getting new chat ID", error);
-      return -1;
     }
   }
 
@@ -334,6 +312,25 @@ function Navbar({ accessToken, name }) {
     }
   }
 
+  async function getNewChatId() {
+    try {
+      console.log("Function : getNewChatId ");
+      const response = await axios.get("/api/chatbot/postCreateNewChat", {
+        headers: {
+          Authorization: `Bearer ${
+            sessionStorage.getItem("accessToken") || ""
+          }`,
+        },
+      });
+      const chatId = response.data.chat_id;
+
+      return chatId;
+    } catch (error) {
+      console.error("Error getting new chat ID", error);
+      return -1;
+    }
+  }
+
   async function handleNewConversation() {
     const newChatId = await getNewChatId();
     console.log("New ChatId conversation: ", newChatId);
@@ -353,7 +350,6 @@ function Navbar({ accessToken, name }) {
   return (
     <div className="">
       {/* Desktop Navigation */}
-
       <div className="hidden lg:block relative h-screen overflow-hidden w-64 bg-gray-50 transition-transform transform translate-x-0 transition duration-300 flex flex-col">
         <Navigation />
       </div>
@@ -361,10 +357,7 @@ function Navbar({ accessToken, name }) {
       {/* Mobile Navigation */}
       <div className="bg-slate-100 items-center justify-center p-4 relative lg:hidden">
         {drawerOpen && (
-          <div
-            className="fixed h-full w-[180px] inset-0 bg-black bg-white flex z-10"
-            style={{ width: "180px" }}
-          >
+          <div className="fixed h-full inset-0 bg-black flex z-10 max-w-[100px]">
             <Navigation setDrawerOpen={drawerOpen} />
             {/* Close Button */}
             <button
@@ -391,7 +384,6 @@ function Navbar({ accessToken, name }) {
 
         <div className="clear-both"></div>
       </div>
-
     </div>
   );
 }

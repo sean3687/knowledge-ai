@@ -17,6 +17,7 @@ import LoadingDots from "./animation/loadingDots";
 import formatDate from "../utils/dateFormat";
 import LottieAnimation from "./animation/lottie-animation";
 import documentlottie from "../public/document-loading.json";
+import linkify from "../utils/linkify.js"
 
 function ChatController({
   inputText,
@@ -166,6 +167,8 @@ function ChatController({
       const highlightedCode = hljs.highlight(lang, code).value;
       return `<pre><code class="hljs ${lang}">${highlightedCode}</code></pre>`;
     });
+
+    str = linkify(str);
 
     return str;
   }
@@ -381,7 +384,7 @@ function ChatController({
                 style={{
                   "max-height": "400px",
                   height: "56px",
-                  "overflow-y": "",
+                
                 }}
                 className="block w-full text-gray-900 placeholder:text-gray-400 text-base font-normal resize-none outline-none px-4 py-4 rounded-t-lg focus:outline-none border-none bg-white z-5"
                 placeholder={
