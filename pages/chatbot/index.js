@@ -118,7 +118,7 @@ function Chat() {
         <div className="mx-4">
           <div className="text-left">
             <div className="text-2xl font-bold mt-8">
-              Meet KLIB: Your AI-powered chat companion! 🤖
+            Meet KLIB: Your Custom LLM-Powered AI Companion! 🤖
             </div>
             <div className="mt-2">
               ✅ Upload documents for in-depth insights.
