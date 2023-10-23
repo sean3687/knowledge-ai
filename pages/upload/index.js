@@ -372,7 +372,7 @@ function UploadPage({ accessToken }) {
                 Text and Documents: .pdf, .html, .doc (Word), .xls (Excel), .ppt
                 (PowerPoint), and .md (Markdown).
               </li>
-              <li>Images: .jpg, .jpeg, .png, among others.</li>
+              <li>Images: .jpg, .jpeg, .png</li>
             </ul>
           </div>
         </div>
