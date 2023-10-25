@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import useChatInfoStore from "../stores/chatStore.js";
 
-
 function Controller() {
   // const [inputText, setInputText] = useState("");
   const [isSendChatLoading, setIsSendChatLoading] = useState(false);
@@ -72,6 +71,28 @@ function Controller() {
     }
   };
 
+
+  const getSourceStatus = async () => {
+    let chatId = router.query.id;
+    try {
+      const response = await axios.get(
+        `/api/chatbot/getSourceStatus?chat_id=${chatId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              sessionStorage.getItem("accessToken") || ""
+            }`,
+          },
+        }
+      );
+
+      const sourceStatus = response.data.source;
+      return sourceStatus;
+    } catch (error) {
+      return "error";
+    }
+  };
+
   const sendMessageGivenChatId = async (messageText) => {
     let chatId = router.query.id;
     console.log("In progress: sendMessageGivenChatId");
@@ -100,31 +121,37 @@ function Controller() {
       console.log("This is debug input text", inputText);
       const reader = response.body.getReader();
 
-      let isDispDetected = false;
       let accumulatedResponse = "";
 
       reader.read().then(async function process({ done, value }) {
         if (done) {
+          let sourceStatus = await getSourceStatus();
+          console.log("This is source status", sourceStatus);
           let fileData;
-          if (isDispDetected) {
+          if (sourceStatus =="Chatgpt" || sourceStatus =="Google_Search" || sourceStatus =="Document_QA_System") {
+            fileData = await getRelevantFile(
+              chatId,
+              inputText,
+              accumulatedResponse
+            );
+          } else if(sourceStatus =="Document_Display") {
             fileData = await displayRelevantFile(
               chatId,
               inputText,
               accumulatedResponse
             );
           } else {
-            fileData = await getRelevantFile(
-              chatId,
-              inputText,
-              accumulatedResponse
-            );
+            fileData = {
+              //empty file object
+            };
           }
-
+          console.log("Final Bot Message", accumulatedResponse);
           const finalBotMessage = {
             sender: "ai",
             message: accumulatedResponse,
             time: sendTime,
-            fileData: fileData,
+            relevant_files: fileData,
+            source : sourceStatus,
           };
 
           getChatTitle(chatId);
@@ -136,17 +163,15 @@ function Controller() {
         }
 
         let decodedValue = new TextDecoder("utf-8").decode(value);
-
-        // Check for "disp:" only if not already detected
-        console.log("this is devoded value", decodedValue);
-        if (!isDispDetected && decodedValue.startsWith("disp: ")) {
-          let dispValues = decodedValue.split("disp: ")[1];
-          dispValues = dispValues.replace(/\n\n$/, '');
-          accumulatedResponse = accumulatedResponse + dispValues;
-          isDispDetected = true;
-          return reader.read().then(process); // Skip further processing for this chunk and continue reading
-        }
-
+        // // Check for "disp:" only if not already detected
+        // console.log("this is devoded value", decodedValue);
+        // if (!isDispDetected && decodedValue.startsWith("disp: ")) {
+        //   let dispValues = decodedValue.split("disp: ")[1];
+        //   dispValues = dispValues.replace(/\n\n$/, "");
+        //   accumulatedResponse = accumulatedResponse + dispValues;
+        //   isDispDetected = true;
+        //   return reader.read().then(process); // Skip further processing for this chunk and continue reading
+        // }
         let processedValues = decodedValue.split("data: ");
 
         for (let val of processedValues) {
@@ -171,7 +196,6 @@ function Controller() {
         time: sendTime,
       };
       addChatArray(errorMessage); // Add error message to chat array
-      
     }
   };
 
@@ -256,11 +280,11 @@ function Controller() {
 
   async function getChatMessages(chatId) {
     setIsGetChatLoading(true);
-    console.log("setIsGetChatLoading : true")
+    console.log("setIsGetChatLoading : true");
     try {
       const response = await axios.get(
         `/api/chatbot/getChatMessage?chat_id=${chatId}`,
-        
+
         {
           headers: {
             Authorization: `Bearer ${
@@ -277,7 +301,7 @@ function Controller() {
       return [];
     } finally {
       setIsGetChatLoading(false);
-      console.log("setIsGetChatLoading : false")
+      console.log("setIsGetChatLoading : false");
     }
   }
 
@@ -347,7 +371,6 @@ function Controller() {
         isGetChatLoading={isGetChatLoading}
         streamingResponse={streamingResponse}
         messages={chatArray}
-        // getRelevantFile={fileObject}
         responseStatus={responseStatus}
         setInputText={setInputText}
         handleClick={sendMessageClick}

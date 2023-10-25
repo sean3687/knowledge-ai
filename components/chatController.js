@@ -8,6 +8,8 @@ import {
   PiArrowDown,
   PiFolderUserDuotone,
   PiGlobeSimpleDuotone,
+  PiDownloadSimpleDuotone,
+  PiQueueDuotone,
 } from "react-icons/pi";
 import hljs from "highlight.js";
 import "highlight.js/styles/panda-syntax-dark.css"; // choose a style of your preference
@@ -17,7 +19,7 @@ import LoadingDots from "./animation/loadingDots";
 import formatDate from "../utils/dateFormat";
 import LottieAnimation from "./animation/lottie-animation";
 import documentlottie from "../public/document-loading.json";
-import linkify from "../utils/linkify.js"
+import linkify from "../utils/linkify.js";
 
 function ChatController({
   inputText,
@@ -31,6 +33,13 @@ function ChatController({
   handleRefresh,
 }) {
   const router = useRouter();
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [expandedSummarizeRow, setExpandedSummarizeRow] = useState(null);
+  const [expandedBlock, setExpandedBlock] = useState({
+    blockId: null,
+    index: null,
+  }); // Add this state
+  const [summaryData, setSummaryData] = useState(null);
   const { docId } = router.query;
   const Instruction = [
     {
@@ -56,7 +65,7 @@ function ChatController({
     switch (responseStatus[0]) {
       case !responseStatus.length || responseStatus[0]?.trim().length === 0:
         return <Loading className="mt-2" />;
-      case "External_Search":
+      case "ChatGPT" || "Google_Search":
         return (
           <div className="border border-purple-500/75 border-1 flex rounded-lg justify-center items-center max-w-fit">
             <div className="flex">
@@ -75,7 +84,7 @@ function ChatController({
                 />
               </div>
               <div className="text-gray text-xs font-medium mr-2">
-                External sources
+                {PresponseStatus[0]}
               </div>
             </div>
           </div>
@@ -179,13 +188,95 @@ function ChatController({
       } else {
         event.preventDefault();
         handleClick();
-        
       }
+    }
+  };
+
+  const downloadDocumentClick = (fileId) => {
+
+    getDownloadDocument(fileId);
+  };
+
+  async function getDownloadDocument(id) {
+    if (!id) return;
+
+    console.log("this is download document id" + id);
+    try {
+      const response = await axios.post(
+        `/api/upload/getDownloadDocument`,
+        { selectedId: id },
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+          responseType: "arraybuffer", // Ensure the response type is arraybuffer
+        }
+      );
+      // Convert the arraybuffer to a blob with the appropriate content type
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const blobURL = URL.createObjectURL(blob);
+
+      // Open the blob URL in a new tab
+      window.open(blobURL, "_blank");
+
+      if (response.status === 200) {
+        console.log("Document Opened");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  }
+
+  async function summarizeDocumentClick(blockId, fileId, index) {
+    console.log("this is blockId", blockId);
+    console.log("this is fileId", fileId);
+
+    setSummaryLoading(true);
+    setSummaryData("");
+
+    // Check if the clicked block is already expanded
+    if (expandedBlock.blockId === blockId) {
+      setExpandedBlock({ blockId: null, index: null }); // Collapse the expanded block
+    } else {
+      
+      setExpandedBlock({ blockId: blockId, index: index }); // Set the clicked block as the expanded block
+
+      const data = await getSummary(fileId);
+      setSummaryData(data);
+    }
+
+    setSummaryLoading(false);
+  }
+
+  const getSummary = async (id) => {
+    const selectedId = id;
+
+    try {
+      const response = await axios.get(
+        `/api/chatbot/getSummary/?selectedId=${selectedId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const summary = await response.data.message;
+      console.log("this is summary ", summary);
+      return summary;
+    } catch (err) {
+      console.log(err);
+      return "Error occured during summary. Please Try again.";
     }
   };
 
   useEffect(() => {
     scrollToBottom;
+    console.log("this is message", messages);
   }, [messages]);
 
   return (
@@ -204,13 +295,13 @@ function ChatController({
             <div className="p-6"></div>
             <div className="border-t border-gray-300"></div>
             <div className="justify-center">
-              {messages?.map((item, key) => {
+              {messages?.map((item, blockId) => {
                 let displayMessage = item.message;
 
                 return item.sender == "human" ? (
                   <div className="border-b">
                     <div className="m-auto max-w-3xl p-5">
-                      <div className="bg-white flex" key={key}>
+                      <div className="bg-white flex" key={blockId}>
                         <div className="text-white">
                           <PiUserDuotone className="text-4xl fill-current bg-blue-400 rounded p-1" />
                         </div>
@@ -228,7 +319,7 @@ function ChatController({
                 ) : (
                   <div className="border-b bg-gray-50 ">
                     <div className="m-auto max-w-3xl p-5">
-                      <div className="flex" key={key}>
+                      <div className="flex" key={blockId}>
                         <div className="text-white">
                           <PiBrainDuotone className="text-4xl fill-current bg-blue-600 rounded p-1" />
                         </div>
@@ -244,32 +335,78 @@ function ChatController({
                               {formatDate(item.timestamp)}
                             </time>
                           </div>
-                          {item.sender === "ai" && (
+                          {item.sender === "ai" &&
+                          (item.source === "Document_QA_System" || item.source ==="Document_Display") ? (
+                            <div className="flex text-xs items-center w-full">
+                              <table className="min-w-full border-collapse">
+                                <thead>
+                                  <tr>
+                                    <th className="px-4 py-2">Filename</th>
+                                    <th className="px-4 py-2">Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {item.relevant_files &&
+                                    item.relevant_files.map((item, index) => (
+                                      <React.Fragment key={index}>
+                                        <tr key={index}>
+                                          <td className="border px-4 py-2">
+                                            {item.file_name}
+                                          </td>
+                                          <td className="border px-4 py-2 items-center ">
+                                            <button
+                                              onClick={() =>
+                                                downloadDocumentClick(item.file_id)
+                                              }
+                                              className="relative transform transition-transform hover:scale-105 active:scale-95 px-2"
+                                            >
+                                              <div className="relative group">
+                                                <PiDownloadSimpleDuotone />
+                                              </div>
+                                            </button>
+                                            <button
+                                              onClick={() =>
+                                                summarizeDocumentClick(
+                                                  blockId,
+                                                  item.file_id,
+                                                  index
+                                                )
+                                              }
+                                              className="px-2"
+                                            >
+                                              <div className="relative group">
+                                                <PiQueueDuotone />
+                                              </div>
+                                            </button>
+                                          </td>
+                                        </tr>
+                                        {expandedBlock.blockId === blockId &&
+                                          expandedBlock.index === index && (
+                                            <tr>
+                                              <td
+                                                colSpan="2"
+                                                className="border px-4 py-2"
+                                              >
+                                                {/* Display the summary data here */}
+                                                {summaryData}
+                                              </td>
+                                            </tr>
+                                          )}
+                                      </React.Fragment>
+                                    ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          ) : item.sender === "ai" && (item.source === "ChatGPT" || item.source ==="Google_Search") ? (
                             <div className="flex text-xs items-center">
-                              {(item.fileData && item.fileData.length > 0) ||
+                              {(item.relevant_files &&
+                                item.relevant_files.length > 0) ||
                               (item.relevant_files &&
                                 item.relevant_files.length > 0) ? (
                                 <span className="text-sm font-bold mr-2">
                                   Learn more:
                                 </span>
                               ) : null}
-                              <div className="flex flex-wrap items-center">
-                                {item.fileData &&
-                                  item.fileData.length > 0 &&
-                                  item.fileData.map((data, index) => (
-                                    <button
-                                      key={index}
-                                      className="relative transform transition-transform px-1 mr-1 max-w-[130px] "
-                                      onClick={() => {
-                                        getDownloadDocument(data.file_id);
-                                      }}
-                                    >
-                                      <div className="relative group text-xs bg-blue-500 px-2 py-1 rounded-lg text-white truncate max-w-[130px] hover:max-w-full">
-                                        {data.file_name}
-                                      </div>
-                                    </button>
-                                  ))}
-                              </div>
                               <div className="flex flex-wrap items-center">
                                 {item.relevant_files &&
                                   item.relevant_files.length > 0 &&
@@ -288,6 +425,8 @@ function ChatController({
                                   ))}
                               </div>
                             </div>
+                          ) : (
+                            <></>
                           )}
                         </div>
                       </div>
@@ -331,7 +470,7 @@ function ChatController({
         </div>
       </div>
 
-    {/* Bottom Floating Area part */}
+      {/* Bottom Floating Area part */}
       <div
         className="lg:w-[calc(100%-256px)] w-full flex opacity-bottom-0 absolute bottom-0 px-4 items-center flex-col"
         style={{
@@ -341,22 +480,21 @@ function ChatController({
       >
         {messages.length === 0 && !isGetChatLoading && !docId ? (
           //Instruction
-          
-            <div className="mb-5 relative w-full">
-              <div className=" grid grid-cols-2 gap-4 align-center mt-10 justify-center max-w-5xl  m-auto">
-                {Instruction.map((item, index) => (
-                  <div
-                    key={index}
-                    className="border rounded-xl border-gray-300 p-5 text-xs hover:bg-gray-200"
-                    onClick={handleHandleInstruction(item.text)}
-                  >
-                    <div className="font-bold text-gray-700">{item.title}</div>
-                    <div className="text-gray-400">{item.text}</div>
-                  </div>
-                ))}
-              </div>
+
+          <div className="mb-5 relative w-full">
+            <div className=" grid grid-cols-2 gap-4 align-center mt-10 justify-center max-w-5xl  m-auto">
+              {Instruction.map((item, index) => (
+                <div
+                  key={index}
+                  className="border rounded-xl border-gray-300 p-5 text-xs hover:bg-gray-200"
+                  onClick={handleHandleInstruction(item.text)}
+                >
+                  <div className="font-bold text-gray-700">{item.title}</div>
+                  <div className="text-gray-400">{item.text}</div>
+                </div>
+              ))}
             </div>
-          
+          </div>
         ) : !isGetChatLoading ? (
           //Scroll to bottom button
           <button
@@ -368,11 +506,11 @@ function ChatController({
         ) : (
           //document loading animation
           <LottieAnimation
-          animationData={documentlottie}
-          width={300}
-          height={300}
-          className="mb-5"
-        />
+            animationData={documentlottie}
+            width={300}
+            height={300}
+            className="mb-5"
+          />
         )}
 
         <div className="mx-4 mb-5 flex flex-col w-full @sm:pb-5 max-w-5xl m-auto">
@@ -384,7 +522,6 @@ function ChatController({
                 style={{
                   "max-height": "400px",
                   height: "56px",
-                
                 }}
                 className="block w-full text-gray-900 placeholder:text-gray-400 text-base font-normal resize-none outline-none px-4 py-4 rounded-t-lg focus:outline-none border-none bg-white z-5"
                 placeholder={
