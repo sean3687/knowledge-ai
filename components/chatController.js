@@ -11,7 +11,7 @@ import {
   PiDownloadSimpleDuotone,
   PiQueueDuotone,
   PiMagnifyingGlassDuotone,
-  PiGoogleLogoDuotone
+  PiGoogleLogoDuotone,
 } from "react-icons/pi";
 import hljs from "highlight.js";
 import "highlight.js/styles/panda-syntax-dark.css"; // choose a style of your preference
@@ -62,12 +62,10 @@ function ChatController({
     },
   ];
 
-  const renderBasedOnResponseStatus = () => {
-    console.log("responseStatus", responseStatus);
-    switch (responseStatus[0]) {
-      case !responseStatus.length || responseStatus[0]?.trim().length === 0:
-        return <Loading className="mt-2" />;
-      case "ChatGPT" || "Google_Search":
+  const renderBasedOnResponseStatus = (status) => {
+    console.log("renderBasedOnResponseStatus", status);
+    switch (status[0]) {
+      case "ChatGPT":
         return (
           <div className="border border-purple-500/75 border-1 flex rounded-lg justify-center items-center max-w-fit">
             <div className="flex">
@@ -91,6 +89,30 @@ function ChatController({
             </div>
           </div>
         );
+      case "Google_Search":
+        return(
+        <div className="border border-red-500/75 border-1 flex rounded-lg justify-center items-center max-w-fit">
+          <div className="flex">
+            <PiGoogleLogoDuotone className="w-6 h-6 mx-4 my-2 text-red-500" />
+          </div>
+          <div className="my-2 mr-5">
+            <div className="flex items-center">
+              <div className="text-gray text-xs font-bold flex aligns-center">
+                <span className="mr-2">Browsing...</span>
+              </div>
+              <Spinner
+                className=""
+                size={`w-3 h-3`}
+                tintColor={"fill-black"}
+                bgColor={"dark:text-red-300"}
+              />
+            </div>
+            <div className="text-gray text-xs font-medium mr-2">
+              {responseStatus[0]}
+            </div>
+          </div>
+        </div>
+        )
       case "Document_QA_System":
         return (
           <div className="border border-blue-500/75 border-1 flex rounded-lg justify-center items-center max-w-fit">
@@ -141,21 +163,20 @@ function ChatController({
             </div>
           </div>
         );
-        case "Google_Search":
+      case "Google_Search":
         return (
-          
           <div className="flex rounded-lg justify-center items-center max-w-fit bg-white rounded-md">
-          <div className="flex">
-            <PiGoogleLogoDuotone className="w-6 h-6 mx-4 my-2 text-red-500" />
-          </div>
-          <div className="my-2 mr-5">
-            <div className="flex items-center">
-              <div className="text-gray text-xs font-bold flex aligns-center">
-                <span className="mr-2">Google Search</span>
+            <div className="flex">
+              <PiGoogleLogoDuotone className="w-6 h-6 mx-4 my-2 text-red-500" />
+            </div>
+            <div className="my-2 mr-5">
+              <div className="flex items-center">
+                <div className="text-gray text-xs font-bold flex aligns-center">
+                  <span className="mr-2">Google Search</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
         );
       case "Document_QA_System":
         return (
@@ -188,9 +209,7 @@ function ChatController({
           </div>
         );
       default:
-        return (
-          <></>
-        );
+        return <></>;
     }
   };
   const handleInputChange = (event) => {
@@ -400,12 +419,14 @@ function ChatController({
                               __html: markdownToHtml(item.message),
                             }}
                           ></div>
-                          
+
                           {item.sender === "ai" &&
                           (item.source === "Document_QA_System" ||
                             item.source === "Document_Display") ? (
                             <div className="bg-white p-2 rounded-md my-2">
-                              <div className="">{renderBasedOnSource(item.source)}</div>
+                              <div className="">
+                                {renderBasedOnSource(item.source)}
+                              </div>
                               <div className="flex text-xs mt-2 items-center w-full">
                                 <table className="min-w-full divide-y divide-gray-200 outline outline-1 outline-gray-200 rounded-md">
                                   <thead>
@@ -473,35 +494,37 @@ function ChatController({
                             (item.source === "ChatGPT" ||
                               item.source === "Google_Search") ? (
                             <>
-                            <div className="">{renderBasedOnSource(item.source)}</div>
-                           
-                            <div className="flex text-xs items-center">
-                              {(item.relevant_files &&
-                                item.relevant_files.length > 0) ||
-                              (item.relevant_files &&
-                                item.relevant_files.length > 0) ? (
-                                <span className="text-sm font-bold mr-2">
-                                  Learn more:
-                                </span>
-                              ) : null}
-                              <div className="flex flex-wrap items-center">
-                                {item.relevant_files &&
-                                  item.relevant_files.length > 0 &&
-                                  item.relevant_files.map((data, index) => (
-                                    <button
-                                      key={index}
-                                      className="relative transform transition-transform px-1 mr-1 max-w-[130px] "
-                                      onClick={() => {
-                                        getDownloadDocument(data.file_id);
-                                      }}
-                                    >
-                                      <div className="relative group text-xs bg-blue-500 px-2 py-1 rounded-lg text-white truncate max-w-[130px] hover:max-w-full">
-                                        {data.file_name}
-                                      </div>
-                                    </button>
-                                  ))}
+                              <div className="">
+                                {renderBasedOnSource(item.source)}
                               </div>
-                            </div>
+
+                              <div className="flex text-xs items-center">
+                                {(item.relevant_files &&
+                                  item.relevant_files.length > 0) ||
+                                (item.relevant_files &&
+                                  item.relevant_files.length > 0) ? (
+                                  <span className="text-sm font-bold mr-2">
+                                    Learn more:
+                                  </span>
+                                ) : null}
+                                <div className="flex flex-wrap items-center">
+                                  {item.relevant_files &&
+                                    item.relevant_files.length > 0 &&
+                                    item.relevant_files.map((data, index) => (
+                                      <button
+                                        key={index}
+                                        className="relative transform transition-transform px-1 mr-1 max-w-[130px] "
+                                        onClick={() => {
+                                          getDownloadDocument(data.file_id);
+                                        }}
+                                      >
+                                        <div className="relative group text-xs bg-blue-500 px-2 py-1 rounded-lg text-white truncate max-w-[130px] hover:max-w-full">
+                                          {data.file_name}
+                                        </div>
+                                      </button>
+                                    ))}
+                                </div>
+                              </div>
                             </>
                           ) : (
                             <></>
@@ -535,7 +558,7 @@ function ChatController({
                   >
                     <div>
                       <div className="max-width-[150px] mb-2">
-                        {renderBasedOnResponseStatus()}
+                        {renderBasedOnResponseStatus(responseStatus)}
                       </div>
                     </div>
                     <div

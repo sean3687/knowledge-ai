@@ -37,8 +37,9 @@ function Controller() {
     if (isSendChatLoading) {
       intervalId = setInterval(async () => {
         if (chatId) {
-          await getChatStatus(chatId);
-          console.log("this is response status", responseStatus);
+          let chatStatus = await getChatStatus(chatId);
+          setResponseStatus(chatStatus);
+          console.log("this is response status", chatStatus);
         }
       }, 1000);
     }
@@ -128,22 +129,18 @@ function Controller() {
           let sourceStatus = await getSourceStatus();
           console.log("This is source status", sourceStatus);
           let fileData;
-          if (sourceStatus =="Chatgpt" || sourceStatus =="Google_Search" || sourceStatus =="Document_QA_System") {
-            fileData = await getRelevantFile(
-              chatId,
-              inputText,
-              accumulatedResponse
-            );
-          } else if(sourceStatus =="Document_Display") {
+          if (sourceStatus =="Document_Display") {
             fileData = await displayRelevantFile(
               chatId,
               inputText,
               accumulatedResponse
             );
           } else {
-            fileData = {
-              //empty file object
-            };
+            fileData = await getRelevantFile(
+              chatId,
+              inputText,
+              accumulatedResponse
+            );
           }
           console.log("Final Bot Message", accumulatedResponse);
           const finalBotMessage = {
@@ -212,10 +209,10 @@ function Controller() {
         }
       );
       const chatStatus = response.data;
-      setResponseStatus(chatStatus);
-      return;
+      return chatStatus;
+      
     } catch (error) {
-      setResponseStatus("");
+      
       return "";
     }
   }
@@ -252,6 +249,10 @@ function Controller() {
   }
 
   async function getRelevantFile(chatId, inputText, aiResponse) {
+    console.log("getRelevantFile");
+    console.log("chatId", chatId);
+    console.log("inputText", inputText);
+    console.log("aiResponse", aiResponse);
     const body = {
       chat_id: chatId,
       human_message: inputText,
