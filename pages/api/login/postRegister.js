@@ -23,16 +23,17 @@ export default async function handler(req, res) {
 
     res.status(200).json({
       success: true,
-      message: response.data.msg
+      message: "Moved to verification page"
     });
+    
   } catch (error) {
-    const errorMessage =
-      error.response && error.response.data && error.response.data.message
-        ? error.response.data.message
-        : error.message || "An error occurred during login.";
+    res.status(400).json({
+      success: false,
+      message: "Username already exists"
+    });
     res.status(500).json({
       success: false,
-      message: response.data.msg,
+      message: "Please try again later",
     });
   }
 }

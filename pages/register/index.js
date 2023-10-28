@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import withLayout from "../../components/layouts/withLayout";
+import { Toaster } from "react-hot-toast";
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -15,8 +16,10 @@ function RegisterPage() {
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
 
     if (formData.password !== formData.confirmPassword) {
       setMessage("Passwords don't match");
@@ -36,27 +39,25 @@ function RegisterPage() {
           },
         }
       );
-
-      // Assuming a successful response means the user has been registered
-      setMessage(response.data.message);
-      window.location.href = "/login";
-      // You can return or process the response if needed
-      return response.data;
+      if (response.data.success === true) {
+        window.location.href = `/register/verify_pending?username=${encodeURIComponent(formData.username)}`;
+      }
+      
     } catch (error) {
-      console.error("Error registering user:", error);
-
-      // If there's an error message in the response, use that, otherwise use a generic error message
-      const errorMessage =
-        error.response && error.response.data && error.response.data.message
-          ? error.response.data.message
-          : "An error occurred during registration.";
-
-      setMessage(errorMessage);
+      if (error.response && error.response.status === 400) {
+        // Handle the 400 Bad Request error here
+        setMessage(
+          "User already exists. Please try again with a different username."
+        );
+      } else {
+        setMessage("An error occurred. Please try again later.");
+      }
     }
   };
 
   return (
     <div className="bg-skyblue-300 min-h-screen flex justify-center items-center">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="bg-white p-8 rounded-lg shadow-md w-80">
         <h2 className="text-2xl font-semibold mb-4">Register</h2>
         <form onSubmit={handleSubmit}>
@@ -65,7 +66,7 @@ function RegisterPage() {
               htmlFor="username"
               className="block text-gray-700 text-sm font-medium mb-2"
             >
-              Username:
+              Email:
             </label>
             <input
               type="text"
@@ -124,4 +125,4 @@ function RegisterPage() {
   );
 }
 
-export default withLayout(RegisterPage, "login")
+export default withLayout(RegisterPage, "login");
