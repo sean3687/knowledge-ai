@@ -14,8 +14,7 @@ export default function VerificationPending() {
   const sendVerificationEmail = async (username) => {
     const url = `/api/login/getVerification?username=${username}`;
 
-  
-    setSecondsLeft(2);
+    setSecondsLeft(30);
     setButtonLabel("Resend in 30s");
 
     try {
