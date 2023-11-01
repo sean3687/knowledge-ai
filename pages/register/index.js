@@ -16,6 +16,26 @@ function RegisterPage() {
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
+  const sendVerificationEmail = async () => {
+    const url = `/api/login/getVerification?username=${formData.username}`;
+
+    try {
+      const response = await axios.get(
+        url,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.success) {
+        toast.success(response.data.message)
+      }
+    } catch (error) {
+        toast.error("Please try again");
+    }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,6 +60,7 @@ function RegisterPage() {
         }
       );
       if (response.data.success === true) {
+        sendVerificationEmail(formData.username)
         window.location.href = `/register/verify_pending?username=${encodeURIComponent(formData.username)}`;
       }
       

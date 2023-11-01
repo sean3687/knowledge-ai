@@ -16,7 +16,7 @@ function withLayout(WrappedComponent, layoutType) {
     if (layoutType === "dashboard") {
       return (
         <DashboardLayout accessToken={accessToken} name={nameString}>
-          <WrappedComponent {...props} accessToken={accessToken} />
+          <WrappedComponent {...props} accessToken={accessToken} name={nameString} />
         </DashboardLayout>
       );
     } else if (layoutType === "login") {
