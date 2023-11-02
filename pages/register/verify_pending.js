@@ -97,7 +97,7 @@ export default function VerificationPending() {
           Verification Required
         </h1>
         <p className="text-gray-400 mt-2 mb-2 font-bold">
-          Enter the code we&aposve emailed to
+          Enter the code we&apos;ve emailed to
         </p>
         <p className="text-gray-400 mt-2 mb-2 font-bold">
           {maskEmail(username)}
