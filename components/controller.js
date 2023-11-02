@@ -208,7 +208,7 @@ function Controller() {
           },
         }
       );
-      const chatStatus = response.data;
+      const chatStatus = response.data.chatStatus;
       return chatStatus;
       
     } catch (error) {
