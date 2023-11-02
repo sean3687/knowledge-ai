@@ -1,4 +1,5 @@
 export default function linkify(inputText) {
+    
     let replacedText, replacePattern1, replacePattern2, replacePattern3;
 
     // URLs starting with http://, https://, or ftp://
