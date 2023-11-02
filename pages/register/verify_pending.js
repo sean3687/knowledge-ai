@@ -11,8 +11,15 @@ export default function VerificationPending() {
   const username = router.query.username;
   const [secondsLeft, setSecondsLeft] = useState(-1);
   const [buttonLabel, setButtonLabel] = useState("Send Verification");
-  const [otp, setOtp] = useState(Array(6).fill("")); // OTP state
-  const otpRefs = Array.from({ length: 6 }).map(() => useRef(null)); // Create refs for each input
+  const [otp, setOtp] = useState(Array(6).fill(""));
+
+  const otpRefsContainer = useRef(Array(6).fill(null));
+
+  useEffect(() => {
+    otpRefsContainer.current = otpRefsContainer.current.map((ref, index) => {
+      return ref || React.createRef();
+    });
+  }, []);
 
   const handleVerify = async () => {
     verifyVerificationCode(otp);
@@ -98,7 +105,6 @@ export default function VerificationPending() {
         </h1>
         <p className="text-gray-400 mt-2 mb-2 font-bold">
           Enter the code we&apos;ve emailed to
-          
         </p>
         <p className="text-gray-400 mt-2 mb-2 font-bold">
           {maskEmail(username)}
@@ -111,7 +117,7 @@ export default function VerificationPending() {
               maxLength="1"
               className="w-10 h-20 text-center  bg-gray-100  font-bold rounded focus:border-blue-600 focus:outline-none"
               value={num}
-              ref={otpRefs[idx]}
+              ref={otpRefsContainer.current[idx]}
               onChange={(e) => handleOTPChange(e, idx)}
             />
           ))}
