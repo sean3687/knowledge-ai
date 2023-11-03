@@ -86,9 +86,7 @@ function RegisterPage() {
             <label
               htmlFor="username"
               className="block text-gray-700 text-sm font-medium mb-2"
-            >
-              Email:
-            </label>
+            >Email:</label>
             <input
               type="text"
               id="username"
