@@ -16,9 +16,7 @@ export default function VerificationPending() {
   const otpRefsContainer = useRef(Array(6).fill(null));
 
   useEffect(() => {
-    otpRefsContainer.current = otpRefsContainer.current.map((ref, index) => {
-      return ref || React.createRef();
-    });
+    otpRefsContainer.current = otp.map((_, index) => otpRefsContainer.current[index] ?? createRef());
   }, []);
 
   const handleVerify = async () => {
