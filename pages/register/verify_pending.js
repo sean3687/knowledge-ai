@@ -1,7 +1,7 @@
-import Head from "next/head";
 import axios from "axios";
 import { PiArrowRight } from "react-icons/pi";
-import { React, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import React, { createRef } from 'react';
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 import maskEmail from "../../utils/maskemail";
