@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import withLayout from "../../components/layouts/withLayout";
-import { Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
