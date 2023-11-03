@@ -1,7 +1,7 @@
 import Head from "next/head";
 import axios from "axios";
 import { PiArrowRight } from "react-icons/pi";
-import { useState, useEffect, useRef } from "react";
+import { React, useState, useEffect, useRef } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 import maskEmail from "../../utils/maskemail";
@@ -98,7 +98,7 @@ export default function VerificationPending() {
         </h1>
         <p className="text-gray-400 mt-2 mb-2 font-bold">
           Enter the code we&apos;ve emailed to
-          
+
         </p>
         <p className="text-gray-400 mt-2 mb-2 font-bold">
           {maskEmail(username)}
