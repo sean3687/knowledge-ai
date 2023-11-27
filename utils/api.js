@@ -7,30 +7,6 @@ const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-export const login = async (un, pw) => {
-  console.log("this is log from util " + un);
-
-  try {
-    // await axios.post(
-    //   "http://https://chitchatrabbit.me/token",
-    //   { 'username': un, 'password':pw },
-    //   { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-    // ).then(function(response){
-    //     const accessToken = response.data.access_token;
-    // console.log("access Token Ready " + accessToken);
-    // // sessionStorage.setItem('accessToken', accessToken);
-    // })
-    
-    
-    // return accessToken;
-  } catch (error) {
-    console.error("error message: " + error);
-    return error;
-  }
-
-
-};
-
 export const checkUserAPI = async ( accessToken) => {
 
 }

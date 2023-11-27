@@ -1,11 +1,12 @@
-import Navbar from "../../components/responsiveNavbar"
+import ResponsiveNavbar from "../navigation/responsiveNavbar"
 import { useState, useEffect } from "react";
 
 
-function DashboardLayout({ children, accessToken, name }) {
+function DashboardLayout({ children, accessToken, username}) {
+
     return (
         <div className="flex flex-col h-screen lg:flex-row">
-            <Navbar accessToken={accessToken} name={name} className=""/>
+            <ResponsiveNavbar />
             <div className="w-full overflow-y-auto bg-white">
                 <div className="flex-grow overflow-y-auto">
                     {children}

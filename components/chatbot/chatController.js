@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import Loading from "./animation/loading";
+import Loading from "../animation/loading";
 import { FaPaperPlane, FaTrashCan, FaRegComments } from "react-icons/fa6";
 import {
   PiUserDuotone,
@@ -16,12 +16,13 @@ import {
 import hljs from "highlight.js";
 import "highlight.js/styles/panda-syntax-dark.css"; // choose a style of your preference
 import axios from "axios";
-import Spinner from "./animation/spinner";
-import LoadingDots from "./animation/loadingDots";
-import formatDate from "../utils/dateFormat";
-import LottieAnimation from "./animation/lottie-animation";
-import documentlottie from "../public/document-loading.json";
-import linkify from "../utils/linkify.js";
+import Spinner from "../animation/spinner";
+import LoadingDots from "../animation/loadingDots";
+import formatDate from "../../utils/dateFormat";
+import LottieAnimation from "../animation/lottie-animation";
+import documentlottie from "../../public/document-loading.json";
+import linkify from "../../utils/linkify.js";
+import useSessionStorage from "../../pages/hooks/useSessionStorage";
 
 function ChatController({
   inputText,
@@ -43,6 +44,7 @@ function ChatController({
   }); // Add this state
   const [summaryData, setSummaryData] = useState(null);
   const { docId } = router.query;
+  const [accessToken, setAccessToken] = useSessionStorage("accessToken", "");
   const Instruction = [
     {
       title: "Casual Conversation",
@@ -236,7 +238,7 @@ function ChatController({
         { selectedId: id },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
           responseType: "arraybuffer",
@@ -365,7 +367,7 @@ function ChatController({
 
   useEffect(() => {
     scrollToBottom;
-    console.log("this is message", messages);
+    
   }, [messages]);
 
   return (
@@ -626,7 +628,7 @@ function ChatController({
               <textarea
                 rows="1"
                 style={{
-                  "max-height": "400px",
+                  "maxHeight?": "400px",
                   height: "56px",
                 }}
                 className="block w-full text-gray-900 placeholder:text-gray-400 text-base font-normal resize-none outline-none px-4 py-4 rounded-t-lg focus:outline-none border-none bg-white z-5"

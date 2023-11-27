@@ -1,4 +1,4 @@
-import Controller from "../../components/controller";
+import Controller from "../../components/chatbot/controller";
 import { } from "react-icons/ai"
 import withLayout from "../../components/layouts/withLayout";
 

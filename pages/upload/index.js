@@ -19,8 +19,9 @@ import useChatInfoStore from "../../stores/chatStore";
 import withLayout from "../../components/layouts/withLayout";
 import formatDate from "../../utils/dateFormat";
 import { toast, Toaster } from "react-hot-toast";
+import useSessionStorage from "../hooks/useSessionStorage";
 
-function UploadPage({ accessToken }) {
+function UploadPage() {
   const [filesUpload, setFilesUpload] = useState([]);
   const [documentList, setDocumentList] = useState([]);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -40,13 +41,14 @@ function UploadPage({ accessToken }) {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [typingTimeout, setTypingTimeout] = useState(null);
-
+  const [accessToken] = useSessionStorage("accessToken", "");
   const router = useRouter();
 
-  // const selectDocument = (fileId) => {
-  //   setSelectedID(fileId)
-  //   console.log("this is document selected " +selectedID )
-  // }
+  useEffect(() => {
+    if (!accessToken) {
+      router.push("/login");
+    }
+  });
 
   const handleMouseEnter = (id) => {
     setHoveredID(id);

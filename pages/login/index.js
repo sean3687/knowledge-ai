@@ -7,9 +7,12 @@ import LottieAnimation from "../../components/animation/lottie-animation";
 import accountingLottie from "../../public/accounting-lottie.json";
 import { toast, Toaster } from "react-hot-toast";
 import Spinner from "../../components/animation/spinner";
+import useSessionStorage from "../hooks/useSessionStorage";
 
 function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [accessToken, setAccessToken] = useSessionStorage('accessToken', '');
+  const [username, setUsername] = useSessionStorage('name', '');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,13 +32,13 @@ function LoginPage() {
 
       toast.success("Successfully Login!");
 
-      const accessToken = response.data.accessToken;
-      sessionStorage.setItem("accessToken", accessToken);
+      let accessToken= response.data.accessToken;
+      setAccessToken(response.data.accessToken);
+      
       await getProfile(accessToken);
-
       window.location.href = "/chatbot";
-      console.log("Move finished" + chatid);
       setIsLoading(false);
+
     } catch (error) {
       if (!setIsLoading) {
         // For other errors (status code 500), display a generic error message.
@@ -59,7 +62,7 @@ function LoginPage() {
     });
     console.log("did you get username from getRPfoeil?" + username);
     if (response.data.success) {
-      sessionStorage.setItem("name", response.data.response.username);
+        setUsername(response.data.response.username);
     } else {
     }
   }
@@ -80,10 +83,6 @@ function LoginPage() {
           Upload your documents and let KLIB&apos;s leading AI extract vital
           insights, enhancing your data experience. Experience the future of the
           knowledge library today!
-          {/* Simply upload your documents and let our advanced AI delve deep into
-          them. KLIB&apos;s cutting-edge AI dives deep into your documents, extract
-          critical insights, and elevate your data experience. <br></br>
-          <br></br>Dive into the future of knowledge library today! */}
         </p>
         <LottieAnimation
           animationData={accountingLottie}

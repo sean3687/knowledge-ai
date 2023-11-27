@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import FileController from "./fileController.js";
-import ChatController from "./chatController.js";
-import moment from "moment";
 import { useRouter } from "next/router";
+import ChatController from "./chatController.js";
+import moment from "moment";  
 import axios from "axios";
-import useChatInfoStore from "../stores/chatStore.js";
+import useChatInfoStore from "../../stores/chatStore.js";
+import useSessionStorage from "../../pages/hooks/useSessionStorage.js";
 
 function Controller() {
-  // const [inputText, setInputText] = useState("");
   const [isSendChatLoading, setIsSendChatLoading] = useState(false);
   const [isGetChatLoading, setIsGetChatLoading] = useState(false);
   const [responseStatus, setResponseStatus] = useState("");
@@ -18,23 +17,30 @@ function Controller() {
   const setChatArray = useChatInfoStore((state) => state.setChatArray);
   const addChatArray = useChatInfoStore((state) => state.addChatArray);
   const popChatArray = useChatInfoStore((state) => state.popChatArray);
+  const [savedChatId, setSavedChatId] = useSessionStorage("current_chatId", "");
   const router = useRouter();
   const chatId = router.query.id;
 
   useEffect(() => {
-    const savedChatId = sessionStorage.getItem("current_chatId");
-    console.log("Chatid From Session Storage", savedChatId);
-    console.log("chatid from router", chatId);
-
+    let intervalId;
+    console.log("This is savedChatId", savedChatId);
+    console.log("This is chatId", chatId);
     if (savedChatId !== chatId && chatId) {
+      //when you switch to another chat
+     console.log("tab swtiched")
       setChatArray([]);
       getChatMessages(chatId);
-      sessionStorage.setItem("current_chatId", chatId);
+      setSavedChatId("current_chatId", chatId);
+      
     }
 
-    let intervalId;
+    if( savedChatId === chatId && chatArray.length === 0 && chatId){
+      //when you refresh the page
+      getChatMessages(chatId);
+    }
 
     if (isSendChatLoading) {
+      //when you send a message
       intervalId = setInterval(async () => {
         if (chatId) {
           let chatStatus = await getChatStatus(chatId);
@@ -49,16 +55,15 @@ function Controller() {
         clearInterval(intervalId);
       }
     };
-  }, [chatId, isSendChatLoading]);
+  }, [chatId, savedChatId]);
 
   const sendMessageClick = async () => {
     setIsSendChatLoading(true);
-    console.log("In progress: sendMessageClick1 ", isSendChatLoading);
-    setStreamingResponse("");
     const currentInputText = inputText;
-    setInputText("");
-
     let chatId = router.query.id;
+    setStreamingResponse("");
+    setInputText("");
+    
 
     if (!chatId) {
       console.log("ChatId not found");

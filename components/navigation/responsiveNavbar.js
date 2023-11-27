@@ -13,12 +13,13 @@ import {
 } from "react-icons/pi";
 
 import { FaFileLines, FaGoogleDrive } from "react-icons/fa6";
-import Spinner from "../components/animation/spinner";
+import Spinner from "../animation/spinner";
 import axios from "axios";
 import { useRouter } from "next/router";
-import firstLetterCapitalized from "../utils/stringManimupaltion.js";
-import useChatInfoStore from "../stores/chatStore.js";
-import extractUsername from "../utils/usernameExtracter";
+import firstLetterCapitalized from "../../utils/stringManimupaltion.js";
+import useChatInfoStore from "../../stores/chatStore.js";
+import extractUsername from "../../utils/usernameExtracter";
+import useSessionStorage from "../../pages/hooks/useSessionStorage";
 
 const tabs = [
   {
@@ -33,11 +34,7 @@ const tabs = [
   },
 ];
 
-const TabItems = ({
-  setSelectedTabIndex,
-  selectedTabIndex,
-  setShowCreateModal,
-}) => {
+const TabItems = ({ setSelectedTabIndex, selectedTabIndex }) => {
   return (
     <div className="rounded-lg">
       <div className="border-b bg-white mt-2">
@@ -72,39 +69,38 @@ const TabItems = ({
 };
 
 const handleLogout = () => {
-  sessionStorage.setItem("accessToken", "");
+  sessionStorage.removeItem("accessToken");
+  sessionStorage.removeItem("name");
 };
 
-function Navbar({ accessToken, name }) {
+function ResponsiveNavbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const [token, setToken] = useState("");
   const router = useRouter(); // Get the router object
-  const [nameString, setNameString] = useState("");
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [chatList, setChatList] = useState([]);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [isDeleteChatLoading, setisDeleteChatLoading] = useState(false);
   const currentChatId = useChatInfoStore((state) => state.currentChatId);
-  const setCurrentChatId = useChatInfoStore((state) => state.setCurrentChatId);
-  const addChatArray = useChatInfoStore((state) => state.addChatArray);
   const setChatArray = useChatInfoStore((state) => state.setChatArray);
-
+  const [username, setUsername] = useSessionStorage("name", "");
+  const [selectedChat, setSelectedChat] = useSessionStorage("selectedChat", "");
+  const [firstLetter, setFirstLetter] = useState("");
+  const [usernameExtracted, setUsernameExtracted] = useState("");
+  
   useEffect(() => {
     getChatList();
+    setFirstLetter(firstLetterCapitalized(username));
+    setUsernameExtracted(extractUsername(username));
   }, []);
+
   useEffect(() => {
-    //Access Token
-    setToken(accessToken);
-    //From login page
-    console.log("this is name " + nameString);
     const currentTabIndex = tabs.findIndex(
       (tab) => tab.link === router.pathname
     );
     if (currentTabIndex !== -1) {
       setSelectedTabIndex(currentTabIndex);
     }
-  }, [token, router.pathname]);
+  }, [router.pathname]);
 
   const groupedChats = useMemo(() => {
     const today = [];
@@ -143,7 +139,6 @@ function Navbar({ accessToken, name }) {
             <TabItems
               setSelectedTabIndex={setSelectedTabIndex}
               selectedTabIndex={selectedTabIndex}
-              setShowCreateModal={setShowCreateModal}
             />
           </div>
         )}
@@ -202,7 +197,7 @@ function Navbar({ accessToken, name }) {
                           }
                         >
                           <Link
-                            href={`/chatbot`}
+                            href={`/chatbot/${chat.chat_id}`}
                             className="block py-3 px-2 rounded hover:bg-gray-100 transition duration-300 w-full relative"
                           >
                             <div className="flex items-center flex-grow space-x-2 pr-6">
@@ -254,14 +249,14 @@ function Navbar({ accessToken, name }) {
             }}
           >
             <div
-              className="flex items-center "
+              className="flex items-center"
               onClick={() => console.log(currentChatId)}
             >
               <div className="bg-green-800 text-xs w-6 h-6 aspect-1 rounded-full font-bold text-white flex items-center justify-center">
-                {firstLetterCapitalized(name)}
+                {firstLetter}
               </div>
               <div className="text-black-800 truncate ml-2 font-medium">
-                {extractUsername(name)}
+                {usernameExtracted}
               </div>
             </div>
           </div>
@@ -344,7 +339,6 @@ function Navbar({ accessToken, name }) {
     console.log("Chat id Clicked: ", id);
     router.push(`/chatbot/${id}`);
     setSelectedChatId(id);
-    await getChatList();
   }
 
   return (
@@ -388,4 +382,4 @@ function Navbar({ accessToken, name }) {
   );
 }
 
-export default Navbar;
+export default ResponsiveNavbar;
