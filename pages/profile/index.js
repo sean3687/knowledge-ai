@@ -183,7 +183,7 @@ function ProfilePage({ accessToken, name }) {
     <div className="py-8 px-10 bg-slate-100">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="bg-white p-5 rounded-lg">
-        <div className="text-lg font-bold p-2">Account information</div>
+        <div className="text-lg font-bold p-2">Account inforomation</div>
         {userInfo && (
           <div className="p-4">
             <div className="grid grid-cols-2 gap-4">
