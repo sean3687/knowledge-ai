@@ -23,17 +23,26 @@ export default async function handler(req, res) {
 
     res.status(200).json({
       success: true,
-      message: "Moved to verification page",
+      message: "Moved to verification page"
     });
+    
   } catch (error) {
-    const statusCode = error.response ? error.response.status : 500;
-    const message = error.response?.data?.detail || "An unexpected error occurred. Please try again later.";
-    res.status(statusCode).json({
+    
+    res.status(400).json({
       success: false,
-      message: message,
+      message: "Username already exists"
+    });
+    res.status(405).json({
+      success: false,
+      message: "Username already exists"
+    });
+    res.status(500).json({
+      success: false,
+      message: "Please try again later",
     });
   }
 }
+
 
 // const handleSubmit = async (e) => {
 //     e.preventDefault();

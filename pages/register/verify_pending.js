@@ -34,9 +34,7 @@ export default function VerificationPending() {
       });
       if (response.data.success) {
         toast.success(response.data.message);
-        setTimeout(() => {
-          window.location.href = "/login";
-        }, 2000);
+        window.location.href = "/login";
       } else {
         toast.error(response.data.message || "Verification failed.");
       }
@@ -67,19 +65,18 @@ export default function VerificationPending() {
   const handleOTPChange = (e, index) => {
     const value = e.target.value;
 
-  if (value.length <= 1) {
-    setOtp((prevOtp) => {
-      const newOtp = [...prevOtp];
-      newOtp[index] = value;
+    if (value.length <= 1) {
+      setOtp((prevOtp) => {
+        const newOtp = [...prevOtp];
+        newOtp[index] = value;
 
-      return newOtp;
-    });
+        return newOtp;
+      });
 
-    // Here you should use otpRefsContainer.current instead of otpRefs
-    if (value && otpRefsContainer.current[index + 1]) {
-      otpRefsContainer.current[index + 1].current.focus(); // Move focus to the next input
+      if (value && otpRefs[index + 1]) {
+        otpRefs[index + 1].current.focus(); // Move focus to the next input
+      }
     }
-  }
   };
 
   useEffect(() => {

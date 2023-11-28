@@ -65,11 +65,12 @@ function RegisterPage() {
       }
       
     } catch (error) {
-      if (error.response) {
-        // Use the message from your Next.js API route
-        setMessage(error.response.data.message);
+      if (error.response && error.response.status === 400) {
+        // Handle the 400 Bad Request error here
+        setMessage(
+          "User already exists. Please try again with a different username."
+        );
       } else {
-        // For errors without a response (like network errors), use a generic message
         setMessage("An error occurred. Please try again later.");
       }
     }
