@@ -19,7 +19,7 @@ import useChatInfoStore from "../../stores/chatStore";
 import withLayout from "../../components/layouts/withLayout";
 import formatDate from "../../utils/dateFormat";
 import { toast, Toaster } from "react-hot-toast";
-import useSessionStorage from "../hooks/useSessionStorage";
+import {useSessionStorage} from "../../hooks/useSessionStorage";
 
 function UploadPage() {
   const [filesUpload, setFilesUpload] = useState([]);

@@ -7,11 +7,11 @@ import LottieAnimation from "../../components/animation/lottie-animation";
 import accountingLottie from "../../public/accounting-lottie.json";
 import { toast, Toaster } from "react-hot-toast";
 import Spinner from "../../components/animation/spinner";
-import useSessionStorage from "../hooks/useSessionStorage";
+import { useSessionStorage } from "../../hooks/useSessionStorage";
 
 function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [accessToken, setAccessToken] = useSessionStorage('accessToken', '');
+  const [accessToken2, setAccessToken] = useSessionStorage('accessToken', '');
   const [username, setUsername] = useSessionStorage('name', '');
 
   const handleSubmit = async (e) => {
@@ -34,7 +34,7 @@ function LoginPage() {
 
       let accessToken= response.data.accessToken;
       setAccessToken(response.data.accessToken);
-      
+      console.log("This is accessToken" + accessToken2);
       await getProfile(accessToken);
       window.location.href = "/chatbot";
       setIsLoading(false);
@@ -62,7 +62,11 @@ function LoginPage() {
     });
     console.log("did you get username from getRPfoeil?" + username);
     if (response.data.success) {
+      console.log("did you get username from getRPfoeil? 2" + response.data.response.username);
         setUsername(response.data.response.username);
+        setTimeout(() => {
+          
+        }, 2000);
     } else {
     }
   }

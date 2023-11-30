@@ -4,7 +4,7 @@ import ChatController from "./chatController.js";
 import moment from "moment";  
 import axios from "axios";
 import useChatInfoStore from "../../stores/chatStore.js";
-import useSessionStorage from "../../pages/hooks/useSessionStorage.js";
+import { useSessionStorage } from "../../hooks/useSessionStorage.js";
 
 function Controller() {
   const [isSendChatLoading, setIsSendChatLoading] = useState(false);
@@ -18,6 +18,7 @@ function Controller() {
   const addChatArray = useChatInfoStore((state) => state.addChatArray);
   const popChatArray = useChatInfoStore((state) => state.popChatArray);
   const [savedChatId, setSavedChatId] = useSessionStorage("current_chatId", "");
+  const [accessToken, setAccessToken] = useSessionStorage("accessToken", "");
   const router = useRouter();
   const chatId = router.query.id;
 
@@ -86,7 +87,7 @@ function Controller() {
         {
           headers: {
             Authorization: `Bearer ${
-              sessionStorage.getItem("accessToken") || ""
+              accessToken || ""
             }`,
           },
         }
@@ -117,7 +118,7 @@ function Controller() {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
@@ -208,7 +209,7 @@ function Controller() {
         {
           headers: {
             Authorization: `Bearer ${
-              sessionStorage.getItem("accessToken") || ""
+              accessToken || ""
             }`,
           },
         }
@@ -234,7 +235,7 @@ function Controller() {
         body,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
         }
@@ -266,7 +267,7 @@ function Controller() {
     try {
       const response = await axios.post("/api/chatbot/getRelevantFile", body, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       });
@@ -294,7 +295,7 @@ function Controller() {
         {
           headers: {
             Authorization: `Bearer ${
-              sessionStorage.getItem("accessToken") || ""
+              accessToken
             }`,
           },
         }
@@ -318,7 +319,7 @@ function Controller() {
       const response = await axios.get("/api/chatbot/postCreateNewChat", {
         headers: {
           Authorization: `Bearer ${
-            sessionStorage.getItem("accessToken") || ""
+            accessToken || ""
           }`,
         },
       });
@@ -342,7 +343,7 @@ function Controller() {
         {
           headers: {
             Authorization: `Bearer ${
-              sessionStorage.getItem("accessToken") || ""
+              accessToken || ""
             }`,
           },
         }
@@ -356,7 +357,7 @@ function Controller() {
   const handleRefresh = async () => {
     const response = await axios.get("/api/chatbot/getClearChatHistory", {
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
     });

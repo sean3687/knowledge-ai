@@ -22,7 +22,7 @@ import formatDate from "../../utils/dateFormat";
 import LottieAnimation from "../animation/lottie-animation";
 import documentlottie from "../../public/document-loading.json";
 import linkify from "../../utils/linkify.js";
-import useSessionStorage from "../../pages/hooks/useSessionStorage";
+import { useSessionStorage } from "../../hooks/useSessionStorage";
 
 function ChatController({
   inputText,

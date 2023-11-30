@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 import firstLetterCapitalized from "../../utils/stringManimupaltion.js";
 import useChatInfoStore from "../../stores/chatStore.js";
 import extractUsername from "../../utils/usernameExtracter";
-import useSessionStorage from "../../pages/hooks/useSessionStorage";
+import { useSessionStorage } from "../../hooks/useSessionStorage.js";
 
 const tabs = [
   {
@@ -83,6 +83,7 @@ function ResponsiveNavbar() {
   const currentChatId = useChatInfoStore((state) => state.currentChatId);
   const setChatArray = useChatInfoStore((state) => state.setChatArray);
   const [username, setUsername] = useSessionStorage("name", "");
+  const [accessToken] = useSessionStorage("accessToken", "");
   const [selectedChat, setSelectedChat] = useSessionStorage("selectedChat", "");
   const [firstLetter, setFirstLetter] = useState("");
   const [usernameExtracted, setUsernameExtracted] = useState("");
@@ -92,6 +93,10 @@ function ResponsiveNavbar() {
     setFirstLetter(firstLetterCapitalized(username));
     setUsernameExtracted(extractUsername(username));
   }, []);
+
+  useEffect(() => {
+    console.log("Updated username:", username);
+  }, [username]);
 
   useEffect(() => {
     const currentTabIndex = tabs.findIndex(
@@ -266,12 +271,13 @@ function ResponsiveNavbar() {
   }
 
   async function getChatList() {
+    
     try {
       console.log("Function :getChatList");
       const response = await axios.get("/api/chatbot/getChatList", {
         headers: {
           Authorization: `Bearer ${
-            sessionStorage.getItem("accessToken") || ""
+            accessToken
           }`,
         },
       });
@@ -292,7 +298,7 @@ function ResponsiveNavbar() {
         {
           headers: {
             Authorization: `Bearer ${
-              sessionStorage.getItem("accessToken") || ""
+              accessToken || ""
             }`,
           },
         }
@@ -313,7 +319,7 @@ function ResponsiveNavbar() {
       const response = await axios.get("/api/chatbot/postCreateNewChat", {
         headers: {
           Authorization: `Bearer ${
-            sessionStorage.getItem("accessToken") || ""
+            accessToken
           }`,
         },
       });
