@@ -10,6 +10,8 @@ import {
   PiQueueDuotone,
   PiFileTextBold,
   PiWarningDuotone,
+  PiTreeStructureDuotone,
+  PiReceiptDuotone
 } from "react-icons/pi";
 
 import { CiMenuKebab } from "react-icons/ci";
@@ -19,7 +21,8 @@ import useChatInfoStore from "../../stores/chatStore";
 import withLayout from "../../components/layouts/withLayout";
 import formatDate from "../../utils/dateFormat";
 import { toast, Toaster } from "react-hot-toast";
-import {useSessionStorage} from "../../hooks/useSessionStorage";
+import { useSessionStorage } from "../../hooks/useSessionStorage";
+import PromptController from "../../components/upload/promptController";
 
 function UploadPage() {
   const [filesUpload, setFilesUpload] = useState([]);
@@ -43,6 +46,10 @@ function UploadPage() {
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [accessToken] = useSessionStorage("accessToken", "");
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
     if (!accessToken) {
@@ -325,7 +332,7 @@ function UploadPage() {
     }
   }
 
-  function StatusIndication({ fileStatus }) {
+  function UploadstatusIndication({ fileStatus }) {
     return (
       <div>
         {fileStatus === "uploading" ? (
@@ -445,7 +452,10 @@ function UploadPage() {
                   <th className="text-left text-xs font-semibold text-gray-700 uppercase">
                     Filename
                   </th>
-                  <th className="text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th className="text-xs font-semibold text-gray-700 uppercase">
+                    Types
+                  </th>
+                  <th className="text-xs font-semibold text-gray-700 uppercase">
                     Created Date
                   </th>
                   <th className=" text-xs font-semibold text-gray-700 uppercase">
@@ -500,11 +510,14 @@ function UploadPage() {
                         >
                           {item.file_name}
                         </td>
-                        <td className="whitespace-nowrap pr-3 py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
+                        <td className="whitespace-nowrap text-center py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
+                          Recipts
+                        </td>
+                        <td className="whitespace-nowrap text-center py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
                           {formatDate(item.upload_time)}
                         </td>
                         <td className="whitespace-nowrap text-center py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
-                          <StatusIndication fileStatus={item.status} />
+                          <UploadstatusIndication fileStatus={item.status} />
                         </td>
                         <td className="relative whitespace-nowrap py-4 text-sm text-gray-700 overflow-hidden text-center">
                           {item.labels.length === 0 ? (
@@ -535,6 +548,20 @@ function UploadPage() {
 
                               <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-black text-white text-xs rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                                 Download
+                              </div>
+                            </div>
+                          </button>
+                          <button
+                            onClick={() => {
+                              openModal
+                            }}
+                            className="relative transform transition-transform hover:scale-105 active:scale-95 px-2"
+                          >
+                            <div className="relative group">
+                              <PiTreeStructureDuotone />
+
+                              <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-black text-white text-xs rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                               Structure Data
                               </div>
                             </div>
                           </button>
@@ -609,11 +636,14 @@ function UploadPage() {
                                     "Delete"
                                   )}
                                 </button>
+                                
                               </div>
                             </Modal>
                           </button>
                         </td>
                       </tr>
+                      {/* Modals */}
+                      {/* Open Summarize Row */}
                       {expandedSummarizeRow === index && (
                         <tr>
                           <td colSpan={6} className="p-4">
@@ -635,6 +665,7 @@ function UploadPage() {
                           </td>
                         </tr>
                       )}
+                       {/* Open Keyword Row */}
                       {expandedMetadataRow === index && (
                         <tr>
                           <td colSpan={6} className="p-4">
@@ -656,6 +687,7 @@ function UploadPage() {
                           </td>
                         </tr>
                       )}
+                      <PromptController isOpen={isModalOpen} onClose={closeModal} type={"receipts"} />
                     </>
                   ))}
               </tbody>
@@ -663,21 +695,7 @@ function UploadPage() {
           </div>
         </div>
       </div>
-      {/* {showPopup && (
-        <div className="fixed bottom-4 right-4 w-2/3 lg:w-1/4 p-4 bg-white border rounded-lg shadow-xl">
-          <div className="flex justify-between items-center mb-4">
-            <button
-              onClick={() => setShowPopup(false)}
-              className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
-            >
-              <AiOutlineClose />
-            </button>
-          </div>
-          <div>
-            <UploadStatusChecker jsonData={uploadIneQueue} />
-          </div>
-        </div>
-      )} */}
+      
     </div>
   );
 }
