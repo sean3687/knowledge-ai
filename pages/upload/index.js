@@ -11,7 +11,7 @@ import {
   PiFileTextBold,
   PiWarningDuotone,
   PiTreeStructureDuotone,
-  PiReceiptDuotone
+  PiReceiptDuotone,
 } from "react-icons/pi";
 
 import { CiMenuKebab } from "react-icons/ci";
@@ -29,13 +29,9 @@ function UploadPage() {
   const [documentList, setDocumentList] = useState([]);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedID, setSelectedID] = useState(null);
+  const [structureDataId, setStructureDataId] = useState(null);
   const [deleteStatus, setDeleteStatus] = useState("");
-  const [uploadStatus, setUploadStatus] = useState("");
-  const [uploadIneQueue, setUploadIneQueue] = useState([]);
-
-  const [showPopup, setShowPopup] = useState(false);
   const fileInput = useRef(null);
-  const [showUploadDropdown, setShowUploadDropdown] = useState(false);
   const [hoveredID, setHoveredID] = useState(null);
   const setSummarizeId = useChatInfoStore((state) => state.setSummarizeId);
   const [expandedSummarizeRow, setExpandedSummarizeRow] = useState(null);
@@ -48,7 +44,10 @@ function UploadPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = () => setIsModalOpen(true);
+  const openModal = (id) => {
+    setIsModalOpen(true);
+    setStructureDataId(id);
+  };
   const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
@@ -132,8 +131,6 @@ function UploadPage() {
     setFilesUpload([...event.target.files]);
     console.log("this is files" + filesUpload.name);
     handleFilesUpload([...event.target.files]);
-    setShowPopup(true);
-    setShowUploadDropdown(null);
     event.target.value = null;
   }
 
@@ -179,7 +176,6 @@ function UploadPage() {
   }
 
   async function handleFilesUpload(files) {
-    setUploadStatus("in-progress");
     toast.success("Upload Initiated!");
     console.log("handleFilesUpload " + filesUpload);
     const formData = new FormData();
@@ -198,14 +194,11 @@ function UploadPage() {
         }
       );
       console.log("this is upload", response.data);
-      setUploadIneQueue(response.data);
       await processFiles(response.data);
       console.log("upload completed");
       fetchUploadedDocuments(accessToken);
     } catch (error) {
       console.error("Error uploading:", error);
-      setUploadStatus("failed");
-      const errorMessage = "Failed to upload";
       window.alert(error);
       fetchUploadedDocuments(accessToken);
     }
@@ -553,7 +546,7 @@ function UploadPage() {
                           </button>
                           <button
                             onClick={() => {
-                              openModal
+                              openModal(item.id);
                             }}
                             className="relative transform transition-transform hover:scale-105 active:scale-95 px-2"
                           >
@@ -561,9 +554,18 @@ function UploadPage() {
                               <PiTreeStructureDuotone />
 
                               <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-black text-white text-xs rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                               Structure Data
+                                Structure Data
                               </div>
                             </div>
+                            <PromptController
+                              className="modal"
+                              overlayClassName="modal-overlay"
+                              isOpen={isModalOpen && structureDataId == item.id}
+                              onClose={closeModal}
+                              itemId={structureDataId}
+                              type="receipts"
+                              
+                            />
                           </button>
                           <button
                             onClick={() => {
@@ -636,7 +638,6 @@ function UploadPage() {
                                     "Delete"
                                   )}
                                 </button>
-                                
                               </div>
                             </Modal>
                           </button>
@@ -665,7 +666,7 @@ function UploadPage() {
                           </td>
                         </tr>
                       )}
-                       {/* Open Keyword Row */}
+                      {/* Open Keyword Row */}
                       {expandedMetadataRow === index && (
                         <tr>
                           <td colSpan={6} className="p-4">
@@ -687,7 +688,6 @@ function UploadPage() {
                           </td>
                         </tr>
                       )}
-                      <PromptController isOpen={isModalOpen} onClose={closeModal} type={"receipts"} />
                     </>
                   ))}
               </tbody>
@@ -695,7 +695,6 @@ function UploadPage() {
           </div>
         </div>
       </div>
-      
     </div>
   );
 }

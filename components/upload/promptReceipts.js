@@ -53,14 +53,6 @@ function PromptReceipts() {
   return (
     <>
       {/* this is navigation */}
-      <div className="text-xl w-full flex">
-        <div>Back to files</div>
-        <div className="flex mr-0 ml-auto">
-          <div> | </div>
-          <div>Automation Status</div>
-          <div>Save</div>
-        </div>
-      </div>
       <div className="border rounded-md m-10">
         {/* table header */}
         <div className="text-xl w-full flex">
