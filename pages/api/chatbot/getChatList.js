@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await axios.get(
-      `https://chitchatrabbit.me/get_chat_info`,
+      `https://chitchatrabbit.me/klib/get_chat_info`,
       {
         headers: {
           "Content-Type": "application/json",

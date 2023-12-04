@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     const file_id = req.query.file_id;
     console.log("this is from nextjs route"+ file_id)
     try {
-        const response = await axios.get(`https://chitchatrabbit.me/upload_status/${file_id}`, {
+        const response = await axios.get(`https://chitchatrabbit.me/klib/upload_status/${file_id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",

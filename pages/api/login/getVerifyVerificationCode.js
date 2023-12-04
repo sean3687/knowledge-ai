@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     const { otp } = req.query;
     try {
       const response = await axios.get(
-        `https://chitchatrabbit.me/verify_email_code?verification_code=${otp}`,
+        `https://chitchatrabbit.me/klib/verify_email_code?verification_code=${otp}`,
         {
           headers: {
             "Content-Type": "application/json",

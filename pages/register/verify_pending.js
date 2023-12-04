@@ -73,8 +73,8 @@ export default function VerificationPending() {
         return newOtp;
       });
 
-      if (value && otpRefs[index + 1]) {
-        otpRefs[index + 1].current.focus(); // Move focus to the next input
+      if (value && otpRefsContainer.current[index + 1]) {
+        otpRefsContainer.current[index + 1].current.focus(); // Move focus to the next input
       }
     }
   };

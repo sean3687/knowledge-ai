@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   const { chat_id } = req.query; 
   const token = req.headers.authorization.split(" ")[1];
 
-  const url = `https://chitchatrabbit.me/get_chat_status/${chat_id}`;
+  const url = `https://chitchatrabbit.me/klib/get_chat_status/${chat_id}`;
 
   try {
     const response = await axios.get(url, { 

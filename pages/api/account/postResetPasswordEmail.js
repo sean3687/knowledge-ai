@@ -8,7 +8,7 @@ const handler = async (req, res) => {
   
     try {
       const response = await axios.post(
-        `https://chitchatrabbit.me/request_password_reset?username=${username}`,
+        `https://chitchatrabbit.me/klib/request_password_reset?username=${username}`,
         {
           headers: {
             "Content-Type": "application/json",

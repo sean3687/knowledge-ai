@@ -111,7 +111,7 @@ function Controller() {
 
     try {
       const response = await fetch(
-        `https://chitchatrabbit.me/chain/${chatId}/?message=${encodeURIComponent(
+        `https://chitchatrabbit.me/klib/chain/${chatId}/?message=${encodeURIComponent(
           inputText
         )}`,
 

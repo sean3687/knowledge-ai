@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     const token = req.headers.authorization.split(" ")[1];
 
     try {
-        const response = await axios.get("https://chitchatrabbit.me/delete_user", {
+        const response = await axios.get("https://chitchatrabbit.me/klib/delete_user", {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",

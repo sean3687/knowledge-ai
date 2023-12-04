@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     const {selectedId}  = req.body
     console.log("this is selected id " + selectedId)
     try {
-        const response = await axios.get(`https://chitchatrabbit.me/delete_file/${selectedId}`, {
+        const response = await axios.get(`https://chitchatrabbit.me/klib/delete_file/${selectedId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 // async function deleteDocument() {
 //     try {
 //       const response = await axios.get(
-//         `https://chitchatrabbit.me/delete_file/${fileIdSelected}`,
+//         `https://chitchatrabbit.me/klib/delete_file/${fileIdSelected}`,
 //         {
 //           headers: {
 //             Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,

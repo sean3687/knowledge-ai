@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   console.log("chatid post deleteChat", chat_id);
   try {
     const response = await axios.get(
-      `https://chitchatrabbit.me/delete_chat/${chat_id}`,
+      `https://chitchatrabbit.me/klib/delete_chat/${chat_id}`,
       {
         headers: {
           "Content-Type": "application/json",

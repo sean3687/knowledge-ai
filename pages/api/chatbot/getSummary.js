@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     const { selectedId }  = req.query
     console.log("this is selected id " + selectedId)
     try {
-        const response = await axios.get(`https://chitchatrabbit.me/summary/${selectedId}`, {
+        const response = await axios.get(`https://chitchatrabbit.me/klib/summary/${selectedId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
 // const fetchSummary = async (id) => {
 //     setIsLoading(true);
 //     try {
-//       const res = await fetch(`https://chitchatrabbit.me/summary/${id}`, {
+//       const res = await fetch(`https://chitchatrabbit.me/klib/summary/${id}`, {
 //         method: "GET",
 //         headers: {
 //           "Content-Type": "application/json",

@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await axios.post(
-      "https://chitchatrabbit.me/register",
+      "https://chitchatrabbit.me/klib/register",
       bodyRequest,
       {
         headers: header,
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
 //     }
 
 //     try {
-//       const response = await fetch("https://chitchatrabbit.me/register", {
+//       const response = await fetch("https://chitchatrabbit.me/klib/register", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",

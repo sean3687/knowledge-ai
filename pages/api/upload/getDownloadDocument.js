@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     console.log("this is from nextjs route"+ selectedId)
   try {
     const response = await axios.get(
-      `https://chitchatrabbit.me/download_file/${selectedId}`,
+      `https://chitchatrabbit.me/klib/download_file/${selectedId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

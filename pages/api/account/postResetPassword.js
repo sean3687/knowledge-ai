@@ -5,7 +5,7 @@ const handler = async (req, res) => {
 
   try {
     const response = await axios.post(
-      `https://chitchatrabbit.me/reset_password`,
+      `https://chitchatrabbit.me/klib/reset_password`,
       body,
       {
         headers: {

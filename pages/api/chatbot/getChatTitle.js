@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   console.log("getchattitle: 1")
   try {
     const response = await axios.get(
-      `https://chitchatrabbit.me/update_chat_subject/${chat_id}`,
+      `https://chitchatrabbit.me/klib/update_chat_subject/${chat_id}`,
       {
         headers: {
           "Content-Type": "application/json",

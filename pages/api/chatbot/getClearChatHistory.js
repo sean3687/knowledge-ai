@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     console.log("this is token "+token)
   
     try {
-        const response = await axios.get(`https://chitchatrabbit.me/clear_chat_history`, {
+        const response = await axios.get(`https://chitchatrabbit.me/klib/clear_chat_history`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",

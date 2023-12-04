@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     const { search_query } = req.body
 
     try {
-        const response = await axios.get(`https://chitchatrabbit.me/search_file_by_label/${search_query}`, {
+        const response = await axios.get(`https://chitchatrabbit.me/klib/search_file_by_label/${search_query}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",

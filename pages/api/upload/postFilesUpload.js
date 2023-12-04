@@ -24,7 +24,7 @@ async function handler(req, res) {
       };
 
       try {
-          const { data } = await axios.post('https://chitchatrabbit.me/uploadfiles', req, axiosConfig);
+          const { data } = await axios.post('https://chitchatrabbit.me/klib/uploadfiles', req, axiosConfig);
           data.pipe(res);  
           res.status(200).json({
               file: data.response,
