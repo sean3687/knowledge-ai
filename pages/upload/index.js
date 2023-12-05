@@ -445,9 +445,7 @@ function UploadPage() {
                   <th className="text-left text-xs font-semibold text-gray-700 uppercase">
                     Filename
                   </th>
-                  <th className="text-xs font-semibold text-gray-700 uppercase">
-                    Types
-                  </th>
+                
                   <th className="text-xs font-semibold text-gray-700 uppercase">
                     Created Date
                   </th>
@@ -504,9 +502,6 @@ function UploadPage() {
                           {item.file_name}
                         </td>
                         <td className="whitespace-nowrap text-center py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
-                          Recipts
-                        </td>
-                        <td className="whitespace-nowrap text-center py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
                           {formatDate(item.upload_time)}
                         </td>
                         <td className="whitespace-nowrap text-center py-4 text-sm text-gray-700 truncate text-ellipsis max-w-[10rem]">
@@ -557,15 +552,7 @@ function UploadPage() {
                                 Structure Data
                               </div>
                             </div>
-                            <PromptController
-                              className="modal"
-                              overlayClassName="modal-overlay"
-                              isOpen={isModalOpen && structureDataId == item.id}
-                              onClose={closeModal}
-                              itemId={structureDataId}
-                              type="receipts"
-                              
-                            />
+                            
                           </button>
                           <button
                             onClick={() => {
