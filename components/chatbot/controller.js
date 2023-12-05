@@ -31,7 +31,8 @@ function Controller() {
      console.log("tab swtiched")
       setChatArray([]);
       getChatMessages(chatId);
-      setSavedChatId("current_chatId", chatId);
+      
+      setSavedChatId(chatId);
       
     }
 
