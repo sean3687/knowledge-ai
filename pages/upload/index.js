@@ -141,7 +141,7 @@ function UploadPage() {
         `/api/upload/getFileUploadStatus?file_id=${fileId}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
         }
