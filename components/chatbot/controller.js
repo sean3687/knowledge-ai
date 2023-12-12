@@ -23,15 +23,27 @@ function Controller() {
   const chatId = router.query.id;
 
   useEffect(() => {
+    
     let intervalId;
-    console.log("This is savedChatId", savedChatId);
+    console.log("This is savedChatId 11", savedChatId);
     console.log("This is chatId", chatId);
+
+    if (isSendChatLoading) {
+      //when you send a message
+      
+      intervalId = setInterval(async () => {
+        if (chatId) {
+          let chatStatus = await getChatStatus(chatId);
+          setResponseStatus(chatStatus);
+          console.log("this is response status", chatStatus);
+        }
+      }, 1000);
+    }
     if (savedChatId !== chatId && chatId) {
       //when you switch to another chat
      console.log("tab swtiched")
       setChatArray([]);
       getChatMessages(chatId);
-      
       setSavedChatId(chatId);
       
     }
@@ -41,25 +53,17 @@ function Controller() {
       getChatMessages(chatId);
     }
 
-    if (isSendChatLoading) {
-      //when you send a message
-      intervalId = setInterval(async () => {
-        if (chatId) {
-          let chatStatus = await getChatStatus(chatId);
-          setResponseStatus(chatStatus);
-          console.log("this is response status", chatStatus);
-        }
-      }, 1000);
-    }
+    
 
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
       }
     };
-  }, [chatId, savedChatId]);
+  }, [chatId, savedChatId, isSendChatLoading]);
 
   const sendMessageClick = async () => {
+    console.log("chekcing: " ,isSendChatLoading)
     setIsSendChatLoading(true);
     const currentInputText = inputText;
     let chatId = router.query.id;
@@ -162,6 +166,7 @@ function Controller() {
           console.log("this is finalBot Message", finalBotMessage);
           addChatArray(finalBotMessage);
           setIsSendChatLoading(false);
+          
           setStreamingResponse("");
           return;
         }
