@@ -614,12 +614,13 @@ function ChatController({
           </button>
         ) : (
           //document loading animation
-          <LottieAnimation
-            animationData={documentlottie}
-            width={300}
-            height={300}
-            className="mb-5"
-          />
+          // <LottieAnimation
+          //   animationData={documentlottie}
+          //   width={300}
+          //   height={300}
+          //   className="mb-5"
+          // />
+          <></>
         )}
 
         <div className="mx-4 mb-5 flex flex-col w-full @sm:pb-5 max-w-5xl m-auto">
